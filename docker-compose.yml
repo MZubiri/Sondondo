@@ -1,0 +1,67 @@
+services:
+  # 1. Base de datos MySQL 8.0
+  db:
+    image: mysql:8.0
+    container_name: sondondo_mysql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password_2026}
+      MYSQL_DATABASE: ${DB_NAME:-valle_sondondo_db}
+      MYSQL_USER: ${DB_USER:-sondondo_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-sondondo_secure_pass_2026}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - sondondo_net
+
+  # 2. Backend ASP.NET Core 9 Web API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sondondo_api
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=${DB_NAME:-valle_sondondo_db};User=${DB_USER:-sondondo_user};Password=${DB_PASSWORD:-sondondo_secure_pass_2026};CharSet=utf8mb4;
+      - AgencySettings__WhatsAppNumber=${WHATSAPP_NUMBER:-51966380590}
+      - AgencySettings__Email=${AGENCY_EMAIL:-miskichaskaperu@hotmail.com}
+    ports:
+      - "${API_PORT:-5000}:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - sondondo_net
+
+  # 3. Frontend Angular SPA servido por Nginx
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sondondo_web
+    restart: always
+    ports:
+      - "${WEB_PORT:-80}:80"
+    depends_on:
+      - backend
+    networks:
+      - sondondo_net
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  sondondo_net:
+    driver: bridge

@@ -1,0 +1,292 @@
+/* ==========================================================================
+   Valle del Sondondo Expeditions - Sistema de Diseño Andino Contemporáneo
+   ========================================================================== */
+
+:root {
+  /* Paleta Inspirada en el Valle del Sondondo y los Andes */
+  --primary: #C0392B;               /* Terracota andina viva */
+  --primary-hover: #A93226;
+  --primary-light: #FADBD8;
+  
+  --secondary: #E67E22;             /* Oro solar y maíz andino */
+  --secondary-hover: #D35400;
+  
+  --accent-emerald: #1B4D3E;        /* Verde profundo de los andenes vivos */
+  --accent-emerald-light: #27AE60;
+  
+  --night-900: #0B132B;             /* Noche andina estrellada */
+  --night-800: #1C2541;
+  --night-700: #3A506B;
+  
+  --earth-50: #FAF8F5;              /* Lienzo cálido natural */
+  --earth-100: #F3EFEA;
+  --earth-200: #E5DFC5;
+  --earth-300: #D4CDBC;
+  --earth-700: #5D5348;
+  --earth-900: #2C2621;
+
+  --whatsapp: #25D366;
+  --whatsapp-hover: #20BA5A;
+
+  --surface-card: #FFFFFF;
+  --border-light: rgba(0, 0, 0, 0.08);
+  --border-dark: rgba(255, 255, 255, 0.12);
+
+  /* Tipografías */
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Sombras y Elevación */
+  --shadow-sm: 0 2px 8px rgba(11, 19, 43, 0.04);
+  --shadow-md: 0 8px 24px rgba(11, 19, 43, 0.08);
+  --shadow-lg: 0 16px 40px rgba(11, 19, 43, 0.12);
+  --shadow-glow: 0 8px 30px rgba(192, 57, 43, 0.3);
+
+  /* Bordes Redondeados */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Transiciones */
+  --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Reset y Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--earth-50);
+  color: var(--earth-900);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--night-900);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+p {
+  color: var(--earth-700);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition-smooth);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button, input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Contenedores */
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Botones con estilo premium */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.75rem 1.6rem;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, #D35400 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 18px rgba(192, 57, 43, 0.35);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(192, 57, 43, 0.45);
+  background: linear-gradient(135deg, #A93226 0%, #C0392B 100%);
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: var(--night-900);
+  border: 1.5px solid var(--earth-200);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  background: var(--earth-100);
+  border-color: var(--earth-300);
+  transform: translateY(-2px);
+}
+
+.btn-whatsapp {
+  background-color: var(--whatsapp);
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
+}
+
+.btn-whatsapp:hover {
+  background-color: var(--whatsapp-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(37, 211, 102, 0.45);
+}
+
+.btn-outline-white {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.btn-outline-white:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-safetravels {
+  background: #E8F5E9;
+  color: #1B5E20;
+  border: 1px solid #A5D6A7;
+}
+
+.badge-terracotta {
+  background: rgba(192, 57, 43, 0.1);
+  color: var(--primary);
+}
+
+.badge-gold {
+  background: rgba(230, 126, 34, 0.12);
+  color: #B9770E;
+}
+
+.badge-emerald {
+  background: rgba(39, 174, 96, 0.12);
+  color: #1E8449;
+}
+
+/* Glassmorphism utility */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-lg);
+}
+
+.glass-card-dark {
+  background: rgba(11, 19, 43, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-lg);
+  color: #ffffff;
+}
+
+/* Sección cabeceras */
+.section-title-wrap {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 3rem auto;
+}
+
+.section-tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.6rem;
+}
+
+.section-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--night-900);
+  margin-bottom: 0.8rem;
+}
+
+.section-subtitle {
+  font-size: 1.05rem;
+  color: var(--earth-700);
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.85rem;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--earth-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--earth-300);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--earth-700);
+}
