@@ -9,77 +9,66 @@ import { IconComponent } from '../icon/icon.component';
   template: `
     <section class="why-us-section" id="nosotros">
       <div class="container">
-        <!-- Section Header -->
         <div class="section-title-wrap">
-          <span class="section-tag">Nuestra Identidad</span>
-          <h2 class="section-title">¿Por Qué Viajar con Valle del Sondondo Expeditions?</h2>
+          <span class="section-tag">Compromiso & Manera de Viajar</span>
+          <h2 class="section-title">¿Por Qué Expediciones con Guías Locales?</h2>
           <p class="section-subtitle">
-            Somos nacidos en esta tierra. Compartimos contigo los secretos de nuestros ancestros con calidez, respeto y los más altos estándares de seguridad turística.
+            No somos intermediarios de oficina. Operamos desde el corazón de Lucanas, 
+            con baquianos e informadores comunales que conocen cada andén, cañón y sendero ancestral.
           </p>
         </div>
 
-        <!-- Pillars Grid -->
-        <div class="pillars-grid">
-          <!-- Pillar 1 -->
-          <div class="pillar-card">
-            <div class="pillar-icon-box bg-emerald">
-              <app-icon name="shield-check" [size]="28" stroke="#1B5E20"></app-icon>
+        <!-- 3 Authentic Arguments with Subtle Dividers -->
+        <div class="arguments-list">
+          <div class="argument-item">
+            <div class="arg-header">
+              <div class="arg-icon">
+                <app-icon name="compass" [size]="20" stroke="var(--forest-900)"></app-icon>
+              </div>
+              <h3 class="arg-title">Guías Nativos & Quechuahablantes</h3>
             </div>
-            <div class="pillar-badge-text">Certificación Oficial</div>
-            <h3 class="pillar-title">Sello Safe Travels</h3>
-            <p class="pillar-desc">
-              Acreditados formalmente por el WTTC y la DIRCETUR. Garantizamos protocolos de viaje responsables, transparentes y seguros en todos nuestros circuitos.
+            <p class="arg-desc">
+              Pobladores nacidos y criados en Andamarca, Aucará y Mayobamba. Su conocimiento sobre 
+              el Qapaq Ñan, la historia de los ayllus prehispánicos y los hábitos de vuelo del cóndor 
+              brindan una experiencia cultural auténtica y segura.
             </p>
           </div>
 
-          <!-- Pillar 2 -->
-          <div class="pillar-card">
-            <div class="pillar-icon-box bg-terracotta">
-              <app-icon name="feather" [size]="28" stroke="var(--primary)"></app-icon>
+          <div class="argument-item">
+            <div class="arg-header">
+              <div class="arg-icon">
+                <app-icon name="feather" [size]="20" stroke="var(--accent-clay)"></app-icon>
+              </div>
+              <h3 class="arg-title">Turismo Comunitario & Respeto</h3>
             </div>
-            <div class="pillar-badge-text">Raíces Profundas</div>
-            <h3 class="pillar-title">Guías Nativos Quechuas</h3>
-            <p class="pillar-desc">
-              Nuestros guías son hijos del Valle del Sondondo. Te abrirán las puertas de los pueblos, dialogarás con los maestros de tijeras y conocerás la historia viva de los andenes.
+            <p class="arg-desc">
+              Cada expedición retribuye de forma justa y directa a las comunidades campesinas del valle: 
+              hospedajes familiares, cocineras tradicionales y arrieros locales, respetando la fiesta del 
+              agua y los ciclos agrícolas de los andenes.
             </p>
           </div>
 
-          <!-- Pillar 3 -->
-          <div class="pillar-card">
-            <div class="pillar-icon-box bg-gold">
-              <app-icon name="users" [size]="28" stroke="#B9770E"></app-icon>
+          <div class="argument-item">
+            <div class="arg-header">
+              <div class="arg-icon">
+                <app-icon name="shield-check" [size]="20" stroke="var(--forest-900)"></app-icon>
+              </div>
+              <h3 class="arg-title">Seguridad en Altura & Asistencia</h3>
             </div>
-            <div class="pillar-badge-text">Impacto Social</div>
-            <h3 class="pillar-title">Turismo Regenerativo</h3>
-            <p class="pillar-desc">
-              Tu visita dinamiza directamente a las familias campesinas, hospederías comunales y tejedoras tradicionales, protegiendo este Paisaje Cultural Vivo.
-            </p>
-          </div>
-
-          <!-- Pillar 4 -->
-          <div class="pillar-card">
-            <div class="pillar-icon-box bg-blue">
-              <app-icon name="mountain" [size]="28" stroke="#2980B9"></app-icon>
-            </div>
-            <div class="pillar-badge-text">Seguridad en Altura</div>
-            <h3 class="pillar-title">Aclimatación y Oxígeno</h3>
-            <p class="pillar-desc">
-              Diseñamos itinerarios con progresión gradual de altitud. Todos nuestros traslados cuentan con pulsioxímetro, botiquín completo y balón de oxígeno medicinal.
+            <p class="arg-desc">
+              Protocolos de aclimatación para alturas de 2,500 a 4,200 msnm (Pachapupum y Pampa Galeras), 
+              transporte turístico privado seguro, botiquín de primeros auxilios y coordinación permanente en territorio.
             </p>
           </div>
         </div>
 
-        <!-- Big Banner Promo / Quote -->
-        <div class="quote-banner glass-card-dark">
-          <div class="quote-content">
-            <span class="quote-icon">“</span>
-            <p class="quote-text">
-              El Valle del Sondondo no es solo un destino, es una conexión viva con el corazón sagrado de los Andes peruanos.
+        <!-- Ethical Travel Philosophy Banner -->
+        <div class="philosophy-strip">
+          <div class="philosophy-content">
+            <p class="philosophy-quote">
+              “Caminamos con veneración por la Pachamama y los Apus protectores. Promovemos el respeto a nuestras comunidades campesinas y la conservación milenaria de los andenes vivos.”
             </p>
-            <div class="quote-author">
-              <strong>Equipo de Valle del Sondondo Expeditions</strong>
-              <span>Aucará • Lucanas • Ayacucho</span>
-            </div>
+            <span class="philosophy-author">Comunidad de Guías Locales • Valle del Sondondo, Ayacucho, Perú</span>
           </div>
         </div>
       </div>
@@ -88,127 +77,92 @@ import { IconComponent } from '../icon/icon.component';
   styles: [`
     .why-us-section {
       padding: 6rem 0;
-      background: var(--earth-100);
-      position: relative;
+      background: var(--cream-100);
+      border-bottom: 1px solid var(--border-light);
     }
 
-    .pillars-grid {
+    .arguments-list {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
       margin-bottom: 4rem;
     }
 
-    .pillar-card {
-      background: #FFFFFF;
-      padding: 2.2rem 1.75rem;
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--border-light);
-      transition: var(--transition-smooth);
+    .argument-item {
       display: flex;
       flex-direction: column;
     }
 
-    .pillar-card:hover {
-      transform: translateY(-6px);
-      box-shadow: var(--shadow-lg);
-      border-color: rgba(192, 57, 43, 0.2);
+    .arg-header {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 0.85rem;
     }
 
-    .pillar-icon-box {
-      width: 58px;
-      height: 58px;
-      border-radius: 16px;
+    .arg-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-xs);
+      background: #FFFFFF;
+      border: 1px solid var(--border-light);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 1.25rem;
+      flex-shrink: 0;
     }
 
-    .bg-emerald { background: #E8F5E9; }
-    .bg-terracotta { background: #FDEDEC; }
-    .bg-gold { background: #FEF9E7; }
-    .bg-blue { background: #EBF5FB; }
-
-    .pillar-badge-text {
-      font-size: 0.72rem;
+    .arg-title {
+      font-size: 1.15rem;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #7D8898;
-      margin-bottom: 0.35rem;
+      color: var(--earth-950);
+      line-height: 1.3;
     }
 
-    .pillar-title {
-      font-size: 1.25rem;
-      color: var(--night-900);
-      margin-bottom: 0.75rem;
-    }
-
-    .pillar-desc {
-      font-size: 0.88rem;
+    .arg-desc {
+      font-size: 0.92rem;
+      line-height: 1.7;
       color: var(--earth-700);
-      line-height: 1.6;
+      padding-left: 0.2rem;
     }
 
-    .quote-banner {
-      padding: 3rem;
+    .philosophy-strip {
+      background: #FFFFFF;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 2.2rem 3rem;
       text-align: center;
-      position: relative;
-      overflow: hidden;
     }
 
-    .quote-icon {
-      font-family: Georgia, serif;
-      font-size: 4rem;
-      line-height: 1;
-      color: var(--secondary);
-      display: block;
-      margin-bottom: -1rem;
-    }
-
-    .quote-text {
-      font-family: var(--font-display);
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: #FFFFFF;
+    .philosophy-quote {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: var(--earth-900);
       max-width: 780px;
-      margin: 0 auto 1.5rem auto;
-      line-height: 1.4;
+      margin: 0 auto 0.75rem auto;
     }
 
-    .quote-author {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-    }
-
-    .quote-author strong {
-      color: var(--secondary);
-      font-size: 1rem;
-    }
-
-    .quote-author span {
-      color: #B0BCC8;
-      font-size: 0.85rem;
+    .philosophy-author {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-clay);
     }
 
     @media (max-width: 992px) {
-      .pillars-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 600px) {
-      .pillars-grid {
+      .arguments-list {
         grid-template-columns: 1fr;
+        gap: 2rem;
       }
-      .quote-banner {
-        padding: 2rem 1.5rem;
+      .philosophy-strip {
+        padding: 1.8rem 1.5rem;
       }
-      .quote-text {
-        font-size: 1.25rem;
+      .philosophy-quote {
+        font-size: 1.02rem;
       }
     }
   `]

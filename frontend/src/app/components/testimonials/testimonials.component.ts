@@ -8,50 +8,65 @@ import { IconComponent } from '../icon/icon.component';
   standalone: true,
   imports: [CommonModule, IconComponent],
   template: `
-    <section class="testimonials-section" id="testimonios">
-      <div class="container">
-        <div class="section-title-wrap">
-          <span class="section-tag">Testimonios Reales</span>
-          <h2 class="section-title">Lo Que Dicen Nuestros Viajeros</h2>
-          <p class="section-subtitle">
-            Historias auténticas de quienes se atrevieron a explorar los cañones, andenes y glaciares de Sondondo.
-          </p>
+    @if (testimonials.length > 0) {
+      <section class="testimonials-section" id="testimonios">
+        <div class="container">
+          <div class="section-title-wrap text-center">
+            <span class="section-tag">Experiencias Verificadas</span>
+            <h2 class="section-title">Testimonios de Expedicionarios</h2>
+            <p class="section-subtitle">
+              Reseñas y vivencias compartidas por personas que han recorrido nuestros senderos.
+            </p>
+          </div>
+
+          <div class="testimonials-grid">
+            @for (item of testimonials; track item.id) {
+              <div class="testimonial-card">
+                <p class="testimonial-quote">“{{ item.comment }}”</p>
+                <div class="testimonial-footer">
+                  <span class="author-name">{{ item.authorName }}</span>
+                  <span class="author-location">{{ item.location }}</span>
+                  <span class="tour-name">{{ item.tourName }}</span>
+                </div>
+              </div>
+            }
+          </div>
         </div>
-
-        <div class="testimonials-grid">
-          @for (item of testimonials; track item.id) {
-            <div class="testimonial-card">
-              <!-- Star Rating -->
-              <div class="rating-stars">
-                @for (star of [1,2,3,4,5]; track star) {
-                  <app-icon name="star" [size]="18" stroke="#F1C40F" customClass="star-icon"></app-icon>
-                }
-              </div>
-
-              <p class="testimonial-comment">
-                “{{ item.comment }}”
-              </p>
-
-              <div class="testimonial-meta">
-                <div class="author-avatar">
-                  {{ getInitials(item.authorName) }}
-                </div>
-                <div>
-                  <div class="author-name">{{ item.authorName }}</div>
-                  <div class="author-location">{{ item.location }}</div>
-                  <div class="tour-tag">{{ item.tourName }}</div>
-                </div>
-              </div>
+      </section>
+    } @else {
+      <!-- Transparencia: si no hay testimonios auditados, no inventamos nombres falsos -->
+      <section class="community-note-section" id="testimonios">
+        <div class="container">
+          <div class="community-box">
+            <div class="community-icon">
+              <app-icon name="users" [size]="24" stroke="var(--forest-900)"></app-icon>
             </div>
-          }
+            <div class="community-text">
+              <h4>Comunidad de Viajeros y Reseñas Directas</h4>
+              <p>
+                Por política de transparencia y respeto, no publicamos testimonios inventados. 
+                Puedes consultar fotografías, experiencias y opiniones directas de nuestros viajeros en nuestra 
+                comunidad de Facebook o solicitar referencias de salidas recientes por WhatsApp.
+              </p>
+            </div>
+            <div class="community-action">
+              <a 
+                href="https://www.facebook.com/valledelsondondoexpeditions" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="btn btn-secondary btn-sm">
+                <span>Ver Facebook Oficial</span>
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    }
   `,
   styles: [`
     .testimonials-section {
-      padding: 6rem 0;
-      background: var(--earth-50);
+      padding: 5.5rem 0;
+      background: var(--cream-50);
     }
 
     .testimonials-grid {
@@ -62,95 +77,108 @@ import { IconComponent } from '../icon/icon.component';
 
     .testimonial-card {
       background: #FFFFFF;
-      padding: 2.2rem 1.8rem;
-      border-radius: var(--radius-lg);
       border: 1px solid var(--border-light);
-      box-shadow: var(--shadow-sm);
+      border-radius: var(--radius-sm);
+      padding: 2rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: var(--transition-smooth);
     }
 
-    .testimonial-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-md);
-      border-color: rgba(230, 126, 34, 0.3);
-    }
-
-    .rating-stars {
-      display: flex;
-      gap: 0.25rem;
-      margin-bottom: 1.25rem;
-      color: #F1C40F;
-    }
-
-    .testimonial-comment {
-      font-size: 0.95rem;
-      line-height: 1.65;
-      color: var(--earth-900);
+    .testimonial-quote {
+      font-family: var(--font-serif);
       font-style: italic;
-      margin-bottom: 1.75rem;
-      flex-grow: 1;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--earth-800);
+      margin-bottom: 1.5rem;
     }
 
-    .testimonial-meta {
+    .testimonial-footer {
       display: flex;
-      align-items: center;
-      gap: 0.85rem;
+      flex-direction: column;
+      gap: 0.2rem;
       padding-top: 1rem;
       border-top: 1px solid var(--border-light);
     }
 
-    .author-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-      color: #FFFFFF;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.95rem;
-      flex-shrink: 0;
-    }
-
     .author-name {
-      font-family: var(--font-display);
       font-weight: 700;
       font-size: 0.95rem;
-      color: var(--night-900);
+      color: var(--earth-950);
     }
 
     .author-location {
-      font-size: 0.78rem;
-      color: #7D8898;
+      font-size: 0.8rem;
+      color: var(--earth-500);
     }
 
-    .tour-tag {
-      font-size: 0.72rem;
-      color: var(--primary);
+    .tour-name {
+      font-size: 0.78rem;
+      color: var(--accent-clay);
       font-weight: 600;
-      margin-top: 2px;
+    }
+
+    /* Nota honesta de comunidad */
+    .community-note-section {
+      padding: 3.5rem 0;
+      background: var(--cream-50);
+    }
+
+    .community-box {
+      background: #FFFFFF;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .community-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--forest-50);
+      border-radius: var(--radius-xs);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .community-text {
+      flex-grow: 1;
+    }
+
+    .community-text h4 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--earth-950);
+      margin-bottom: 0.35rem;
+    }
+
+    .community-text p {
+      font-size: 0.9rem;
+      color: var(--earth-700);
+      line-height: 1.6;
+    }
+
+    .community-action {
+      flex-shrink: 0;
     }
 
     @media (max-width: 992px) {
       .testimonials-grid {
         grid-template-columns: 1fr;
       }
+      .community-box {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.75rem;
+      }
     }
   `]
 })
 export class TestimonialsComponent {
   @Input() testimonials: Testimonial[] = [];
-
-  getInitials(name: string): string {
-    if (!name) return 'V';
-    const parts = name.split(' ');
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[1][0]).toUpperCase();
-    }
-    return name.substring(0, 2).toUpperCase();
-  }
 }

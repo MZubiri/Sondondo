@@ -17,6 +17,27 @@ public class ContactController : ControllerBase
         _context = context;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<ContactMessageAdminDto>>> GetMessages()
+    {
+        var messages = await _context.ContactMessages
+            .OrderByDescending(m => m.CreatedAt)
+            .Select(m => new ContactMessageAdminDto
+            {
+                Id = m.Id,
+                Name = m.Name,
+                Email = m.Email,
+                Phone = m.Phone,
+                Subject = m.Subject,
+                Message = m.Message,
+                CreatedAt = m.CreatedAt,
+                IsRead = m.IsRead
+            })
+            .ToListAsync();
+
+        return Ok(messages);
+    }
+
     [HttpPost]
     public async Task<IActionResult> SendContactMessage([FromBody] CreateContactMessageDto dto)
     {
@@ -40,6 +61,36 @@ public class ContactController : ControllerBase
         await _context.SaveChangesAsync();
 
         return Ok(new { success = true, message = "Tu mensaje ha sido recibido con éxito. Nos comunicaremos contigo a la brevedad." });
+    }
+
+    [HttpPatch("{id}/read")]
+    public async Task<IActionResult> ToggleRead(int id)
+    {
+        var message = await _context.ContactMessages.FindAsync(id);
+        if (message == null)
+        {
+            return NotFound(new { message = $"Mensaje con ID {id} no encontrado." });
+        }
+
+        message.IsRead = !message.IsRead;
+        await _context.SaveChangesAsync();
+
+        return Ok(new { success = true, id = message.Id, isRead = message.IsRead });
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteMessage(int id)
+    {
+        var message = await _context.ContactMessages.FindAsync(id);
+        if (message == null)
+        {
+            return NotFound(new { message = $"Mensaje con ID {id} no encontrado." });
+        }
+
+        _context.ContactMessages.Remove(message);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { success = true, message = "Mensaje eliminado con éxito." });
     }
 }
 

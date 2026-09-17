@@ -20,6 +20,54 @@ public class BookingsController : ControllerBase
         _configuration = configuration;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<BookingAdminDto>>> GetBookings(
+        [FromQuery] string? status,
+        [FromQuery] string? search)
+    {
+        var query = _context.BookingInquiries
+            .Include(b => b.Tour)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(status) && !status.Equals("all", StringComparison.OrdinalIgnoreCase))
+        {
+            query = query.Where(b => b.Status.ToLower() == status.ToLower());
+        }
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var s = search.Trim().ToLower();
+            query = query.Where(b => b.FullName.ToLower().Contains(s) ||
+                                     b.Email.ToLower().Contains(s) ||
+                                     b.Phone.Contains(s) ||
+                                     (b.Tour != null && b.Tour.Title.ToLower().Contains(s)));
+        }
+
+        var items = await query
+            .OrderByDescending(b => b.CreatedAt)
+            .ToListAsync();
+
+        var whatsappNumber = _configuration["AgencySettings:WhatsAppNumber"] ?? "51966380590";
+
+        var result = items.Select(b => new BookingAdminDto
+        {
+            Id = b.Id,
+            TourId = b.TourId,
+            TourTitle = b.Tour?.Title ?? "Consulta General",
+            FullName = b.FullName,
+            Email = b.Email,
+            Phone = b.Phone,
+            NumberOfPeople = b.NumberOfPeople,
+            TravelDate = b.TravelDate,
+            Message = b.Message,
+            Status = b.Status,
+            CreatedAt = b.CreatedAt,
+            WhatsAppDirectUrl = BuildWhatsAppReplyUrl(b, b.Tour?.Title, whatsappNumber)
+        }).ToList();
+
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<ActionResult<BookingInquiryResponseDto>> CreateInquiry([FromBody] CreateBookingInquiryDto dto)
     {
@@ -51,8 +99,7 @@ public class BookingsController : ControllerBase
         await _context.BookingInquiries.AddAsync(inquiry);
         await _context.SaveChangesAsync();
 
-        // Build WhatsApp direct message link
-        var whatsappNumber = _configuration["AgencySettings:WhatsAppNumber"] ?? "51966000000";
+        var whatsappNumber = _configuration["AgencySettings:WhatsAppNumber"] ?? "51966380590";
         var tourTitle = tour?.Title ?? "Tour en Valle del Sondondo";
         var dateFormatted = dto.TravelDate.HasValue ? dto.TravelDate.Value.ToString("dd/MM/yyyy") : "Por coordinar";
 
@@ -60,7 +107,7 @@ public class BookingsController : ControllerBase
                      $"Mi nombre es *{dto.FullName}* y deseo cotizar/reservar:\n" +
                      $"🏔️ *Tour:* {tourTitle}\n" +
                      $"👥 *Personas:* {dto.NumberOfPeople}\n" +
-                     $"📅 *Fecha tentativa:* {dateFormatted}\n" +
+                     $"📅 *Fecha:* {dateFormatted}\n" +
                      $"📱 *Teléfono:* {dto.Phone}\n" +
                      (!string.IsNullOrWhiteSpace(dto.Message) ? $"💬 *Mensaje:* {dto.Message}\n" : "") +
                      $"Quedo atento a su respuesta para coordinar detalles.";
@@ -101,5 +148,56 @@ public class BookingsController : ControllerBase
             CreatedAt = inquiry.CreatedAt,
             WhatsAppDirectUrl = string.Empty
         });
+    }
+
+    [HttpPatch("{id}/status")]
+    public async Task<IActionResult> UpdateBookingStatus(int id, [FromBody] UpdateBookingStatusDto dto)
+    {
+        var inquiry = await _context.BookingInquiries.FindAsync(id);
+        if (inquiry == null)
+        {
+            return NotFound(new { message = $"Reserva con ID {id} no encontrada." });
+        }
+
+        inquiry.Status = dto.Status.Trim();
+        await _context.SaveChangesAsync();
+
+        return Ok(new { success = true, id = inquiry.Id, status = inquiry.Status });
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteBooking(int id)
+    {
+        var inquiry = await _context.BookingInquiries.FindAsync(id);
+        if (inquiry == null)
+        {
+            return NotFound(new { message = $"Reserva con ID {id} no encontrada." });
+        }
+
+        _context.BookingInquiries.Remove(inquiry);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { success = true, message = "Reserva eliminada con éxito." });
+    }
+
+    private static string BuildWhatsAppReplyUrl(BookingInquiry inquiry, string? tourTitle, string agencyNumber)
+    {
+        // Clean customer phone: strip non-digits
+        var cleanPhone = new string(inquiry.Phone.Where(char.IsDigit).ToArray());
+        if (cleanPhone.Length == 9 && !cleanPhone.StartsWith("51"))
+        {
+            cleanPhone = "51" + cleanPhone;
+        }
+
+        if (string.IsNullOrWhiteSpace(cleanPhone))
+        {
+            cleanPhone = agencyNumber;
+        }
+
+        var message = $"¡Hola {inquiry.FullName}! 👋 Te saluda el equipo de *Valle del Sondondo Expeditions*.\n" +
+                      $"Recibimos tu solicitud para el tour *{tourTitle ?? "Valle del Sondondo"}* para {inquiry.NumberOfPeople} persona(s).\n" +
+                      $"¿En qué fecha te gustaría realizar tu expedición? Con gusto te compartimos disponibilidad e itinerario detallado.";
+
+        return $"https://wa.me/{cleanPhone}?text={WebUtility.UrlEncode(message)}";
     }
 }

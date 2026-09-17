@@ -5,86 +5,106 @@ import { IconComponent } from '../icon/icon.component';
 @Component({
   selector: 'app-valley-experience',
   standalone: true,
-  imports: [CommonModule, IconComponent],
+  imports: [CommonModule],
   template: `
-    <section class="experience-section" id="experiencia">
+    <section class="destination-section" id="experiencia">
       <div class="container">
-        <!-- Section Header -->
+        <!-- Editorial Header -->
         <div class="section-title-wrap">
-          <span class="section-tag">Patrimonio Vivo de Ayacucho</span>
-          <h2 class="section-title">El Valle del Sondondo: Un Santuario Andino</h2>
+          <span class="section-tag">Territorio & Patrimonio Andino</span>
+          <h2 class="section-title">Valle del Sondondo: Paisaje Cultural Vivo de Ayacucho</h2>
           <p class="section-subtitle">
-            Ubicado en la provincia de Lucanas, Ayacucho, este valle protegido guarda una herencia viva que data de más de mil años de historia andina ininterrumpida.
+            Al sur de Ayacucho, este valle interandino milenario reúne el mayor anfiteatro de andenes 
+            prehispánicos vivos de América, el vuelo del Cóndor Andino y la cuna de la Danza de Tijeras.
           </p>
         </div>
 
-        <!-- Four Pillars of the Valley -->
-        <div class="experience-grid">
-          <!-- Card 1: Cóndor -->
-          <div class="exp-card">
-            <div class="exp-img-box">
-              <img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=800&q=80" alt="Cóndor Andino en Mayobamba" loading="lazy" />
-              <div class="exp-badge">
-                <app-icon name="feather" [size]="16" stroke="#FFFFFF"></app-icon>
-                <span>Santuario Ornitológico</span>
-              </div>
-            </div>
-            <div class="exp-content">
-              <h3>El Vuelo del Cóndor en Mayobamba</h3>
-              <p>
-                Los cañones de Mayobamba y Aucará ofrecen uno de los mejores observatorios naturales de Sudamérica. El Cóndor Andino planea a escasos metros aprovechando las corrientes térmicas matutinas.
+        <!-- Wide Photographic Showcase with Editorial Narrative -->
+        <div class="editorial-feature">
+          <div class="feature-media">
+            <img 
+              src="/assets/images/andenes_andamarca.jpg" 
+              alt="Andenerías preíncas vivas de Andamarca en el Valle del Sondondo" 
+              loading="lazy" 
+              class="feature-img" />
+            <span class="feature-caption">
+              Andamarca • Anfiteatro de Andenes Prehispánicos Vivos (3,400 msnm)
+            </span>
+          </div>
+
+          <div class="feature-text">
+            <h3 class="feature-title">
+              Cultura Viva, Paisaje Milenario y Soberanía Andina
+            </h3>
+            <p class="feature-lead">
+              El Valle del Sondondo abarca los distritos históricos de Andamarca, Aucará, Cabana Sur, 
+              Chipao y Huancasancos. Sus terrazas agrícolas escalonadas, construidas por las culturas 
+              preíncas Cabana, Andamarca y Lucanas, siguen produciendo maíz y legumbres con los mismos 
+              canales de piedra que irrigaron el imperio.
+            </p>
+            <p>
+              Operamos con guías y baquianos nacidos en el propio valle. Compartimos la historia del 
+              cronista indígena Felipe Guamán Poma de Ayala, el respeto por el Apu Qarhuarazo y la 
+              convivencia armónica con las comunidades campesinas de Lucanas.
+            </p>
+          </div>
+        </div>
+
+        <!-- Visual Alternated List of Interest Points -->
+        <div class="interest-points-list">
+          <div class="interest-row">
+            <div class="interest-index">01</div>
+            <div class="interest-body">
+              <h4 class="interest-title">Anfiteatro de Andenes de Andamarca</h4>
+              <p class="interest-desc">
+                Terrazas agrícolas prehispánicas continuas en actividad. Miradores de Waylla y Aya Urqu, 
+                con vestigios de la fortaleza de Kanichi Antamarkas y una vista panorámica sin igual en el continente.
               </p>
+            </div>
+            <div class="interest-tag-col">
+              <span class="interest-badge">Andamarca • 3,400 msnm</span>
             </div>
           </div>
 
-          <!-- Card 2: Andenerías -->
-          <div class="exp-card">
-            <div class="exp-img-box">
-              <img src="https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=800&q=80" alt="Andenes Vivos de Andamarca" loading="lazy" />
-              <div class="exp-badge">
-                <app-icon name="landmark" [size]="16" stroke="#FFFFFF"></app-icon>
-                <span>Ingeniería Prehispánica</span>
-              </div>
-            </div>
-            <div class="exp-content">
-              <h3>Colosales Andenerías Vivas de Andamarca</h3>
-              <p>
-                Más de 5,000 hectáreas de terrazas agrícolas escalonadas construidas por civilizaciones Wari e Inca que continúan fértiles hoy en día, alimentadas por sabios canales de regadío.
+          <div class="interest-row">
+            <div class="interest-index">02</div>
+            <div class="interest-body">
+              <h4 class="interest-title">Mirador de Cóndores de Mayobamba</h4>
+              <p class="interest-desc">
+                Avistamiento matutino (6:30 a 8:30 am) de cóndores andinos remontando las corrientes térmicas 
+                del cañón a escasos metros del visitante, complementado con el bosque de piedras de Julián Cuaresma.
               </p>
+            </div>
+            <div class="interest-tag-col">
+              <span class="interest-badge">Mayobamba • Kuntur Ñan</span>
             </div>
           </div>
 
-          <!-- Card 3: Tijeras -->
-          <div class="exp-card">
-            <div class="exp-img-box">
-              <img src="https://images.unsplash.com/photo-1589802829985-817e51171b92?auto=format&fit=crop&w=800&q=80" alt="Danza de las Tijeras UNESCO" loading="lazy" />
-              <div class="exp-badge">
-                <app-icon name="compass" [size]="16" stroke="#FFFFFF"></app-icon>
-                <span>Patrimonio UNESCO</span>
-              </div>
-            </div>
-            <div class="exp-content">
-              <h3>Cuna Ancestral de la Danza de las Tijeras</h3>
-              <p>
-                El Valle del Sondondo es el vientre místico de los Danzantes de Tijeras (Galas y Tusuq). El chasquido del hierro forjado y la melodía del arpa y violín rinden tributo a las fuerzas de la naturaleza.
+          <div class="interest-row">
+            <div class="interest-index">03</div>
+            <div class="interest-body">
+              <h4 class="interest-title">Cuna de la Danza de las Tijeras (UNESCO)</h4>
+              <p class="interest-desc">
+                Patrimonio Cultural Inmaterial de la Humanidad. El Valle del Sondondo es la cuna del ritual 
+                sagrado de los Danzaq, quienes bailan al compás del arpa y el violín haciendo sonar sus tijeras de acero.
               </p>
+            </div>
+            <div class="interest-tag-col">
+              <span class="interest-badge">Patrimonio UNESCO</span>
             </div>
           </div>
 
-          <!-- Card 4: Qarhuarazo -->
-          <div class="exp-card">
-            <div class="exp-img-box">
-              <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80" alt="Apu Qarhuarazo" loading="lazy" />
-              <div class="exp-badge">
-                <app-icon name="mountain" [size]="16" stroke="#FFFFFF"></app-icon>
-                <span>Deidad Tutelar</span>
-              </div>
-            </div>
-            <div class="exp-content">
-              <h3>El Sagrado Volcán Apu Qarhuarazo (5,112m)</h3>
-              <p>
-                El coloso nevado que vigila el valle. Rodeado de bofedales con manadas de vicuñas protegidas y lagunas sagradas donde se celebran ceremonias milenarias de ofrenda al agua.
+          <div class="interest-row">
+            <div class="interest-index">04</div>
+            <div class="interest-body">
+              <h4 class="interest-title">Volcán de Pachapupum & Pampa Galeras</h4>
+              <p class="interest-desc">
+                Monumento natural pétreo de sal y azufre a 4,022 msnm con pozas termominero-medicinales en Sacsamarca, 
+                junto a la mayor concentración de vicuñas silvestres del Perú en la Reserva Nacional Pampa Galeras.
               </p>
+            </div>
+            <div class="interest-tag-col">
+              <span class="interest-badge">Pachapupum & Vicuñas</span>
             </div>
           </div>
         </div>
@@ -92,97 +112,157 @@ import { IconComponent } from '../icon/icon.component';
     </section>
   `,
   styles: [`
-    .experience-section {
-      padding: 6rem 0;
+    .destination-section {
+      padding: 6.5rem 0;
       background: #FFFFFF;
+      border-top: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--border-light);
     }
 
-    .experience-grid {
+    .editorial-feature {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.75rem;
-    }
-
-    .exp-card {
-      background: var(--earth-50);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      border: 1px solid var(--border-light);
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      flex-direction: column;
-      transition: var(--transition-smooth);
-    }
-
-    .exp-card:hover {
-      transform: translateY(-6px);
-      box-shadow: var(--shadow-md);
-      border-color: rgba(192, 57, 43, 0.25);
-    }
-
-    .exp-img-box {
-      position: relative;
-      height: 200px;
-      overflow: hidden;
-    }
-
-    .exp-img-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-
-    .exp-card:hover .exp-img-box img {
-      transform: scale(1.08);
-    }
-
-    .exp-badge {
-      position: absolute;
-      top: 0.85rem;
-      left: 0.85rem;
-      background: rgba(11, 19, 43, 0.85);
-      backdrop-filter: blur(8px);
-      padding: 0.35rem 0.75rem;
-      border-radius: var(--radius-full);
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      display: flex;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 3.5rem;
       align-items: center;
-      gap: 0.35rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 4.5rem;
     }
 
-    .exp-content {
-      padding: 1.5rem;
+    .feature-media {
+      position: relative;
+      background: var(--earth-100);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .feature-img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+    }
+
+    .feature-caption {
+      display: block;
+      padding: 0.65rem 1rem;
+      background: var(--cream-100);
+      font-size: 0.76rem;
+      color: var(--earth-700);
+      letter-spacing: 0.04em;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .feature-text {
       display: flex;
       flex-direction: column;
-      flex-grow: 1;
     }
 
-    .exp-content h3 {
-      font-size: 1.15rem;
-      margin-bottom: 0.65rem;
-      color: var(--night-900);
+    .feature-title {
+      font-size: 2rem;
       line-height: 1.3;
+      color: var(--earth-950);
+      margin-bottom: 1.25rem;
     }
 
-    .exp-content p {
-      font-size: 0.88rem;
-      line-height: 1.6;
+    .feature-lead {
+      font-size: 1.08rem;
+      line-height: 1.75;
+      color: var(--earth-800);
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .feature-text p {
+      font-size: 0.95rem;
       color: var(--earth-700);
+      line-height: 1.7;
     }
 
-    @media (max-width: 1100px) {
-      .experience-grid {
-        grid-template-columns: repeat(2, 1fr);
+    /* Lista visual sencilla sin tarjetas repetitivas */
+    .interest-points-list {
+      border-top: 1px solid var(--border-light);
+    }
+
+    .interest-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 200px;
+      gap: 2rem;
+      align-items: baseline;
+      padding: 2.2rem 0;
+      border-bottom: 1px solid var(--border-light);
+      transition: var(--transition);
+    }
+
+    .interest-row:hover {
+      background-color: var(--cream-50);
+    }
+
+    .interest-index {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--accent-clay);
+    }
+
+    .interest-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--earth-950);
+      margin-bottom: 0.45rem;
+    }
+
+    .interest-desc {
+      font-size: 0.92rem;
+      color: var(--earth-700);
+      line-height: 1.65;
+      max-width: 650px;
+    }
+
+    .interest-tag-col {
+      text-align: right;
+    }
+
+    .interest-badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--forest-900);
+      background: var(--forest-50);
+      border: 1px solid rgba(27, 53, 39, 0.15);
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-xs);
+    }
+
+    @media (max-width: 992px) {
+      .editorial-feature {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .feature-img {
+        height: 320px;
+      }
+      .interest-row {
+        grid-template-columns: 60px 1fr;
+        gap: 1rem;
+      }
+      .interest-tag-col {
+        grid-column: 2;
+        text-align: left;
       }
     }
 
     @media (max-width: 600px) {
-      .experience-grid {
+      .destination-section {
+        padding: 4.5rem 0;
+      }
+      .feature-title {
+        font-size: 1.55rem;
+      }
+      .interest-row {
         grid-template-columns: 1fr;
+        gap: 0.5rem;
+        padding: 1.6rem 0;
+      }
+      .interest-tag-col {
+        grid-column: 1;
       }
     }
   `]

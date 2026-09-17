@@ -31,13 +31,18 @@ import { IconComponent } from '../icon/icon.component';
             <img [src]="tour.mainImageUrl" [alt]="tour.title" class="preview-img" />
             <div class="preview-info">
               <div class="preview-badges">
-                <span class="badge badge-terracotta">{{ tour.categoryName }}</span>
-                <span class="badge badge-gold">{{ tour.duration }}</span>
+                <span class="badge badge-nature">{{ tour.categoryName }}</span>
+                <span class="badge">{{ tour.duration }}</span>
               </div>
               <div class="preview-price">
-                <span>Desde:</span>
-                <strong>S/ {{ tour.priceSoles }}</strong>
-                <small>(USD {{ tour.priceUsd }})</small>
+                <span>Tarifa:</span>
+                <strong>
+                  @if (tour.priceSoles > 0) {
+                    S/ {{ tour.priceSoles }}
+                  } @else {
+                    Consultar
+                  }
+                </strong>
               </div>
             </div>
           </div>
@@ -211,32 +216,32 @@ import { IconComponent } from '../icon/icon.component';
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: var(--primary);
+      color: var(--accent-clay);
     }
 
     .modal-title {
       font-size: 1.4rem;
-      color: var(--night-900);
+      color: var(--earth-950);
       margin-top: 0.2rem;
     }
 
     .close-btn {
-      background: var(--earth-100);
-      border: none;
-      border-radius: 50%;
+      background: var(--cream-100);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xs);
       width: 36px;
       height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      color: var(--night-900);
-      transition: var(--transition-smooth);
+      color: var(--earth-900);
+      transition: var(--transition);
     }
 
     .close-btn:hover {
       background: var(--earth-200);
-      color: var(--primary);
+      color: var(--earth-950);
     }
 
     .modal-tour-preview {
@@ -244,16 +249,16 @@ import { IconComponent } from '../icon/icon.component';
       align-items: center;
       gap: 1rem;
       padding: 0.85rem 1rem;
-      background: var(--earth-50);
+      background: var(--cream-50);
       border: 1px solid var(--border-light);
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-sm);
       margin-bottom: 1.5rem;
     }
 
     .preview-img {
-      width: 70px;
-      height: 70px;
-      border-radius: 10px;
+      width: 65px;
+      height: 65px;
+      border-radius: var(--radius-xs);
       object-fit: cover;
     }
 
@@ -273,7 +278,7 @@ import { IconComponent } from '../icon/icon.component';
 
     .preview-price strong {
       font-size: 1.1rem;
-      color: var(--night-900);
+      color: var(--forest-900);
     }
 
     .form-row {
@@ -291,25 +296,26 @@ import { IconComponent } from '../icon/icon.component';
     label {
       font-size: 0.85rem;
       font-weight: 600;
-      color: var(--night-900);
+      color: var(--earth-950);
       margin-bottom: 0.35rem;
     }
 
     .form-control {
-      padding: 0.7rem 0.95rem;
-      border: 1.5px solid var(--earth-200);
-      border-radius: 10px;
-      background: var(--earth-50);
-      color: var(--night-900);
+      padding: 0.65rem 0.95rem;
+      min-height: 44px;
+      border: 1px solid var(--earth-200);
+      border-radius: var(--radius-sm);
+      background: var(--cream-50);
+      color: var(--earth-950);
       font-size: 0.92rem;
-      transition: var(--transition-smooth);
+      transition: var(--transition);
     }
 
     .form-control:focus {
       outline: none;
-      border-color: var(--primary);
+      border-color: var(--forest-900);
       background: #FFFFFF;
-      box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+      box-shadow: 0 0 0 2px rgba(27, 53, 39, 0.1);
     }
 
     .form-control.is-invalid {

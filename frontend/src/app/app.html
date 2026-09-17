@@ -1,18 +1,21 @@
 <app-navbar 
+  *ngIf="!isAdminRoute()"
   [whatsAppNumber]="agency()?.whatsappNumber || '51966380590'">
 </app-navbar>
 
 <router-outlet></router-outlet>
 
 <app-footer 
+  *ngIf="!isAdminRoute()"
   [phoneNumber]="agency()?.phoneNumber || '+51 966 380 590'"
   [email]="agency()?.email || 'miskichaskaperu@hotmail.com'"
   [whatsAppNumber]="agency()?.whatsappNumber || '51966380590'"
   [facebookUrl]="agency()?.facebookUrl || 'https://www.facebook.com/valledelsondondoexpeditions'">
 </app-footer>
 
-<!-- Floating WhatsApp Action Button -->
+<!-- Floating WhatsApp Action Button (Only on Public Client View) -->
 <a 
+  *ngIf="!isAdminRoute()"
   [href]="'https://wa.me/' + (agency()?.whatsappNumber || '51966380590') + '?text=' + '¡Hola Valle del Sondondo Expeditions! Quisiera consultar sobre los tours disponibles.'"
   target="_blank" 
   rel="noopener noreferrer" 

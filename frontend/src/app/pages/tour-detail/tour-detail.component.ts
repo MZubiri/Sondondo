@@ -14,17 +14,17 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
     @if (tour()) {
       <div class="tour-detail-page">
         <!-- Hero Banner with Background -->
-        <section class="detail-hero" [style.background-image]="'linear-gradient(rgba(11, 19, 43, 0.75), rgba(11, 19, 43, 0.9)), url(' + tour()!.mainImageUrl + ')'">
+        <section class="detail-hero" [style.background-image]="'linear-gradient(rgba(18, 35, 26, 0.72), rgba(27, 21, 16, 0.88)), url(' + tour()!.mainImageUrl + ')'">
           <div class="container">
             <a routerLink="/" fragment="tours" class="back-link">
               <app-icon name="arrow-right" [size]="18" stroke="#FFFFFF" customClass="rotate-180"></app-icon>
-              <span>Volver a todos los circuitos</span>
+              <span>Volver a todos los recorridos</span>
             </a>
 
             <div class="detail-header-content">
               <div class="hero-badges">
-                <span class="badge badge-category">{{ tour()!.categoryName }}</span>
-                <span class="badge badge-safetravels">Safe Travels Perú</span>
+                <span class="badge badge-nature">{{ tour()!.categoryName }}</span>
+                <span class="badge">Lucanas • Ayacucho, Perú</span>
               </div>
 
               <h1 class="detail-title">{{ tour()!.title }}</h1>
@@ -188,13 +188,16 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
 
           <!-- Sticky Sidebar -->
           <aside class="detail-sidebar-col">
-            <div class="sticky-booking-card glass-card">
+            <div class="sticky-booking-card">
               <div class="card-price-header">
-                <span class="price-subtitle">Inversión por persona</span>
+                <span class="price-subtitle">Tarifa del Recorrido</span>
                 <div class="price-row">
-                  <span class="currency">S/</span>
-                  <span class="price-val">{{ tour()!.priceSoles }}</span>
-                  <span class="price-usd-badge">(aprox. USD {{ tour()!.priceUsd }})</span>
+                  @if (tour()!.priceSoles > 0) {
+                    <span class="currency">S/</span>
+                    <span class="price-val">{{ tour()!.priceSoles }}</span>
+                  } @else {
+                    <span class="price-val">Consultar</span>
+                  }
                 </div>
               </div>
 
@@ -311,12 +314,10 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
       display: flex;
       flex-wrap: wrap;
       gap: 1.5rem;
-      padding: 1.25rem 1.75rem;
-      background: rgba(11, 19, 43, 0.75);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: var(--radius-lg);
+      padding: 1.1rem 1.6rem;
+      background: rgba(18, 35, 26, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: var(--radius-sm);
       max-width: fit-content;
     }
 
@@ -331,12 +332,12 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
       font-size: 0.72rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: #A0AAB8;
+      color: #C5BAAD;
     }
 
     .d-stat strong {
       font-family: var(--font-display);
-      font-size: 1rem;
+      font-size: 0.98rem;
       color: #FFFFFF;
     }
 
@@ -353,8 +354,8 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
     }
 
     .block-title {
-      font-size: 1.85rem;
-      color: var(--night-900);
+      font-size: 1.75rem;
+      color: var(--earth-950);
       margin-bottom: 1.5rem;
       position: relative;
       padding-bottom: 0.5rem;
@@ -365,16 +366,15 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
       position: absolute;
       bottom: 0;
       left: 0;
-      width: 44px;
-      height: 3px;
-      background: var(--primary);
-      border-radius: 2px;
+      width: 40px;
+      height: 2px;
+      background: var(--accent-clay);
     }
 
     .lead-text {
-      font-size: 1.1rem;
+      font-size: 1.08rem;
       line-height: 1.8;
-      color: var(--earth-700);
+      color: var(--earth-800);
     }
 
     .gallery-grid {
@@ -385,9 +385,9 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
 
     .gallery-item {
       height: 190px;
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-xs);
       overflow: hidden;
-      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
     }
 
     .gallery-item img {
@@ -398,7 +398,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
     }
 
     .gallery-item:hover img {
-      transform: scale(1.08);
+      transform: scale(1.05);
     }
 
     .itinerary-timeline {
@@ -413,17 +413,16 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
     }
 
     .day-marker {
-      width: 60px;
-      height: 60px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      width: 54px;
+      height: 54px;
+      border-radius: var(--radius-xs);
+      background: var(--forest-900);
       color: #FFFFFF;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(192, 57, 43, 0.35);
     }
 
     .day-marker span {
@@ -435,7 +434,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
 
     .day-marker strong {
       font-family: var(--font-display);
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       line-height: 1;
     }
 
@@ -444,11 +443,12 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
       padding: 1.75rem;
       background: #FFFFFF;
       border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
     }
 
     .step-title {
-      font-size: 1.25rem;
-      color: var(--night-900);
+      font-size: 1.22rem;
+      color: var(--earth-950);
       margin-bottom: 0.6rem;
     }
 

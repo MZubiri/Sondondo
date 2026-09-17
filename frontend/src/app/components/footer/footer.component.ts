@@ -9,304 +9,177 @@ import { IconComponent } from '../icon/icon.component';
   imports: [CommonModule, RouterModule, IconComponent],
   template: `
     <footer class="footer-wrap">
-      <div class="container footer-container">
-        <!-- Column 1: Brand & Safe Travels -->
-        <div class="footer-col brand-col">
-          <div class="footer-logo">
-            <div class="logo-icon">
-              <app-icon name="feather" [size]="24" stroke="#FFFFFF"></app-icon>
-            </div>
-            <div>
-              <span class="logo-name">VALLE DEL SONDONDO</span>
-              <span class="logo-tag">EXPEDITIONS • PERÚ</span>
-            </div>
-          </div>
-          <p class="footer-bio">
-            Operador turístico local pionero y certificado en el Valle del Sondondo (Lucanas - Ayacucho). Guiamos experiencias vivenciales, ornitológicas y de alta montaña con respeto absoluto hacia las comunidades andinas y su patrimonio milenario.
+      <div class="container footer-grid">
+        <!-- Col 1: Bio -->
+        <div class="footer-brand">
+          <span class="footer-title">Valle del Sondondo Expeditions</span>
+          <p class="footer-text">
+            Turismo vivencial andino, avistamiento de cóndores en Mayobamba, andenerías 
+            prehispánicas vivas de Andamarca, cuna de la Danza de Tijeras y volcán de Pachapupum. 
+            Operador local en Lucanas, Ayacucho, Perú.
           </p>
-
-          <!-- Safe Travels Certificate Pill -->
-          <div class="safe-travels-badge">
-            <div class="st-icon">
-              <app-icon name="shield-check" [size]="20" stroke="#1B5E20"></app-icon>
-            </div>
-            <div>
-              <div class="st-title">CERTIFICACIÓN INTERNACIONAL</div>
-              <div class="st-desc">Safe Travels • WTTC & DIRCETUR</div>
-            </div>
-          </div>
         </div>
 
-        <!-- Column 2: Circuitos Destacados -->
-        <div class="footer-col">
-          <h4 class="col-title">Circuitos Emblemáticos</h4>
-          <ul class="col-links">
-            <li><a routerLink="/tour/kuntur-nan-vuelo-del-condor">Kuntur Ñan (Ruta del Cóndor)</a></li>
-            <li><a routerLink="/tour/andenes-vivos-andamarca-danzantes-de-tijeras">Andenes Vivos de Andamarca</a></li>
-            <li><a routerLink="/tour/expedicion-sagrada-apu-qarhuarazo">Trek Apu Qarhuarazo (5,112m)</a></li>
-            <li><a routerLink="/tour/ruta-termal-canones-catarata-limayhuacho">Aguas Termales & Cañones</a></li>
-            <li><a routerLink="/tour/gran-travesia-valle-del-sondondo">Gran Travesía Sondondo (4 Días)</a></li>
+        <!-- Col 2: Enlaces Rápidos -->
+        <div class="footer-nav">
+          <span class="footer-col-header">Navegación</span>
+          <ul>
+            <li><a routerLink="/" fragment="tours">Recorridos & Circuitos</a></li>
+            <li><a routerLink="/" fragment="experiencia">El Destino & Cañón</a></li>
+            <li><a routerLink="/" fragment="nosotros">Por Qué Elegirnos</a></li>
+            <li><a routerLink="/" fragment="contacto">Contacto & Ubicación</a></li>
+            <li><a routerLink="/admin/login" class="admin-link">Acceso Operador / Admin &rarr;</a></li>
           </ul>
         </div>
 
-        <!-- Column 3: Destinos del Valle -->
-        <div class="footer-col">
-          <h4 class="col-title">Destinos en Sondondo</h4>
-          <ul class="col-links">
-            <li><span>Aucará & Mirador de Mayobamba</span></li>
-            <li><span>Andamarca & Casa de los Antamarkas</span></li>
-            <li><span>Cabana Sur & Templo Colonial</span></li>
-            <li><span>Chipao & Canteras de Piedra</span></li>
-            <li><span>Puquio & Reserva Pampa Galeras</span></li>
-          </ul>
-        </div>
-
-        <!-- Column 4: Contacto Oficial -->
-        <div class="footer-col contact-col">
-          <h4 class="col-title">Contacto Directo</h4>
-          <div class="contact-item">
-            <app-icon name="map-pin" [size]="18" stroke="var(--primary)"></app-icon>
-            <span>Av. Apu Chauccalla 402, Aucará, Lucanas, Ayacucho, Perú</span>
-          </div>
-          <div class="contact-item">
-            <app-icon name="phone" [size]="18" stroke="var(--primary)"></app-icon>
-            <a [href]="'tel:' + phoneNumber">{{ phoneNumber }}</a>
-          </div>
-          <div class="contact-item">
-            <app-icon name="mail" [size]="18" stroke="var(--primary)"></app-icon>
-            <a [href]="'mailto:' + email">{{ email }}</a>
-          </div>
-          <div class="contact-item">
-            <app-icon name="whatsapp" [size]="18" stroke="#25D366"></app-icon>
-            <a [href]="whatsAppUrl" target="_blank" rel="noopener noreferrer">Atención WhatsApp 24/7</a>
-          </div>
-
-          <div class="social-row">
-            <a [href]="facebookUrl" target="_blank" rel="noopener noreferrer" class="social-btn" title="Facebook">
-              Facebook
+        <!-- Col 3: Contacto & Redes -->
+        <div class="footer-contact">
+          <span class="footer-col-header">Contacto Directo</span>
+          <div class="contact-links">
+            <a [href]="whatsAppUrl" target="_blank" rel="noopener noreferrer" class="contact-line">
+              <app-icon name="whatsapp" [size]="16" stroke="var(--whatsapp)"></app-icon>
+              <span>WhatsApp de Atención (+51 966 380 590)</span>
             </a>
-            <a [href]="whatsAppUrl" target="_blank" rel="noopener noreferrer" class="social-btn wa" title="WhatsApp">
-              WhatsApp
+            <a [href]="'mailto:' + email" class="contact-line">
+              <app-icon name="mail" [size]="16" stroke="var(--earth-500)"></app-icon>
+              <span>{{ email }}</span>
+            </a>
+            <div class="contact-line">
+              <app-icon name="map-pin" [size]="16" stroke="var(--earth-500)"></app-icon>
+              <span>Aucará, Lucanas, Ayacucho, Perú</span>
+            </div>
+            <a [href]="facebookUrl" target="_blank" rel="noopener noreferrer" class="facebook-link">
+              Página de Facebook Oficial &rarr;
             </a>
           </div>
         </div>
       </div>
 
-      <!-- Bottom Bar -->
       <div class="footer-bottom">
-        <div class="container bottom-content">
-          <p>© 2026 Valle del Sondondo Expeditions. Todos los derechos reservados.</p>
-          <div class="bottom-links">
-            <span>Turismo Sostenible y Comunitario</span>
-            <span>•</span>
-            <span>Patrimonio Cultural de Ayacucho</span>
-          </div>
+        <div class="container bottom-row">
+          <p>© 2026 Valle del Sondondo Expeditions. Turismo comunitario y conservación.</p>
+          <span class="bottom-tag">Lucanas • Ayacucho, Perú</span>
         </div>
       </div>
     </footer>
   `,
   styles: [`
     .footer-wrap {
-      background: var(--night-900);
-      color: #FFFFFF;
-      padding-top: 4.5rem;
-      border-top: 3px solid var(--primary);
+      background: var(--earth-950);
+      color: #EDE8DE;
+      padding-top: 4rem;
+      border-top: 1px solid var(--border-light);
     }
 
-    .footer-container {
+    .footer-grid {
       display: grid;
-      grid-template-columns: 1.8fr 1.2fr 1.1fr 1.4fr;
-      gap: 3rem;
-      margin-bottom: 3.5rem;
+      grid-template-columns: 1.5fr 1fr 1.2fr;
+      gap: 3.5rem;
+      padding-bottom: 3.5rem;
     }
 
-    .footer-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-      margin-bottom: 1.2rem;
-    }
-
-    .logo-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .logo-name {
-      display: block;
+    .footer-title {
       font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-      line-height: 1.1;
-    }
-
-    .logo-tag {
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: var(--secondary);
-      letter-spacing: 0.15em;
-    }
-
-    .footer-bio {
-      color: #A0AAB8;
-      font-size: 0.9rem;
-      line-height: 1.6;
-      margin-bottom: 1.5rem;
-    }
-
-    .safe-travels-badge {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      padding: 0.75rem 1rem;
-    }
-
-    .st-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: #E8F5E9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .st-title {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: #81C784;
-    }
-
-    .st-desc {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #FFFFFF;
-    }
-
-    .col-title {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 700;
       color: #FFFFFF;
-      margin-bottom: 1.3rem;
-      position: relative;
-      padding-bottom: 0.6rem;
+      display: block;
+      margin-bottom: 0.75rem;
     }
 
-    .col-title::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 32px;
-      height: 2px;
-      background: var(--primary);
+    .footer-text {
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: #B5A89A;
+      max-width: 420px;
     }
 
-    .col-links {
+    .footer-col-header {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-clay);
+      display: block;
+      margin-bottom: 1.1rem;
+    }
+
+    .footer-nav ul {
       list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .footer-nav a {
+      font-size: 0.88rem;
+      color: #D6CEC3;
+      transition: var(--transition);
+    }
+
+    .footer-nav a:hover {
+      color: #FFFFFF;
+      text-decoration: underline;
+    }
+
+    .admin-link {
+      color: var(--accent-clay) !important;
+      opacity: 0.85;
+      font-size: 0.82rem !important;
+      margin-top: 0.35rem;
+      display: inline-block;
+    }
+
+    .admin-link:hover {
+      opacity: 1;
+    }
+
+    .contact-links {
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
     }
 
-    .col-links a, .col-links span {
-      color: #B0BCC8;
-      font-size: 0.92rem;
-      transition: var(--transition-smooth);
-    }
-
-    .col-links a:hover {
-      color: var(--secondary);
-      padding-left: 4px;
-    }
-
-    .contact-item {
+    .contact-line {
       display: flex;
-      align-items: flex-start;
-      gap: 0.65rem;
-      margin-bottom: 0.85rem;
+      align-items: center;
+      gap: 0.6rem;
       font-size: 0.88rem;
-      color: #B0BCC8;
+      color: #D6CEC3;
     }
 
-    .contact-item a {
+    .contact-line a:hover {
       color: #FFFFFF;
     }
 
-    .contact-item a:hover {
-      color: var(--secondary);
-    }
-
-    .social-row {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: 1.25rem;
-    }
-
-    .social-btn {
-      padding: 0.4rem 0.9rem;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: var(--radius-full);
-      font-size: 0.82rem;
+    .facebook-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
       font-weight: 600;
       color: #FFFFFF;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    .social-btn:hover {
-      background: var(--primary);
-      border-color: var(--primary);
-    }
-
-    .social-btn.wa:hover {
-      background: var(--whatsapp);
-      border-color: var(--whatsapp);
+      text-decoration: underline;
     }
 
     .footer-bottom {
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       padding: 1.5rem 0;
-      font-size: 0.85rem;
-      color: #7D8898;
+      font-size: 0.8rem;
+      color: #8C7F72;
     }
 
-    .bottom-content {
+    .bottom-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 0.75rem;
     }
 
-    .bottom-links {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    @media (max-width: 992px) {
-      .footer-container {
-        grid-template-columns: 1fr 1fr;
-        gap: 2.5rem;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .footer-container {
+    @media (max-width: 860px) {
+      .footer-grid {
         grid-template-columns: 1fr;
-      }
-      .bottom-content {
-        flex-direction: column;
-        text-align: center;
+        gap: 2.2rem;
       }
     }
   `]
@@ -318,7 +191,7 @@ export class FooterComponent {
   @Input() facebookUrl: string = 'https://www.facebook.com/valledelsondondoexpeditions';
 
   get whatsAppUrl(): string {
-    const text = encodeURIComponent('¡Hola Valle del Sondondo Expeditions! Deseo más información sobre sus tours y salidas.');
+    const text = encodeURIComponent('¡Hola! Me gustaría consultar información sobre los recorridos.');
     return `https://wa.me/${this.whatsAppNumber}?text=${text}`;
   }
 }
