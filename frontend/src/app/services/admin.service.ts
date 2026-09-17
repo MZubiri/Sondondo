@@ -190,9 +190,32 @@ export class AdminService {
     );
   }
 
+  private sanitizeAdminTour(tour: AdminTour): AdminTour {
+    let img = tour.mainImageUrl;
+    if (!img || img.includes('unsplash.com') || img.startsWith('http')) {
+      const slug = (tour.slug || '').toLowerCase();
+      const title = (tour.title || '').toLowerCase();
+      if (slug.includes('condor') || title.includes('cóndor') || title.includes('condor') || slug.includes('mayobamba')) {
+        img = '/assets/images/condor_mayobamba.jpg';
+      } else if (slug.includes('andenes') || title.includes('andamarca') || title.includes('tijeras') || slug.includes('cultura')) {
+        img = '/assets/images/andenes_andamarca.jpg';
+      } else if (slug.includes('volcan') || slug.includes('pachapupum') || slug.includes('termal') || title.includes('termas') || title.includes('volcán')) {
+        img = '/assets/images/volcan_pachapupum.jpg';
+      } else if (slug.includes('qarhuarazo') || slug.includes('pampa') || slug.includes('galeras') || title.includes('qarhuarazo') || title.includes('vicuña')) {
+        img = '/assets/images/pampa_galeras_vicunas.jpg';
+      } else if (slug.includes('pueblo') || title.includes('pueblos') || title.includes('aucara') || title.includes('cabana') || title.includes('chipao')) {
+        img = '/assets/images/pueblo_andamarca.jpg';
+      } else {
+        img = '/assets/images/hero_sondondo.jpg';
+      }
+    }
+    return { ...tour, mainImageUrl: img };
+  }
+
   // --- TOURS ---
   getTours(includeInactive = true): Observable<AdminTour[]> {
     return this.http.get<AdminTour[]>(`${this.apiUrl}/tours?includeInactive=${includeInactive}`).pipe(
+      map(tours => tours.map(t => this.sanitizeAdminTour(t))),
       catchError(() => {
         // Fallback using stored tours or defaults
         try {

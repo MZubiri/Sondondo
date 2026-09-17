@@ -15,7 +15,8 @@ import { IconComponent } from '../icon/icon.component';
           [src]="tour.mainImageUrl" 
           [alt]="tour.title" 
           loading="lazy" 
-          class="card-img" />
+          class="card-img"
+          (error)="onImageError($event)" />
       </a>
 
       <div class="card-body">
@@ -175,4 +176,9 @@ import { IconComponent } from '../icon/icon.component';
 export class TourCardComponent {
   @Input({ required: true }) tour!: TourSummary;
   @Output() onBookClick = new EventEmitter<TourSummary>();
+
+  onImageError(e: Event): void {
+    const target = e.target as HTMLImageElement;
+    target.src = '/assets/images/hero_sondondo.jpg';
+  }
 }

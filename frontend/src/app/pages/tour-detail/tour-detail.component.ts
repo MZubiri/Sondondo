@@ -84,7 +84,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
                 <div class="gallery-grid">
                   @for (img of tour()!.galleryImages; track img) {
                     <div class="gallery-item">
-                      <img [src]="img" [alt]="tour()!.title" loading="lazy" />
+                      <img [src]="img" [alt]="tour()!.title" loading="lazy" (error)="onGalleryImageError($event)" />
                     </div>
                   }
                 </div>
@@ -676,5 +676,10 @@ export class TourDetailComponent implements OnInit {
 
   openBookingModal(): void {
     this.isModalOpen.set(true);
+  }
+
+  onGalleryImageError(e: Event): void {
+    const target = e.target as HTMLImageElement;
+    target.src = '/assets/images/andenes_andamarca.jpg';
   }
 }

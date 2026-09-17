@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
   TourSummary,
@@ -18,6 +18,28 @@ import {
 export class TourService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
+
+  private sanitizeTour<T extends TourSummary>(tour: T): T {
+    let img = tour.mainImageUrl;
+    if (!img || img.includes('unsplash.com') || img.startsWith('http')) {
+      const slug = (tour.slug || '').toLowerCase();
+      const title = (tour.title || '').toLowerCase();
+      if (slug.includes('condor') || title.includes('cóndor') || title.includes('condor') || slug.includes('mayobamba')) {
+        img = '/assets/images/condor_mayobamba.jpg';
+      } else if (slug.includes('andenes') || title.includes('andamarca') || title.includes('tijeras') || slug.includes('cultura')) {
+        img = '/assets/images/andenes_andamarca.jpg';
+      } else if (slug.includes('volcan') || slug.includes('pachapupum') || slug.includes('termal') || title.includes('termas') || title.includes('volcán')) {
+        img = '/assets/images/volcan_pachapupum.jpg';
+      } else if (slug.includes('qarhuarazo') || slug.includes('pampa') || slug.includes('galeras') || title.includes('qarhuarazo') || title.includes('vicuña')) {
+        img = '/assets/images/pampa_galeras_vicunas.jpg';
+      } else if (slug.includes('pueblo') || title.includes('pueblos') || title.includes('aucara') || title.includes('cabana') || title.includes('chipao')) {
+        img = '/assets/images/pueblo_andamarca.jpg';
+      } else {
+        img = '/assets/images/hero_sondondo.jpg';
+      }
+    }
+    return { ...tour, mainImageUrl: img };
+  }
 
   // Fallback initial data for instant loading
   private fallbackTours: TourSummary[] = [
@@ -147,6 +169,7 @@ export class TourService {
     if (search) params = params.set('search', search);
 
     return this.http.get<TourSummary[]>(`${this.apiUrl}/tours`, { params }).pipe(
+      map(tours => tours.map(t => this.sanitizeTour(t))),
       catchError(() => {
         let filtered = [...this.fallbackTours];
         if (category) filtered = filtered.filter(t => t.categorySlug === category);
@@ -162,6 +185,23 @@ export class TourService {
 
   getTourBySlug(slug: string): Observable<TourDetail> {
     return this.http.get<TourDetail>(`${this.apiUrl}/tours/${slug}`).pipe(
+      map(detail => {
+        const sanitized = this.sanitizeTour(detail);
+        let gallery = sanitized.galleryImages || [];
+        if (gallery.length === 0 || gallery.some(g => !g || g.includes('unsplash.com') || g.startsWith('http'))) {
+          gallery = [
+            sanitized.mainImageUrl,
+            '/assets/images/andenes_andamarca.jpg',
+            '/assets/images/pueblo_andamarca.jpg',
+            '/assets/images/bosque_piedras.jpg',
+            '/assets/images/rio_sondondo.jpg'
+          ];
+        }
+        return {
+          ...sanitized,
+          galleryImages: gallery
+        };
+      }),
       catchError(() => {
         const item = this.fallbackTours.find(t => t.slug === slug) || this.fallbackTours[0];
         const is3Days = item.durationDays === 3;

@@ -13,6 +13,48 @@ public static class DbInitializer
 
         if (await context.Categories.AnyAsync())
         {
+            // If DB was already seeded, ensure all existing tours have their images updated to authentic Sondondo assets
+            var existingTours = await context.Tours.ToListAsync();
+            bool changed = false;
+            foreach (var tour in existingTours)
+            {
+                if (string.IsNullOrEmpty(tour.MainImageUrl) || tour.MainImageUrl.Contains("unsplash.com") || tour.MainImageUrl.StartsWith("http"))
+                {
+                    var slug = (tour.Slug ?? "").ToLower();
+                    var title = (tour.Title ?? "").ToLower();
+                    if (slug.Contains("condor") || title.Contains("cóndor") || title.Contains("condor"))
+                        tour.MainImageUrl = "/assets/images/condor_mayobamba.jpg";
+                    else if (slug.Contains("andenes") || title.Contains("andamarca") || title.Contains("tijeras"))
+                        tour.MainImageUrl = "/assets/images/andenes_andamarca.jpg";
+                    else if (slug.Contains("pachapupum") || slug.Contains("termal") || title.Contains("termas") || title.Contains("volcán"))
+                        tour.MainImageUrl = "/assets/images/volcan_pachapupum.jpg";
+                    else if (slug.Contains("qarhuarazo") || slug.Contains("pampa") || title.Contains("qarhuarazo") || title.Contains("vicuña"))
+                        tour.MainImageUrl = "/assets/images/pampa_galeras_vicunas.jpg";
+                    else if (slug.Contains("pueblo") || title.Contains("pueblos") || title.Contains("aucara") || title.Contains("cabana"))
+                        tour.MainImageUrl = "/assets/images/pueblo_andamarca.jpg";
+                    else
+                        tour.MainImageUrl = "/assets/images/hero_sondondo.jpg";
+                    changed = true;
+                }
+
+                if (string.IsNullOrEmpty(tour.GalleryImagesJson) || tour.GalleryImagesJson.Contains("unsplash.com") || tour.GalleryImagesJson.Contains("http"))
+                {
+                    tour.GalleryImagesJson = JsonSerializer.Serialize(new[]
+                    {
+                        tour.MainImageUrl,
+                        "/assets/images/andenes_andamarca.jpg",
+                        "/assets/images/pueblo_andamarca.jpg",
+                        "/assets/images/bosque_piedras.jpg",
+                        "/assets/images/rio_sondondo.jpg"
+                    });
+                    changed = true;
+                }
+            }
+
+            if (changed)
+            {
+                await context.SaveChangesAsync();
+            }
             return; // DB has been seeded
         }
 
@@ -73,12 +115,12 @@ public static class DbInitializer
             StartingPoint = "Aucará / Puquio / Cabana Sur",
             Featured = true,
             DisplayOrder = 1,
-            MainImageUrl = "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1200&q=80",
+            MainImageUrl = "/assets/images/condor_mayobamba.jpg",
             GalleryImagesJson = JsonSerializer.Serialize(new[]
             {
-                "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1000&q=80",
-                "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=80",
-                "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1000&q=80"
+                "/assets/images/condor_mayobamba.jpg",
+                "/assets/images/rio_sondondo.jpg",
+                "/assets/images/hero_sondondo.jpg"
             }),
             IncludedJson = JsonSerializer.Serialize(new[]
             {
@@ -122,12 +164,12 @@ public static class DbInitializer
             StartingPoint = "Puquio o Aucará",
             Featured = true,
             DisplayOrder = 2,
-            MainImageUrl = "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=1200&q=80",
+            MainImageUrl = "/assets/images/andenes_andamarca.jpg",
             GalleryImagesJson = JsonSerializer.Serialize(new[]
             {
-                "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=1000&q=80",
-                "https://images.unsplash.com/photo-1589802829985-817e51171b92?auto=format&fit=crop&w=1000&q=80",
-                "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1000&q=80"
+                "/assets/images/andenes_andamarca.jpg",
+                "/assets/images/danza_tijeras.jpg",
+                "/assets/images/pueblo_andamarca.jpg"
             }),
             IncludedJson = JsonSerializer.Serialize(new[]
             {
@@ -168,12 +210,12 @@ public static class DbInitializer
             StartingPoint = "Aucará o Chipao",
             Featured = true,
             DisplayOrder = 3,
-            MainImageUrl = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
+            MainImageUrl = "/assets/images/pampa_galeras_vicunas.jpg",
             GalleryImagesJson = JsonSerializer.Serialize(new[]
             {
-                "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=80",
-                "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1000&q=80",
-                "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=1000&q=80"
+                "/assets/images/pampa_galeras_vicunas.jpg",
+                "/assets/images/bosque_piedras.jpg",
+                "/assets/images/hero_sondondo.jpg"
             }),
             IncludedJson = JsonSerializer.Serialize(new[]
             {
@@ -216,11 +258,12 @@ public static class DbInitializer
             StartingPoint = "Aucará / Cabana Sur",
             Featured = false,
             DisplayOrder = 4,
-            MainImageUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+            MainImageUrl = "/assets/images/volcan_pachapupum.jpg",
             GalleryImagesJson = JsonSerializer.Serialize(new[]
             {
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80",
-                "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1000&q=80"
+                "/assets/images/volcan_pachapupum.jpg",
+                "/assets/images/rio_sondondo.jpg",
+                "/assets/images/bosque_piedras.jpg"
             }),
             IncludedJson = JsonSerializer.Serialize(new[]
             {
@@ -259,12 +302,13 @@ public static class DbInitializer
             StartingPoint = "Puquio, Nasca o Ayacucho",
             Featured = true,
             DisplayOrder = 5,
-            MainImageUrl = "https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=1200&q=80",
+            MainImageUrl = "/assets/images/hero_sondondo.jpg",
             GalleryImagesJson = JsonSerializer.Serialize(new[]
             {
-                "https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=1000&q=80",
-                "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1000&q=80",
-                "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=1000&q=80"
+                "/assets/images/hero_sondondo.jpg",
+                "/assets/images/andenes_andamarca.jpg",
+                "/assets/images/condor_mayobamba.jpg",
+                "/assets/images/volcan_pachapupum.jpg"
             }),
             IncludedJson = JsonSerializer.Serialize(new[]
             {

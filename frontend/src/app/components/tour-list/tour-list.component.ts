@@ -61,7 +61,8 @@ import { IconComponent } from '../icon/icon.component';
               <img 
                 [src]="spotlightTour()!.mainImageUrl" 
                 [alt]="spotlightTour()!.title" 
-                class="spotlight-img" />
+                class="spotlight-img"
+                (error)="onSpotlightImageError($event)" />
             </div>
 
             <div class="spotlight-info">
@@ -84,7 +85,7 @@ import { IconComponent } from '../icon/icon.component';
               </h3>
 
               <p class="spotlight-desc">
-                {{ spotlightTour()!.subtitle }}. Experiencia guiada por las profundidades del cañón, senderos de mármol natural esculpido y selva húmeda tropical conservada.
+                {{ spotlightTour()!.subtitle }}. Experiencia vivencial guiada por las terrazas preíncas, miradores del Cóndor Andino y la riqueza cultural viva de Ayacucho.
               </p>
 
               <div class="spotlight-footer">
@@ -451,5 +452,10 @@ export class TourListComponent {
   resetFilters(): void {
     this.selectedCategory.set('all');
     this.searchQuery.set('');
+  }
+
+  onSpotlightImageError(e: Event): void {
+    const target = e.target as HTMLImageElement;
+    target.src = '/assets/images/hero_sondondo.jpg';
   }
 }
