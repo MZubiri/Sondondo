@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TourSummary, BookingInquiryResponse } from '../../models/tour.model';
 import { TourService } from '../../services/tour.service';
+import { TranslationService } from '../../services/translation.service';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
@@ -15,9 +16,9 @@ import { IconComponent } from '../icon/icon.component';
         <!-- Header -->
         <div class="modal-header">
           <div>
-            <span class="modal-subtitle">Reserva & Cotización</span>
+            <span class="modal-subtitle">{{ ts.t('bookModal.subtitle') }}</span>
             <h3 class="modal-title">
-              {{ tour ? tour.title : 'Planifica tu Expedición en Sondondo' }}
+              {{ tour ? tour.title : ts.t('bookModal.defaultTitle') }}
             </h3>
           </div>
           <button class="close-btn" (click)="onClose()" aria-label="Cerrar modal">
@@ -35,12 +36,12 @@ import { IconComponent } from '../icon/icon.component';
                 <span class="badge">{{ tour.duration }}</span>
               </div>
               <div class="preview-price">
-                <span>Tarifa:</span>
+                <span>{{ ts.t('bookModal.rate') }}</span>
                 <strong>
                   @if (tour.priceSoles > 0) {
                     S/ {{ tour.priceSoles }}
                   } @else {
-                    Consultar
+                    {{ ts.t('bookModal.inquire') }}
                   }
                 </strong>
               </div>
@@ -54,7 +55,7 @@ import { IconComponent } from '../icon/icon.component';
             <div class="success-icon">
               <app-icon name="check" [size]="28" stroke="#27AE60"></app-icon>
             </div>
-            <h4>¡Solicitud Recibida con Éxito!</h4>
+            <h4>{{ ts.t('bookModal.successTitle') }}</h4>
             <p>
               Gracias, <strong>{{ successResponse()?.fullName }}</strong>. Tu solicitud de cotización para 
               <em>{{ successResponse()?.tourTitle }}</em> ha sido registrada en nuestro sistema.
@@ -62,10 +63,10 @@ import { IconComponent } from '../icon/icon.component';
             <div class="success-actions">
               <a [href]="successResponse()?.whatsAppDirectUrl" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp w-100">
                 <app-icon name="whatsapp" [size]="20" stroke="#FFFFFF"></app-icon>
-                <span>Continuar por WhatsApp Inmediatamente</span>
+                <span>{{ ts.t('bookModal.waBtn') }}</span>
               </a>
               <button (click)="onClose()" class="btn btn-secondary w-100 mt-2">
-                Cerrar Ventana
+                {{ ts.t('bookModal.closeBtn') }}
               </button>
             </div>
           </div>
@@ -74,51 +75,51 @@ import { IconComponent } from '../icon/icon.component';
           <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form">
             <div class="form-row">
               <div class="form-group">
-                <label for="fullName">Nombre y Apellido *</label>
+                <label for="fullName">{{ ts.t('contact.name') }}</label>
                 <input 
                   id="fullName" 
                   type="text" 
                   formControlName="fullName" 
-                  placeholder="Ej. Juan Pérez" 
+                  [placeholder]="ts.t('contact.namePlaceholder')" 
                   class="form-control"
                   [class.is-invalid]="isFieldInvalid('fullName')" />
                 @if (isFieldInvalid('fullName')) {
-                  <span class="error-msg">Por favor ingresa tu nombre completo.</span>
+                  <span class="error-msg">{{ ts.t('pay.errName') }}</span>
                 }
               </div>
 
               <div class="form-group">
-                <label for="phone">WhatsApp / Teléfono *</label>
+                <label for="phone">{{ ts.t('contact.phone') }}</label>
                 <input 
                   id="phone" 
                   type="tel" 
                   formControlName="phone" 
-                  placeholder="+51 987 654 321" 
+                  [placeholder]="ts.t('contact.phonePlaceholder')" 
                   class="form-control"
                   [class.is-invalid]="isFieldInvalid('phone')" />
                 @if (isFieldInvalid('phone')) {
-                  <span class="error-msg">Ingresa un número para contactarte.</span>
+                  <span class="error-msg">{{ ts.t('bookModal.errPhone') }}</span>
                 }
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label for="email">Correo Electrónico *</label>
+                <label for="email">{{ ts.t('contact.email') }}</label>
                 <input 
                   id="email" 
                   type="email" 
                   formControlName="email" 
-                  placeholder="ejemplo@correo.com" 
+                  [placeholder]="ts.t('contact.emailPlaceholder')" 
                   class="form-control"
                   [class.is-invalid]="isFieldInvalid('email')" />
                 @if (isFieldInvalid('email')) {
-                  <span class="error-msg">Ingresa un correo electrónico válido.</span>
+                  <span class="error-msg">{{ ts.t('pay.errEmail') }}</span>
                 }
               </div>
 
               <div class="form-group">
-                <label for="numberOfPeople">Nº de Pasajeros *</label>
+                <label for="numberOfPeople">{{ ts.t('pay.passengers') }}</label>
                 <input 
                   id="numberOfPeople" 
                   type="number" 
@@ -130,7 +131,7 @@ import { IconComponent } from '../icon/icon.component';
             </div>
 
             <div class="form-group">
-              <label for="travelDate">Fecha Tentativa de Viaje</label>
+              <label for="travelDate">{{ ts.t('bookModal.travelDate') }}</label>
               <input 
                 id="travelDate" 
                 type="date" 
@@ -139,12 +140,12 @@ import { IconComponent } from '../icon/icon.component';
             </div>
 
             <div class="form-group">
-              <label for="message">Mensaje o Requerimientos Especiales</label>
+              <label for="message">{{ ts.t('bookModal.messageLabel') }}</label>
               <textarea 
                 id="message" 
                 rows="3" 
                 formControlName="message" 
-                placeholder="¿Tienes alguna duda sobre aclimatación, salidas grupales o traslados desde Lima/Ayacucho?" 
+                [placeholder]="ts.t('bookModal.messagePlaceholder')" 
                 class="form-control"></textarea>
             </div>
 
@@ -154,11 +155,19 @@ import { IconComponent } from '../icon/icon.component';
                 [disabled]="bookingForm.invalid || isSubmitting()" 
                 class="btn btn-primary w-100">
                 @if (isSubmitting()) {
-                  <span>Enviando solicitud...</span>
+                  <span>{{ ts.t('bookModal.sending') }}</span>
                 } @else {
                   <app-icon name="calendar" [size]="18" stroke="#FFFFFF"></app-icon>
-                  <span>Enviar Cotización</span>
+                  <span>{{ ts.t('bookModal.sendBtn') }}</span>
                 }
+              </button>
+
+              <button 
+                type="button" 
+                (click)="onPayMercadoPago()" 
+                class="btn btn-mercadopago w-100 mt-2">
+                <app-icon name="credit-card" [size]="18" stroke="#FFFFFF"></app-icon>
+                <span>{{ ts.t('tours.payMercadoPago') }}</span>
               </button>
 
               <button 
@@ -166,7 +175,7 @@ import { IconComponent } from '../icon/icon.component';
                 (click)="openDirectWhatsApp()" 
                 class="btn btn-whatsapp w-100 mt-2">
                 <app-icon name="whatsapp" [size]="18" stroke="#FFFFFF"></app-icon>
-                <span>Cotizar Directo por WhatsApp</span>
+                <span>{{ ts.t('bookModal.quoteWa') }}</span>
               </button>
             </div>
           </form>
@@ -332,6 +341,23 @@ import { IconComponent } from '../icon/icon.component';
       margin-top: 1.5rem;
     }
 
+    .btn-mercadopago {
+      background: #009EE3;
+      color: #FFFFFF;
+      font-weight: 700;
+      border: none;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-mercadopago:hover {
+      background: #0087C4;
+      color: #FFFFFF;
+    }
+
     .w-100 {
       width: 100%;
     }
@@ -381,10 +407,12 @@ import { IconComponent } from '../icon/icon.component';
 export class BookingModalComponent {
   private fb = inject(FormBuilder);
   private tourService = inject(TourService);
+  public ts = inject(TranslationService);
 
   @Input() tour: TourSummary | null = null;
   @Input() whatsAppNumber: string = '51966380590';
   @Output() close = new EventEmitter<void>();
+  @Output() payMercadoPago = new EventEmitter<TourSummary>();
 
   bookingForm: FormGroup = this.fb.group({
     fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -433,6 +461,12 @@ export class BookingModalComponent {
         this.openDirectWhatsApp();
       }
     });
+  }
+
+  onPayMercadoPago(): void {
+    if (this.tour) {
+      this.payMercadoPago.emit(this.tour);
+    }
   }
 
   openDirectWhatsApp(): void {

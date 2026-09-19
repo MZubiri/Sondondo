@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Testimonial } from '../../models/tour.model';
+import { TranslationService } from '../../services/translation.service';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
@@ -12,10 +13,10 @@ import { IconComponent } from '../icon/icon.component';
       <section class="testimonials-section" id="testimonios">
         <div class="container">
           <div class="section-title-wrap text-center">
-            <span class="section-tag">Experiencias Verificadas</span>
-            <h2 class="section-title">Testimonios de Expedicionarios</h2>
+            <span class="section-tag">{{ ts.t('test.badge') }}</span>
+            <h2 class="section-title">{{ ts.t('test.title') }}</h2>
             <p class="section-subtitle">
-              Reseñas y vivencias compartidas por personas que han recorrido nuestros senderos.
+              {{ ts.t('test.subtitle') }}
             </p>
           </div>
 
@@ -180,5 +181,6 @@ import { IconComponent } from '../icon/icon.component';
   `]
 })
 export class TestimonialsComponent {
+  public ts = inject(TranslationService);
   @Input() testimonials: Testimonial[] = [];
 }

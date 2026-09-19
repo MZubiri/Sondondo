@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslationService } from '../../services/translation.service';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
@@ -12,16 +13,14 @@ import { IconComponent } from '../icon/icon.component';
 
       <div class="container hero-container">
         <div class="hero-content">
-          <span class="hero-kicker">Turismo Comunitario & Patrimonio Vivo • Lucanas, Ayacucho, Perú</span>
+          <span class="hero-kicker">{{ ts.t('hero.kicker') }}</span>
 
           <h1 class="hero-title">
-            Expediciones Auténticas en el Valle del Sondondo
+            {{ ts.t('hero.title') }}
           </h1>
 
           <p class="hero-description">
-            El majestuoso vuelo del Cóndor Andino en Mayobamba, el anfiteatro de andenes preíncas 
-            vivos de Andamarca, el volcán pétreo de Pachapupum y la cuna de la Danza de Tijeras UNESCO. 
-            Guiado por pobladores originarios de la cuenca andina.
+            {{ ts.t('hero.description') }}
           </p>
 
           <div class="hero-actions">
@@ -31,12 +30,12 @@ import { IconComponent } from '../icon/icon.component';
               rel="noopener noreferrer" 
               class="btn btn-whatsapp hero-btn-main">
               <app-icon name="whatsapp" [size]="20" stroke="#FFFFFF"></app-icon>
-              <span>Consultar por WhatsApp</span>
+              <span>{{ ts.t('hero.ctaWhatsApp') }}</span>
             </a>
 
             <a href="#tours" class="btn btn-outline-light hero-btn-sub">
               <app-icon name="compass" [size]="18" stroke="#FFFFFF"></app-icon>
-              <span>Ver Recorridos</span>
+              <span>{{ ts.t('hero.ctaTours') }}</span>
             </a>
           </div>
         </div>
@@ -155,6 +154,7 @@ import { IconComponent } from '../icon/icon.component';
   `]
 })
 export class HeroComponent {
+  public ts = inject(TranslationService);
   @Input() whatsAppNumber: string = '51966380590';
 
   get whatsAppUrl(): string {

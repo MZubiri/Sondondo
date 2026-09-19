@@ -1,9 +1,10 @@
-import { Component, EventEmitter, OnInit, Output, signal, computed, input } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, signal, computed, input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TourSummary, Category } from '../../models/tour.model';
 import { TourCardComponent } from '../tour-card/tour-card.component';
+import { TranslationService } from '../../services/translation.service';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
@@ -15,12 +16,9 @@ import { IconComponent } from '../icon/icon.component';
       <div class="container">
         <!-- Section Header -->
         <div class="section-title-wrap text-center">
-          <span class="section-tag">Rutas & Expediciones</span>
-          <h2 class="section-title">Circuitos y Recorridos Verificados</h2>
-          <p class="section-subtitle">
-            Avistamiento del Cóndor Andino en Mayobamba, andenerías prehispánicas vivas de Andamarca, 
-            volcán pétreo de Pachapupum y los bofedales de vicuñas en Lucanas, Ayacucho.
-          </p>
+          <span class="section-tag">{{ ts.t('tours.badge') }}</span>
+          <h2 class="section-title">{{ ts.t('tours.title') }}</h2>
+          <p class="section-subtitle">{{ ts.t('tours.subtitle') }}</p>
         </div>
 
         <!-- Filter & Search Bar -->
@@ -31,7 +29,7 @@ import { IconComponent } from '../icon/icon.component';
               class="filter-btn" 
               [class.active]="selectedCategory() === 'all'" 
               (click)="selectCategory('all')">
-              Todos ({{ allTours().length }})
+              {{ ts.t('cat.all') }} ({{ allTours().length }})
             </button>
 
             @for (cat of categories(); track cat.id) {
@@ -40,7 +38,7 @@ import { IconComponent } from '../icon/icon.component';
                 class="filter-btn" 
                 [class.active]="selectedCategory() === cat.slug" 
                 (click)="selectCategory(cat.slug)">
-                {{ cat.name }}
+                {{ getCategoryName(cat) }}
               </button>
             }
           </div>
@@ -49,7 +47,7 @@ import { IconComponent } from '../icon/icon.component';
             <input 
               type="text" 
               [(ngModel)]="searchQuery" 
-              placeholder="Buscar por lugar o actividad..." 
+              [placeholder]="ts.t('tours.searchPlaceholder')" 
               class="search-input" />
           </div>
         </div>
@@ -60,14 +58,14 @@ import { IconComponent } from '../icon/icon.component';
             <div class="spotlight-media">
               <img 
                 [src]="spotlightTour()!.mainImageUrl" 
-                [alt]="spotlightTour()!.title" 
+                [alt]="getTourTitle(spotlightTour()!)" 
                 class="spotlight-img"
                 (error)="onSpotlightImageError($event)" />
             </div>
 
             <div class="spotlight-info">
               <div class="spotlight-meta">
-                <span class="spotlight-kicker">Recorrido Destacado</span>
+                <span class="spotlight-kicker">{{ ts.t('tours.badge') }}</span>
                 <span class="meta-separator">•</span>
                 <span class="meta-item">
                   <app-icon name="clock" [size]="14"></app-icon>
@@ -81,21 +79,21 @@ import { IconComponent } from '../icon/icon.component';
               </div>
 
               <h3 class="spotlight-title">
-                <a [routerLink]="['/tour', spotlightTour()!.slug]">{{ spotlightTour()!.title }}</a>
+                <a [routerLink]="['/tour', spotlightTour()!.slug]">{{ getTourTitle(spotlightTour()!) }}</a>
               </h3>
 
               <p class="spotlight-desc">
-                {{ spotlightTour()!.subtitle }}. Experiencia vivencial guiada por las terrazas preíncas, miradores del Cóndor Andino y la riqueza cultural viva de Ayacucho.
+                {{ getTourSubtitle(spotlightTour()!) }}
               </p>
 
               <div class="spotlight-footer">
                 <div class="spotlight-price">
-                  <span class="price-label">Precio</span>
+                  <span class="price-label">{{ ts.t('tours.from') }}</span>
                   <span class="price-amount">
                     @if (spotlightTour()!.priceSoles > 0) {
                       S/ {{ spotlightTour()!.priceSoles }}
                     } @else {
-                      Consultar
+                      {{ ts.t('tours.book') }}
                     }
                   </span>
                 </div>
@@ -105,13 +103,13 @@ import { IconComponent } from '../icon/icon.component';
                     type="button"
                     (click)="onBook.emit(spotlightTour()!)" 
                     class="btn btn-primary"
-                    title="Consultar por este recorrido">
+                    [title]="ts.t('tours.book')">
                     <app-icon name="calendar" [size]="16" stroke="#FFFFFF"></app-icon>
-                    <span>Consultar</span>
+                    <span>{{ ts.t('tours.book') }}</span>
                   </button>
 
                   <a [routerLink]="['/tour', spotlightTour()!.slug]" class="btn btn-secondary">
-                    <span>Ver Itinerario</span>
+                    <span>{{ ts.t('tours.viewDetails') }}</span>
                   </a>
                 </div>
               </div>
@@ -131,10 +129,9 @@ import { IconComponent } from '../icon/icon.component';
           </div>
         } @else if (!showSpotlight() || !spotlightTour()) {
           <div class="empty-state">
-            <h3>No encontramos recorridos que coincidan</h3>
-            <p>Intenta con otra palabra clave o selecciona otra categoría.</p>
+            <h3>{{ ts.t('tours.noResults') }}</h3>
             <button (click)="resetFilters()" class="btn btn-secondary" style="margin-top: 1rem;">
-              Ver Todos los Recorridos
+              {{ ts.t('cat.all') }}
             </button>
           </div>
         }
@@ -398,12 +395,37 @@ import { IconComponent } from '../icon/icon.component';
   `]
 })
 export class TourListComponent {
+  public ts = inject(TranslationService);
   allTours = input<TourSummary[]>([]);
   categories = input<Category[]>([]);
   @Output() onBook = new EventEmitter<TourSummary>();
 
   selectedCategory = signal<string>('all');
   searchQuery = signal<string>('');
+
+  getTourTitle(tour: TourSummary): string {
+    if (!tour) return '';
+    const key = `tour.${tour.id}.title`;
+    const trans = this.ts.t(key);
+    return trans !== key ? trans : tour.title;
+  }
+
+  getTourSubtitle(tour: TourSummary): string {
+    if (!tour) return '';
+    const key = `tour.${tour.id}.subtitle`;
+    const trans = this.ts.t(key);
+    return trans !== key ? trans : tour.subtitle;
+  }
+
+  getCategoryName(cat: Category): string {
+    if (cat.slug === 'ruta-del-condor') return this.ts.t('cat.condor');
+    if (cat.slug === 'andenes-vivos') return this.ts.t('cat.andenes');
+    if (cat.slug === 'aguas-termales') return this.ts.t('cat.termas');
+    if (cat.slug === 'pampa-galeras') return this.ts.t('cat.galeras');
+    if (cat.slug === 'pueblos-vivos') return this.ts.t('cat.pueblos');
+    if (cat.slug === 'gran-travesia') return this.ts.t('cat.circuito');
+    return cat.name;
+  }
 
   showSpotlight = computed(() => {
     return this.selectedCategory() === 'all' && !this.searchQuery().trim();

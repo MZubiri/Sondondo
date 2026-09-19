@@ -21,18 +21,18 @@ export class TourService {
 
   private sanitizeTour<T extends TourSummary>(tour: T): T {
     let img = tour.mainImageUrl;
-    if (!img || img.includes('unsplash.com') || img.startsWith('http')) {
+    if (!img || img.includes('unsplash.com') || img.startsWith('http') || img.includes('oficial') || img.includes('qollpa') || img.includes('qochapampa') || img.includes('guaman') || img.includes('caniche')) {
       const slug = (tour.slug || '').toLowerCase();
       const title = (tour.title || '').toLowerCase();
       if (slug.includes('condor') || title.includes('cóndor') || title.includes('condor') || slug.includes('mayobamba')) {
         img = '/assets/images/condor_mayobamba.jpg';
-      } else if (slug.includes('andenes') || title.includes('andamarca') || title.includes('tijeras') || slug.includes('cultura')) {
+      } else if (slug.includes('andenes') || title.includes('andamarca') || title.includes('tijeras') || title.includes('caniche')) {
         img = '/assets/images/andenes_andamarca.jpg';
-      } else if (slug.includes('volcan') || slug.includes('pachapupum') || slug.includes('termal') || title.includes('termas') || title.includes('volcán')) {
+      } else if (slug.includes('volcan') || slug.includes('pachapupum') || slug.includes('termal') || title.includes('termas') || slug.includes('qollpa')) {
         img = '/assets/images/volcan_pachapupum.jpg';
       } else if (slug.includes('qarhuarazo') || slug.includes('pampa') || slug.includes('galeras') || title.includes('qarhuarazo') || title.includes('vicuña')) {
         img = '/assets/images/pampa_galeras_vicunas.jpg';
-      } else if (slug.includes('pueblo') || title.includes('pueblos') || title.includes('aucara') || title.includes('cabana') || title.includes('chipao')) {
+      } else if (slug.includes('pueblo') || title.includes('pueblos') || title.includes('aucara') || title.includes('cabana') || title.includes('chipao') || slug.includes('guaman')) {
         img = '/assets/images/pueblo_andamarca.jpg';
       } else {
         img = '/assets/images/hero_sondondo.jpg';
@@ -45,36 +45,36 @@ export class TourService {
   private fallbackTours: TourSummary[] = [
     {
       id: 1,
-      title: 'Kuntur Ñan: El Vuelo del Cóndor en Mayobamba',
-      slug: 'vuelo-del-condor-mayobamba',
-      subtitle: 'Avistamiento de cóndores andinos a corta distancia en el cañón de Mayobamba y bosque de piedras',
+      title: 'Kuntur Ñan: El Majestuoso Vuelo del Cóndor',
+      slug: 'kuntur-nan-vuelo-del-condor',
+      subtitle: 'Avistamiento de hasta 35 cóndores en Mayobamba y descenso al bebedero sagrado',
       categoryId: 1,
       categoryName: 'Ruta del Cóndor',
       categorySlug: 'ruta-condor',
       duration: 'Full Day',
       durationDays: 1,
-      priceSoles: 0,
-      priceUsd: 0,
+      priceSoles: 140,
+      priceUsd: 38,
       difficulty: 'Fácil a Moderado',
-      altitudeMax: '3,550 msnm',
+      altitudeMax: '3,200 msnm',
       startingPoint: 'Mayobamba / Andamarca, Lucanas, Ayacucho',
       featured: true,
       mainImageUrl: '/assets/images/condor_mayobamba.jpg'
     },
     {
       id: 2,
-      title: 'Gran Circuito Andenes Vivos de Andamarca & Danza de Tijeras',
+      title: 'Andenes Vivos de Andamarca, Caniche & Danza de Tijeras',
       slug: 'andenes-andamarca-danza-tijeras',
-      subtitle: 'El mayor anfiteatro de andenerías prehispánicas vivas de América y la cuna de la Danza de las Tijeras UNESCO',
+      subtitle: 'Colosal sistema agrícola preínca Huari e Inca, fortaleza de Caniche y ritual de tijeras',
       categoryId: 2,
       categoryName: 'Cultura Viva & Andenes',
       categorySlug: 'cultura-viva-andenes',
-      duration: 'Full Day',
-      durationDays: 1,
-      priceSoles: 0,
-      priceUsd: 0,
-      difficulty: 'Fácil',
-      altitudeMax: '3,400 msnm',
+      duration: '2 Días / 1 Noche',
+      durationDays: 2,
+      priceSoles: 320,
+      priceUsd: 88,
+      difficulty: 'Fácil a Moderado',
+      altitudeMax: '3,459 msnm',
       startingPoint: 'Plaza Mayor de Andamarca, Lucanas',
       featured: true,
       mainImageUrl: '/assets/images/andenes_andamarca.jpg'
@@ -83,17 +83,17 @@ export class TourService {
       id: 3,
       title: 'Minivolcanes de Pachapupum & Termas Medicinales',
       slug: 'volcan-pachapupum-termas-mayobamba',
-      subtitle: 'Monumento pétreo volcánico de sal y azufre a 4,022 msnm, géiseres andinos y pozas termomedicinales',
+      subtitle: 'Monumento pétreo volcánico de sal y azufre a 4,022 msnm y pozas termomedicinales',
       categoryId: 3,
-      categoryName: 'Aguas Termales & Volcanes',
-      categorySlug: 'aguas-termales-volcanes',
-      duration: '1 Día',
+      categoryName: 'Aguas Termales & Cañones',
+      categorySlug: 'aguas-termales-canones',
+      duration: 'Full Day',
       durationDays: 1,
-      priceSoles: 0,
-      priceUsd: 0,
-      difficulty: 'Moderado',
+      priceSoles: 130,
+      priceUsd: 36,
+      difficulty: 'Fácil',
       altitudeMax: '4,022 msnm',
-      startingPoint: 'Sacsamarca / Huancasancos - Sondondo',
+      startingPoint: 'Sacsamarca / Chipao, Lucanas',
       featured: false,
       mainImageUrl: '/assets/images/volcan_pachapupum.jpg'
     },
@@ -101,14 +101,14 @@ export class TourService {
       id: 4,
       title: 'Trek Pampa Galeras & Bofedales del Apu Qarhuarazo',
       slug: 'apu-qarhuarazo-pampa-galeras',
-      subtitle: 'Travesía por la Reserva Nacional Pampa Galeras, manadas de vicuñas silvestres y vistas al nevado tutelar',
+      subtitle: 'Travesía por la Reserva Nacional Pampa Galeras, manadas de vicuñas y nevado tutelar',
       categoryId: 4,
       categoryName: 'Alta Montaña & Vicuñas',
       categorySlug: 'alta-montana-vicunas',
       duration: '2 Días',
       durationDays: 2,
-      priceSoles: 0,
-      priceUsd: 0,
+      priceSoles: 180,
+      priceUsd: 49,
       difficulty: 'Exigente',
       altitudeMax: '4,800 msnm',
       startingPoint: 'Pampa Galeras / Lucanas, Ayacucho',
@@ -117,37 +117,19 @@ export class TourService {
     },
     {
       id: 5,
-      title: 'Ruta de los Pueblos Mágicos: Aucará, Cabana Sur & Chipao',
-      slug: 'ruta-pueblos-magicos-sondondo',
-      subtitle: 'Pueblos coloniales, la casa del cronista Guamán Poma de Ayala, arte topiario en Chipao y cataratas',
-      categoryId: 5,
-      categoryName: 'Pueblos Históricos',
-      categorySlug: 'pueblos-historicos',
-      duration: 'Full Day',
-      durationDays: 1,
-      priceSoles: 0,
-      priceUsd: 0,
-      difficulty: 'Fácil',
-      altitudeMax: '3,250 msnm',
-      startingPoint: 'Aucará / Sondondo, Lucanas',
-      featured: false,
-      mainImageUrl: '/assets/images/pueblo_andamarca.jpg'
-    },
-    {
-      id: 6,
-      title: 'Gran Travesía Valle del Sondondo (3 Días / 2 Noches)',
-      slug: 'gran-travesia-valle-sondondo-3-dias',
-      subtitle: 'El circuito integral: Cóndores de Mayobamba, Andenes de Andamarca, Volcán Pachapupum y Pampa Galeras',
-      categoryId: 6,
-      categoryName: 'Expedición Integral',
-      categorySlug: 'expedicion-integral',
-      duration: '3 Días / 2 Noches',
-      durationDays: 3,
-      priceSoles: 0,
-      priceUsd: 0,
+      title: 'Gran Travesía Valle del Sondondo: Ruta de la Mancomunidad',
+      slug: 'gran-travesia-valle-del-sondondo',
+      subtitle: 'Expedición completa por los seis distritos ancestrales de los Hurin Rukanas',
+      categoryId: 2,
+      categoryName: 'Mancomunidad Sondondo',
+      categorySlug: 'mancomunidad-sondondo',
+      duration: '4 Días / 3 Noches',
+      durationDays: 4,
+      priceSoles: 720,
+      priceUsd: 195,
       difficulty: 'Moderado',
-      altitudeMax: '4,100 msnm',
-      startingPoint: 'Plaza de Armas de Ayacucho / Puquio',
+      altitudeMax: '3,459 msnm',
+      startingPoint: 'Puquio / Nasca / Ayacucho',
       featured: true,
       mainImageUrl: '/assets/images/hero_sondondo.jpg'
     }

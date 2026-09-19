@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslationService } from '../../services/translation.service';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
@@ -12,33 +13,32 @@ import { IconComponent } from '../icon/icon.component';
       <div class="container footer-grid">
         <!-- Col 1: Bio -->
         <div class="footer-brand">
-          <span class="footer-title">Valle del Sondondo Expeditions</span>
+          <span class="footer-title">{{ ts.t('footer.title') }}</span>
           <p class="footer-text">
-            Turismo vivencial andino, avistamiento de cóndores en Mayobamba, andenerías 
-            prehispánicas vivas de Andamarca, cuna de la Danza de Tijeras y volcán de Pachapupum. 
-            Operador local en Lucanas, Ayacucho, Perú.
+            {{ ts.t('footer.bio') }}
           </p>
         </div>
 
         <!-- Col 2: Enlaces Rápidos -->
         <div class="footer-nav">
-          <span class="footer-col-header">Navegación</span>
+          <span class="footer-col-header">{{ ts.t('footer.navigation') }}</span>
           <ul>
-            <li><a routerLink="/" fragment="tours">Recorridos & Circuitos</a></li>
-            <li><a routerLink="/" fragment="experiencia">El Destino & Cañón</a></li>
-            <li><a routerLink="/" fragment="nosotros">Por Qué Elegirnos</a></li>
-            <li><a routerLink="/" fragment="contacto">Contacto & Ubicación</a></li>
-            <li><a routerLink="/admin/login" class="admin-link">Acceso Operador / Admin &rarr;</a></li>
+            <li><a routerLink="/" fragment="tours">{{ ts.t('footer.tours') }}</a></li>
+            <li><a routerLink="/" fragment="experiencia">{{ ts.t('footer.destination') }}</a></li>
+            <li><a routerLink="/" fragment="habitaciones">{{ ts.t('footer.rooms') }}</a></li>
+            <li><a routerLink="/" fragment="nosotros">{{ ts.t('footer.whyUs') }}</a></li>
+            <li><a routerLink="/" fragment="contacto">{{ ts.t('footer.contact') }}</a></li>
+            <li><a routerLink="/admin/login" class="admin-link">{{ ts.t('footer.adminLink') }}</a></li>
           </ul>
         </div>
 
         <!-- Col 3: Contacto & Redes -->
         <div class="footer-contact">
-          <span class="footer-col-header">Contacto Directo</span>
+          <span class="footer-col-header">{{ ts.t('footer.directContact') }}</span>
           <div class="contact-links">
             <a [href]="whatsAppUrl" target="_blank" rel="noopener noreferrer" class="contact-line">
               <app-icon name="whatsapp" [size]="16" stroke="var(--whatsapp)"></app-icon>
-              <span>WhatsApp de Atención (+51 966 380 590)</span>
+              <span>{{ ts.t('footer.waLabel') }}</span>
             </a>
             <a [href]="'mailto:' + email" class="contact-line">
               <app-icon name="mail" [size]="16" stroke="var(--earth-500)"></app-icon>
@@ -46,10 +46,10 @@ import { IconComponent } from '../icon/icon.component';
             </a>
             <div class="contact-line">
               <app-icon name="map-pin" [size]="16" stroke="var(--earth-500)"></app-icon>
-              <span>Aucará, Lucanas, Ayacucho, Perú</span>
+              <span>{{ ts.t('footer.address') }}</span>
             </div>
             <a [href]="facebookUrl" target="_blank" rel="noopener noreferrer" class="facebook-link">
-              Página de Facebook Oficial &rarr;
+              {{ ts.t('footer.facebook') }}
             </a>
           </div>
         </div>
@@ -57,8 +57,8 @@ import { IconComponent } from '../icon/icon.component';
 
       <div class="footer-bottom">
         <div class="container bottom-row">
-          <p>© 2026 Valle del Sondondo Expeditions. Turismo comunitario y conservación.</p>
-          <span class="bottom-tag">Lucanas • Ayacucho, Perú</span>
+          <p>{{ ts.t('footer.rights') }}</p>
+          <span class="bottom-tag">{{ ts.t('footer.location') }}</span>
         </div>
       </div>
     </footer>
@@ -185,6 +185,8 @@ import { IconComponent } from '../icon/icon.component';
   `]
 })
 export class FooterComponent {
+  public ts = inject(TranslationService);
+
   @Input() phoneNumber: string = '+51 966 380 590';
   @Input() email: string = 'miskichaskaperu@hotmail.com';
   @Input() whatsAppNumber: string = '51966380590';

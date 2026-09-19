@@ -2,6 +2,7 @@ import { Component, Input, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TourService } from '../../services/tour.service';
+import { TranslationService } from '../../services/translation.service';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
@@ -12,26 +13,25 @@ import { IconComponent } from '../icon/icon.component';
     <section class="contact-section" id="contacto">
       <div class="container">
         <div class="section-title-wrap">
-          <span class="section-tag">Atención Directa</span>
-          <h2 class="section-title">Consulta Disponibilidad y Tarifas</h2>
+          <span class="section-tag">{{ ts.t('contact.badge') }}</span>
+          <h2 class="section-title">{{ ts.t('contact.title') }}</h2>
           <p class="section-subtitle">
-            Respondemos de manera personalizada para coordinar fechas, puntos de encuentro 
-            y recomendaciones de viaje según la temporada del año.
+            {{ ts.t('contact.subtitle') }}
           </p>
         </div>
 
         <div class="contact-layout">
           <!-- Info Column -->
           <div class="contact-info-panel">
-            <h3 class="panel-heading">Contacto Oficial</h3>
+            <h3 class="panel-heading">{{ ts.t('contact.officialHeader') }}</h3>
 
             <!-- WhatsApp Direct Card -->
             <div class="wa-direct-card">
               <div class="wa-header">
                 <app-icon name="whatsapp" [size]="24" stroke="var(--whatsapp)"></app-icon>
                 <div>
-                  <strong>Atención Inmediata por WhatsApp</strong>
-                  <p>Canal principal para cotizaciones rápidas</p>
+                  <strong>{{ ts.t('contact.waCardTitle') }}</strong>
+                  <p>{{ ts.t('contact.waCardSubtitle') }}</p>
                 </div>
               </div>
               <a 
@@ -40,29 +40,29 @@ import { IconComponent } from '../icon/icon.component';
                 rel="noopener noreferrer" 
                 class="btn btn-whatsapp wa-btn">
                 <app-icon name="whatsapp" [size]="18" stroke="#FFFFFF"></app-icon>
-                <span>Chatear por WhatsApp</span>
+                <span>{{ ts.t('contact.waChatBtn') }}</span>
               </a>
             </div>
 
             <!-- Detail List -->
             <div class="contact-details-list">
               <div class="detail-row">
-                <span class="detail-label">Zona de Operación</span>
-                <span class="detail-val">Andamarca, Aucará, Mayobamba, Chipao, Cabana Sur, Pachapupum y Pampa Galeras (Ayacucho, Perú)</span>
+                <span class="detail-label">{{ ts.t('contact.zoneLabel') }}</span>
+                <span class="detail-val">{{ ts.t('contact.zoneValue') }}</span>
               </div>
 
               <div class="detail-row">
-                <span class="detail-label">Horario de Atención</span>
-                <span class="detail-val">Lunes a Domingo: 7:00 AM – 8:00 PM</span>
+                <span class="detail-label">{{ ts.t('contact.hoursLabel') }}</span>
+                <span class="detail-val">{{ ts.t('contact.hoursValue') }}</span>
               </div>
 
               <div class="detail-row">
-                <span class="detail-label">Teléfono Directo</span>
+                <span class="detail-label">{{ ts.t('contact.phoneDirect') }}</span>
                 <span class="detail-val"><a [href]="'tel:' + phoneNumber">{{ phoneNumber }}</a></span>
               </div>
 
               <div class="detail-row">
-                <span class="detail-label">Correo Electrónico</span>
+                <span class="detail-label">{{ ts.t('contact.emailDirect') }}</span>
                 <span class="detail-val"><a [href]="'mailto:' + email">{{ email }}</a></span>
               </div>
             </div>
@@ -70,71 +70,71 @@ import { IconComponent } from '../icon/icon.component';
 
           <!-- Form Column -->
           <div class="contact-form-panel">
-            <h3 class="panel-heading">Envíanos un Mensaje</h3>
+            <h3 class="panel-heading">{{ ts.t('contact.formHeader') }}</h3>
 
             @if (isSent()) {
               <div class="alert-success">
                 <app-icon name="check" [size]="22" stroke="var(--forest-900)"></app-icon>
                 <div>
-                  <strong>¡Consulta recibida con éxito!</strong>
-                  <p>Nos comunicaremos contigo a la brevedad para brindarte toda la información solicitada.</p>
+                  <strong>{{ ts.t('contact.sentTitle') }}</strong>
+                  <p>{{ ts.t('contact.sentDesc') }}</p>
                 </div>
               </div>
             } @else {
               <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
                 <div class="form-field">
-                  <label for="c-name">Nombre y Apellido *</label>
+                  <label for="c-name">{{ ts.t('contact.name') }}</label>
                   <input 
                     id="c-name" 
                     type="text" 
                     formControlName="name" 
-                    placeholder="Tu nombre completo" 
+                    [placeholder]="ts.t('contact.namePlaceholder')" 
                     class="input-control" />
                 </div>
 
                 <div class="form-row">
                   <div class="form-field">
-                    <label for="c-phone">WhatsApp / Teléfono *</label>
+                    <label for="c-phone">{{ ts.t('contact.phone') }}</label>
                     <input 
                       id="c-phone" 
                       type="tel" 
                       formControlName="phone" 
-                      placeholder="Ej. +51 966 380 590" 
+                      [placeholder]="ts.t('contact.phonePlaceholder')" 
                       class="input-control" />
                   </div>
 
                   <div class="form-field">
-                    <label for="c-email">Correo Electrónico *</label>
+                    <label for="c-email">{{ ts.t('contact.email') }}</label>
                     <input 
                       id="c-email" 
                       type="email" 
                       formControlName="email" 
-                      placeholder="tu@correo.com" 
+                      [placeholder]="ts.t('contact.emailPlaceholder')" 
                       class="input-control" />
                   </div>
                 </div>
 
                 <div class="form-field">
-                  <label for="c-subject">Recorrido de Interés</label>
+                  <label for="c-subject">{{ ts.t('contact.tourInterest') }}</label>
                   <select id="c-subject" formControlName="subject" class="input-control">
-                    <option value="">Selecciona una opción...</option>
+                    <option value="">{{ ts.t('contact.tourSelect') }}</option>
                     <option value="Kuntur Ñan: El Vuelo del Cóndor en Mayobamba">Kuntur Ñan: El Vuelo del Cóndor en Mayobamba</option>
                     <option value="Gran Circuito Andenes Vivos de Andamarca & Danza de Tijeras">Gran Circuito Andenes Vivos de Andamarca & Danza de Tijeras</option>
                     <option value="Minivolcanes de Pachapupum & Termas Medicinales">Minivolcanes de Pachapupum & Termas Medicinales</option>
                     <option value="Trek Pampa Galeras & Bofedales del Apu Qarhuarazo">Trek Pampa Galeras & Bofedales del Apu Qarhuarazo</option>
                     <option value="Ruta de los Pueblos Mágicos: Aucará, Cabana Sur & Chipao">Ruta de los Pueblos Mágicos: Aucará, Cabana Sur & Chipao</option>
                     <option value="Gran Travesía Valle del Sondondo (3 Días / 2 Noches)">Gran Travesía Valle del Sondondo (3 Días / 2 Noches)</option>
-                    <option value="Consulta General">Consulta General / Paquete Personalizado</option>
+                    <option value="Consulta General">{{ ts.t('contact.tourGeneral') }}</option>
                   </select>
                 </div>
 
                 <div class="form-field">
-                  <label for="c-message">Detalles o Consulta *</label>
+                  <label for="c-message">{{ ts.t('contact.message') }}</label>
                   <textarea 
                     id="c-message" 
                     rows="4" 
                     formControlName="message" 
-                    placeholder="Fechas tentativas, número de personas o cualquier requerimiento específico..." 
+                    [placeholder]="ts.t('contact.messagePlaceholder')" 
                     class="input-control"></textarea>
                 </div>
 
@@ -143,9 +143,9 @@ import { IconComponent } from '../icon/icon.component';
                   [disabled]="contactForm.invalid || isSending()" 
                   class="btn btn-primary submit-btn">
                   @if (isSending()) {
-                    <span>Enviando consulta...</span>
+                    <span>{{ ts.t('contact.sending') }}</span>
                   } @else {
-                    <span>Enviar Consulta</span>
+                    <span>{{ ts.t('contact.send') }}</span>
                   }
                 </button>
               </form>
@@ -334,6 +334,7 @@ import { IconComponent } from '../icon/icon.component';
 export class ContactSectionComponent {
   private fb = inject(FormBuilder);
   private tourService = inject(TourService);
+  public ts = inject(TranslationService);
 
   @Input() address: string = 'Av. Apu Chauccalla 402, Aucará, Lucanas, Ayacucho, Perú';
   @Input() phoneNumber: string = '+51 966 380 590';

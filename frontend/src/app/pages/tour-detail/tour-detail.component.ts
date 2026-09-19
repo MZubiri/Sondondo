@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { TourDetail, TourSummary } from '../../models/tour.model';
 import { TourService } from '../../services/tour.service';
+import { TranslationService } from '../../services/translation.service';
 import { IconComponent } from '../../components/icon/icon.component';
 import { BookingModalComponent } from '../../components/booking-modal/booking-modal.component';
 
@@ -18,7 +19,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
           <div class="container">
             <a routerLink="/" fragment="tours" class="back-link">
               <app-icon name="arrow-right" [size]="18" stroke="#FFFFFF" customClass="rotate-180"></app-icon>
-              <span>Volver a todos los recorridos</span>
+              <span>{{ ts.t('detail.back') }}</span>
             </a>
 
             <div class="detail-header-content">
@@ -35,7 +36,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
                 <div class="d-stat">
                   <app-icon name="clock" [size]="18" stroke="var(--secondary)"></app-icon>
                   <div>
-                    <small>Duración</small>
+                    <small>{{ ts.t('detail.duration') }}</small>
                     <strong>{{ tour()!.duration }}</strong>
                   </div>
                 </div>
@@ -43,7 +44,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
                 <div class="d-stat">
                   <app-icon name="mountain" [size]="18" stroke="var(--primary)"></app-icon>
                   <div>
-                    <small>Altitud Máxima</small>
+                    <small>{{ ts.t('detail.altitude') }}</small>
                     <strong>{{ tour()!.altitudeMax }}</strong>
                   </div>
                 </div>
@@ -51,7 +52,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
                 <div class="d-stat">
                   <app-icon name="compass" [size]="18" stroke="#27AE60"></app-icon>
                   <div>
-                    <small>Dificultad</small>
+                    <small>{{ ts.t('detail.difficulty') }}</small>
                     <strong>{{ tour()!.difficulty }}</strong>
                   </div>
                 </div>
@@ -59,7 +60,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
                 <div class="d-stat">
                   <app-icon name="map-pin" [size]="18" stroke="#3498DB"></app-icon>
                   <div>
-                    <small>Punto de Partida</small>
+                    <small>{{ ts.t('detail.startPoint') }}</small>
                     <strong>{{ tour()!.startingPoint }}</strong>
                   </div>
                 </div>
@@ -73,14 +74,14 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
           <div class="detail-main-col">
             <!-- Overview -->
             <section class="content-block">
-              <h2 class="block-title">Descripción de la Experiencia</h2>
+              <h2 class="block-title">{{ ts.t('detail.descTitle') }}</h2>
               <p class="lead-text">{{ tour()!.description }}</p>
             </section>
 
             <!-- Gallery Images -->
             @if (tour()!.galleryImages.length > 0) {
               <section class="content-block">
-                <h2 class="block-title">Galería Fotográfica</h2>
+                <h2 class="block-title">{{ ts.t('detail.galleryTitle') }}</h2>
                 <div class="gallery-grid">
                   @for (img of tour()!.galleryImages; track img) {
                     <div class="gallery-item">
@@ -94,12 +95,12 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
             <!-- Day-by-day Itinerary -->
             @if (tour()!.itineraries.length > 0) {
               <section class="content-block">
-                <h2 class="block-title">Itinerario Día a Día</h2>
+                <h2 class="block-title">{{ ts.t('detail.itineraryTitle') }}</h2>
                 <div class="itinerary-timeline">
                   @for (day of tour()!.itineraries; track day.id) {
                     <div class="timeline-step">
                       <div class="day-marker">
-                        <span>Día</span>
+                        <span>{{ ts.t('detail.day') }}</span>
                         <strong>{{ day.dayNumber }}</strong>
                       </div>
                       <div class="step-card glass-card">
@@ -109,21 +110,21 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
                         @if (day.activities) {
                           <div class="step-detail-row">
                             <app-icon name="compass" [size]="16" stroke="var(--primary)"></app-icon>
-                            <span><strong>Actividades:</strong> {{ day.activities }}</span>
+                            <span><strong>{{ ts.t('detail.activities') }}</strong> {{ day.activities }}</span>
                           </div>
                         }
 
                         @if (day.meals) {
                           <div class="step-detail-row">
                             <app-icon name="check" [size]="16" stroke="var(--secondary)"></app-icon>
-                            <span><strong>Alimentación:</strong> {{ day.meals }}</span>
+                            <span><strong>{{ ts.t('detail.meals') }}</strong> {{ day.meals }}</span>
                           </div>
                         }
 
                         @if (day.accommodation) {
                           <div class="step-detail-row">
                             <app-icon name="landmark" [size]="16" stroke="var(--accent-emerald)"></app-icon>
-                            <span><strong>Pernocte:</strong> {{ day.accommodation }}</span>
+                            <span><strong>{{ ts.t('detail.accommodation') }}</strong> {{ day.accommodation }}</span>
                           </div>
                         }
                       </div>
@@ -140,7 +141,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
                 <div class="inc-card included-box">
                   <h3 class="inc-title text-success">
                     <app-icon name="check" [size]="20" stroke="#27AE60"></app-icon>
-                    <span>Qué Incluye</span>
+                    <span>{{ ts.t('detail.included') }}</span>
                   </h3>
                   <ul class="inc-list">
                     @for (item of tour()!.included; track item) {
@@ -156,7 +157,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
                 <div class="inc-card not-included-box">
                   <h3 class="inc-title text-danger">
                     <app-icon name="x" [size]="20" stroke="#E74C3C"></app-icon>
-                    <span>No Incluye</span>
+                    <span>{{ ts.t('detail.notIncluded') }}</span>
                   </h3>
                   <ul class="inc-list">
                     @for (item of tour()!.notIncluded; track item) {
@@ -173,7 +174,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
             <!-- Recommendations -->
             @if (tour()!.recommendations.length > 0) {
               <section class="content-block">
-                <h2 class="block-title">¿Qué Debes Llevar? (Recomendaciones)</h2>
+                <h2 class="block-title">{{ ts.t('detail.recommendations') }}</h2>
                 <div class="recommendations-box">
                   @for (tip of tour()!.recommendations; track tip) {
                     <div class="tip-chip">
@@ -190,13 +191,13 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
           <aside class="detail-sidebar-col">
             <div class="sticky-booking-card">
               <div class="card-price-header">
-                <span class="price-subtitle">Tarifa del Recorrido</span>
+                <span class="price-subtitle">{{ ts.t('detail.rate') }}</span>
                 <div class="price-row">
                   @if (tour()!.priceSoles > 0) {
                     <span class="currency">S/</span>
                     <span class="price-val">{{ tour()!.priceSoles }}</span>
                   } @else {
-                    <span class="price-val">Consultar</span>
+                    <span class="price-val">{{ ts.t('detail.inquire') }}</span>
                   }
                 </div>
               </div>
@@ -204,33 +205,33 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
               <div class="card-perks">
                 <div class="perk-item">
                   <app-icon name="shield-check" [size]="18" stroke="#27AE60"></app-icon>
-                  <span>Certificación Safe Travels</span>
+                  <span>{{ ts.t('detail.safeTravels') }}</span>
                 </div>
                 <div class="perk-item">
                   <app-icon name="users" [size]="18" stroke="var(--primary)"></app-icon>
-                  <span>Grupos reducidos y seguros</span>
+                  <span>{{ ts.t('detail.smallGroups') }}</span>
                 </div>
                 <div class="perk-item">
                   <app-icon name="whatsapp" [size]="18" stroke="#25D366"></app-icon>
-                  <span>Atención directa sin intermediarios</span>
+                  <span>{{ ts.t('detail.directAttention') }}</span>
                 </div>
               </div>
 
               <div class="card-cta-group">
                 <button (click)="openBookingModal()" class="btn btn-primary w-100 btn-lg">
                   <app-icon name="calendar" [size]="20" stroke="#FFFFFF"></app-icon>
-                  <span>Solicitar Cotización</span>
+                  <span>{{ ts.t('detail.requestQuote') }}</span>
                 </button>
 
                 <a [href]="whatsAppUrl" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp w-100 btn-lg mt-2">
                   <app-icon name="whatsapp" [size]="20" stroke="#FFFFFF"></app-icon>
-                  <span>Consultar por WhatsApp</span>
+                  <span>{{ ts.t('detail.inquireWa') }}</span>
                 </a>
               </div>
 
               <div class="card-contact-hint">
                 <app-icon name="phone" [size]="15"></app-icon>
-                <span>¿Dudas? Llámanos al <strong>+51 966 380 590</strong></span>
+                <span>{{ ts.t('detail.questions') }} <strong>+51 966 380 590</strong></span>
               </div>
             </div>
           </aside>
@@ -648,6 +649,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
 export class TourDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private tourService = inject(TourService);
+  public ts = inject(TranslationService);
 
   tour = signal<TourDetail | null>(null);
   isModalOpen = signal(false);

@@ -13,39 +13,87 @@ public static class DbInitializer
 
         if (await context.Categories.AnyAsync())
         {
-            // If DB was already seeded, ensure all existing tours have their images updated to authentic Sondondo assets
+            // If DB was already seeded, synchronize existing tours with authentic verified assets
             var existingTours = await context.Tours.ToListAsync();
             bool changed = false;
             foreach (var tour in existingTours)
             {
-                if (string.IsNullOrEmpty(tour.MainImageUrl) || tour.MainImageUrl.Contains("unsplash.com") || tour.MainImageUrl.StartsWith("http"))
-                {
-                    var slug = (tour.Slug ?? "").ToLower();
-                    var title = (tour.Title ?? "").ToLower();
-                    if (slug.Contains("condor") || title.Contains("cóndor") || title.Contains("condor"))
-                        tour.MainImageUrl = "/assets/images/condor_mayobamba.jpg";
-                    else if (slug.Contains("andenes") || title.Contains("andamarca") || title.Contains("tijeras"))
-                        tour.MainImageUrl = "/assets/images/andenes_andamarca.jpg";
-                    else if (slug.Contains("pachapupum") || slug.Contains("termal") || title.Contains("termas") || title.Contains("volcán"))
-                        tour.MainImageUrl = "/assets/images/volcan_pachapupum.jpg";
-                    else if (slug.Contains("qarhuarazo") || slug.Contains("pampa") || title.Contains("qarhuarazo") || title.Contains("vicuña"))
-                        tour.MainImageUrl = "/assets/images/pampa_galeras_vicunas.jpg";
-                    else if (slug.Contains("pueblo") || title.Contains("pueblos") || title.Contains("aucara") || title.Contains("cabana"))
-                        tour.MainImageUrl = "/assets/images/pueblo_andamarca.jpg";
-                    else
-                        tour.MainImageUrl = "/assets/images/hero_sondondo.jpg";
-                    changed = true;
-                }
+                var slug = (tour.Slug ?? "").ToLower();
+                var title = (tour.Title ?? "").ToLower();
 
-                if (string.IsNullOrEmpty(tour.GalleryImagesJson) || tour.GalleryImagesJson.Contains("unsplash.com") || tour.GalleryImagesJson.Contains("http"))
+                if (slug.Contains("condor") || title.Contains("cóndor") || title.Contains("condor"))
                 {
+                    tour.Title = "Kuntur Ñan: El Majestuoso Vuelo del Cóndor";
+                    tour.Subtitle = "Avistamiento de hasta 35 cóndores en Mayobamba y descenso al bebedero sagrado";
+                    tour.Description = "Vive una experiencia sobrecogedora en el mirador de Mayobamba (3,200 msnm), el mejor lugar del Perú para observar al Apu Huamaní (cóndor andino) en estado silvestre. Por las mañanas, contempla el vuelo de hasta 35 cóndores sobrevolando a pocos metros de distancia conforme salen de sus dormideros y desciende luego al pie del puquial / bebedero en el cañón para observarlos de cerca. Guiado por pobladores originarios quechuas conocedores de los mitos y tradiciones del valle.";
+                    tour.AltitudeMax = "3,200 msnm";
+                    tour.MainImageUrl = "/assets/images/condor_mayobamba.jpg";
                     tour.GalleryImagesJson = JsonSerializer.Serialize(new[]
                     {
-                        tour.MainImageUrl,
-                        "/assets/images/andenes_andamarca.jpg",
-                        "/assets/images/pueblo_andamarca.jpg",
+                        "/assets/images/condor_mayobamba.jpg",
                         "/assets/images/bosque_piedras.jpg",
                         "/assets/images/rio_sondondo.jpg"
+                    });
+                    changed = true;
+                }
+                else if (slug.Contains("andenes") || title.Contains("andamarca") || title.Contains("tijeras") || title.Contains("caniche"))
+                {
+                    tour.Title = "Andenes Vivos de Andamarca, Caniche y Danza de Tijeras";
+                    tour.Subtitle = "Colosal sistema agrícola preínca Huari e Inca, fortaleza de Caniche y ritual de tijeras";
+                    tour.Description = "Recorre las más de 5,000 hectáreas de terrazas agrícolas en uso continuo de Andamarca (3,300 msnm). Explora el Sitio Arqueológico de Caniche (Patrimonio de la Nación 2003) con sus murallas Wari de hasta 12 metros de altura, colcas y cantería ceremonial incaica. Participa en labores tradicionales de siembra y riego, culminando con una demostración íntima de la Danza de las Tijeras (Patrimonio Cultural Inmaterial de la Humanidad por la UNESCO).";
+                    tour.AltitudeMax = "3,459 msnm";
+                    tour.MainImageUrl = "/assets/images/andenes_andamarca.jpg";
+                    tour.GalleryImagesJson = JsonSerializer.Serialize(new[]
+                    {
+                        "/assets/images/andenes_andamarca.jpg",
+                        "/assets/images/danza_tijeras.jpg",
+                        "/assets/images/pueblo_andamarca.jpg"
+                    });
+                    changed = true;
+                }
+                else if (slug.Contains("volcan") || slug.Contains("pachapupum") || slug.Contains("termal") || title.Contains("termal") || title.Contains("termas") || title.Contains("qollpa"))
+                {
+                    tour.Title = "Minivolcanes de Pachapupum & Termas Medicinales";
+                    tour.Subtitle = "Monumento pétreo volcánico de sal y azufre a 4,022 msnm y pozas termomedicinales";
+                    tour.Description = "Monumento natural cónico de sal y azufre de 30 metros de altura con cráter de aguas termales en ebullición y pozas termomedicinales curativas ricas en minerales, ubicado en Sacsamarca y en los cañones del río Sondondo.";
+                    tour.AltitudeMax = "4,022 msnm";
+                    tour.MainImageUrl = "/assets/images/volcan_pachapupum.jpg";
+                    tour.GalleryImagesJson = JsonSerializer.Serialize(new[]
+                    {
+                        "/assets/images/volcan_pachapupum.jpg",
+                        "/assets/images/rio_sondondo.jpg",
+                        "/assets/images/bosque_piedras.jpg"
+                    });
+                    changed = true;
+                }
+                else if (slug.Contains("qarhuarazo") || slug.Contains("pampa") || slug.Contains("galeras") || title.Contains("qarhuarazo") || title.Contains("vicuña"))
+                {
+                    tour.Title = "Trek Pampa Galeras & Bofedales del Apu Qarhuarazo";
+                    tour.Subtitle = "Travesía por la Reserva Nacional Pampa Galeras, manadas de vicuñas y nevado tutelar";
+                    tour.Description = "En el km 90 de la vía se encuentra la Reserva Nacional Bárbara d'Achille Pampa Galeras, que alberga la mayor población de vicuñas del país. Travesía de alta montaña por bofedales y pastizales andinos bajo la protección del nevado Apu Qarhuarazo.";
+                    tour.AltitudeMax = "4,800 msnm";
+                    tour.MainImageUrl = "/assets/images/pampa_galeras_vicunas.jpg";
+                    tour.GalleryImagesJson = JsonSerializer.Serialize(new[]
+                    {
+                        "/assets/images/pampa_galeras_vicunas.jpg",
+                        "/assets/images/pueblo_andamarca.jpg",
+                        "/assets/images/rio_sondondo.jpg"
+                    });
+                    changed = true;
+                }
+                else
+                {
+                    tour.Title = "Gran Travesía Valle del Sondondo: Ruta de la Mancomunidad";
+                    tour.Subtitle = "La expedición definitiva por los seis distritos ancestrales de los Hurin Rukanas";
+                    tour.Description = "La travesía integral más completa de los Andes ayacuchanos a través de la mancomunidad de seis distritos (Andamarca, Aucará, Cabana Sur, Chipao, Mayobamba y Sondondo). Combina el avistamiento matutino de cóndores, las terrazas vivas de Andamarca, la fortaleza de Caniche, los baños termales de Qollpa, la laguna de Qochapampa y la casa de Guaman Poma de Ayala, con guías nativos quechuahablantes.";
+                    tour.AltitudeMax = "3,459 msnm";
+                    tour.MainImageUrl = "/assets/images/hero_sondondo.jpg";
+                    tour.GalleryImagesJson = JsonSerializer.Serialize(new[]
+                    {
+                        "/assets/images/hero_sondondo.jpg",
+                        "/assets/images/andenes_andamarca.jpg",
+                        "/assets/images/condor_mayobamba.jpg",
+                        "/assets/images/danza_tijeras.jpg"
                     });
                     changed = true;
                 }
@@ -55,7 +103,7 @@ public static class DbInitializer
             {
                 await context.SaveChangesAsync();
             }
-            return; // DB has been seeded
+            return; // DB has been synchronized
         }
 
         // 1. Categories
@@ -79,9 +127,9 @@ public static class DbInitializer
 
         var catMontana = new Category
         {
-            Name = "Aventura y Alta Montaña",
-            Slug = "aventura-alta-montana",
-            Description = "Trekking épico hacia los glaciares del Apu Qarhuarazo (5,112 msnm), bofedales con vicuñas y lagunas cristalinas.",
+            Name = "Alta Montaña & Vicuñas",
+            Slug = "alta-montana-vicunas",
+            Description = "Reserva Nacional Pampa Galeras, vicuñas silvestres y ascensos al Apu Qarhuarazo.",
             Icon = "mountain",
             DisplayOrder = 3
         };
@@ -90,7 +138,7 @@ public static class DbInitializer
         {
             Name = "Aguas Termales & Cañones",
             Slug = "aguas-termales-canones",
-            Description = "Relax medicinal en fuentes termales naturales de Huancas Puquio y Gollpa, rodeadas de imponentes cataratas.",
+            Description = "Relax medicinal en fuentes termales naturales de Pachapupum y cañones de Chipao.",
             Icon = "droplets",
             DisplayOrder = 4
         };
@@ -103,15 +151,15 @@ public static class DbInitializer
         {
             Title = "Kuntur Ñan: El Majestuoso Vuelo del Cóndor",
             Slug = "kuntur-nan-vuelo-del-condor",
-            Subtitle = "Avistamiento en primer plano del Cóndor Andino en los miradores sagrados de Mayobamba",
-            Description = "Vive una experiencia sobrecogedora al contemplar al rey de los Andes en su hábitat salvaje. Desde el mirador natural de Mayobamba y Aucará, serás testigo del planeo de cóndores andinos a pocos metros de distancia sobre los profundos abismos del Valle del Sondondo. La jornada incluye visita a la laguna sagrada de Ccochapanpa, guiado ornitológico especializado y un reconfortante almuerzo tradicional andino.",
+            Subtitle = "Avistamiento de hasta 35 cóndores en Mayobamba y descenso al bebedero sagrado",
+            Description = "Vive una experiencia sobrecogedora en el mirador de Mayobamba (3,200 msnm), el mejor lugar del Perú para observar al Apu Huamaní (cóndor andino) en estado silvestre. Por las mañanas, contempla el vuelo de hasta 35 cóndores sobrevolando a pocos metros de distancia conforme salen de sus dormideros y desciende luego al pie del puquial / bebedero en el cañón para observarlos de cerca. Guiado por pobladores originarios quechuas conocedores de los mitos y tradiciones del valle.",
             CategoryId = catCondor.Id,
             Duration = "Full Day (8:00 AM - 4:30 PM)",
             DurationDays = 1,
             PriceSoles = 140.00m,
             PriceUsd = 38.00m,
             Difficulty = "Fácil a Moderado",
-            AltitudeMax = "3,400 msnm",
+            AltitudeMax = "3,200 msnm",
             StartingPoint = "Aucará / Puquio / Cabana Sur",
             Featured = true,
             DisplayOrder = 1,
@@ -119,8 +167,8 @@ public static class DbInitializer
             GalleryImagesJson = JsonSerializer.Serialize(new[]
             {
                 "/assets/images/condor_mayobamba.jpg",
-                "/assets/images/rio_sondondo.jpg",
-                "/assets/images/hero_sondondo.jpg"
+                "/assets/images/bosque_piedras.jpg",
+                "/assets/images/rio_sondondo.jpg"
             }),
             IncludedJson = JsonSerializer.Serialize(new[]
             {
@@ -150,17 +198,17 @@ public static class DbInitializer
 
         var tour2 = new Tour
         {
-            Title = "Gran Circuito Andenes Vivos de Andamarca y Danzantes de Tijeras",
+            Title = "Andenes Vivos de Andamarca, Caniche y Danza de Tijeras",
             Slug = "andenes-vivos-andamarca-danzantes-de-tijeras",
-            Subtitle = "Inmersión cultural en el anfiteatro preínca vivo más colosal del Perú y cuna de la mística andina",
-            Description = "El Valle del Sondondo alberga más de 5,000 hectáreas de andenerías prehispánicas que continúan cultivándose con la sabiduría de los gentiles y de la cultura Wari e Inca. En este viaje de 2 días descubrirás la 'Casa del Saber de los Antamarkas', el sitio arqueológico de Caniche, el Templo Colonial de Cabana Sur y una demostración íntima y exclusiva de la ancestral Danza de las Tijeras (Patrimonio Cultural Inmaterial de la Humanidad por la UNESCO).",
+            Subtitle = "Colosal sistema agrícola preínca Huari e Inca, fortaleza de Caniche y ritual de tijeras",
+            Description = "Recorre las más de 5,000 hectáreas de terrazas agrícolas en uso continuo de Andamarca (3,300 msnm). Explora el Sitio Arqueológico de Caniche (Patrimonio de la Nación 2003) con sus murallas Wari de hasta 12 metros de altura, colcas y cantería ceremonial incaica. Participa en labores tradicionales de siembra y riego, culminando con una demostración íntima de la Danza de las Tijeras (Patrimonio Cultural Inmaterial de la Humanidad por la UNESCO).",
             CategoryId = catCultura.Id,
             Duration = "2 Días / 1 Noche",
             DurationDays = 2,
             PriceSoles = 320.00m,
             PriceUsd = 88.00m,
             Difficulty = "Fácil a Moderado",
-            AltitudeMax = "3,500 msnm",
+            AltitudeMax = "3,459 msnm",
             StartingPoint = "Puquio o Aucará",
             Featured = true,
             DisplayOrder = 2,
@@ -178,7 +226,7 @@ public static class DbInitializer
                 "Alimentación completa (1 desayuno, 2 almuerzos andinos, 1 cena)",
                 "Demostración vivencial de Danza de las Tijeras con maestro galas",
                 "Guiado histórico e interpretación cultural por expertos comunales",
-                "Boletos de ingreso a museos y complejos arqueológicos",
+                "Boletos de ingreso al complejo arqueológico de Caniche",
                 "Atención personalizada y asistencia 24/7"
             }),
             NotIncludedJson = JsonSerializer.Serialize(new[]
@@ -189,75 +237,27 @@ public static class DbInitializer
             RecommendationsJson = JsonSerializer.Serialize(new[]
             {
                 "Ropa cómoda para caminar y abrigo para las noches andinas",
-                "Batería externa para teléfono/cámara (hermosos paisajes fotográficos)",
-                "Dinero en efectivo en soles para comprar artesanías directamente a las tejedoras"
+                "Batería externa para teléfono/cámara",
+                "Dinero en efectivo en soles (no hay cajeros ATM en Andamarca)"
             })
         };
 
         var tour3 = new Tour
         {
-            Title = "Expedición Sagrada al Apu Qarhuarazo (5,112 msnm)",
-            Slug = "expedicion-sagrada-apu-qarhuarazo",
-            Subtitle = "Trek de alta montaña hacia el volcán tutelar, bofedales de vicuñas y lagunas glaciares",
-            Description = "Para los amantes del senderismo de montaña y la espiritualidad andina: asciende a los pies del imponente nevado Apu Qarhuarazo (Qarwarasu), la deidad protectora de todo el Valle del Sondondo y Lucanas. Caminarás entre manadas de vicuñas silvestres, bofedales habitados por aves altoandinas y glaciares relictos. Celebraremos un tradicional 'Pago a la Tierra' guiado por un pampa misayoc y acamparemos bajo uno de los cielos estrellados más limpios del planeta.",
-            CategoryId = catMontana.Id,
-            Duration = "3 Días / 2 Noches",
-            DurationDays = 3,
-            PriceSoles = 540.00m,
-            PriceUsd = 148.00m,
-            Difficulty = "Exigente (Trekking de Altura)",
-            AltitudeMax = "5,112 msnm",
-            StartingPoint = "Aucará o Chipao",
-            Featured = true,
-            DisplayOrder = 3,
-            MainImageUrl = "/assets/images/pampa_galeras_vicunas.jpg",
-            GalleryImagesJson = JsonSerializer.Serialize(new[]
-            {
-                "/assets/images/pampa_galeras_vicunas.jpg",
-                "/assets/images/bosque_piedras.jpg",
-                "/assets/images/hero_sondondo.jpg"
-            }),
-            IncludedJson = JsonSerializer.Serialize(new[]
-            {
-                "Transporte 4x4 especializado para pistas de montaña",
-                "Guía de alta montaña certificado AGMP / UIAGM",
-                "Equipo completo de campamento cuatro estaciones (carpas térmicas, colchonetas)",
-                "Cocinero de montaña y pensión completa los 3 días",
-                "Caballos de carga para el equipaje pesado y equipo común",
-                "Ceremonia andina de ofrenda y respeto a la Pachamama",
-                "Pulsioxímetro, oxígeno medicinal y radiocomunicación VHF"
-            }),
-            NotIncludedJson = JsonSerializer.Serialize(new[]
-            {
-                "Bolsa de dormir (sleeping bag -10°C, disponible para alquiler)",
-                "Bastones de trekking (disponibles para alquiler)",
-                "Seguro de viaje contra accidentes de alta montaña"
-            }),
-            RecommendationsJson = JsonSerializer.Serialize(new[]
-            {
-                "Indispensable aclimatación previa de al menos 2 días por encima de 3,000m",
-                "Ropa técnica de montaña (primera capa térmica, polar, chaqueta cortavientos Gore-Tex)",
-                "Guantes térmicos, gorro de lana andina y calcetines gruesos",
-                "Linterna frontal con pilas de repuesto"
-            })
-        };
-
-        var tour4 = new Tour
-        {
-            Title = "Ruta Termo-Medicinal, Cañones y Catarata Limayhuacho",
-            Slug = "ruta-termal-canones-catarata-limayhuacho",
-            Subtitle = "Desconexión total en piscinas termales volcánicas y senderismo por cascadas ocultas",
-            Description = "Un día revitalizante dedicado al bienestar físico y la comunión con las aguas sagradas de Sondondo. Disfruta de un relajante baño en las fuentes termales de Huancas Puquio y Gollpa, cuyas aguas ricas en minerales brotan a más de 38°C ideales para la relajación muscular y articular. Luego, emprenderemos una suave caminata por el cañón hasta la espectacular Catarata de Limayhuacho.",
+            Title = "Minivolcanes de Pachapupum & Termas Medicinales",
+            Slug = "volcan-pachapupum-termas-mayobamba",
+            Subtitle = "Monumento pétreo volcánico de sal y azufre a 4,022 msnm y pozas termomedicinales",
+            Description = "Monumento natural cónico de sal y azufre de 30 metros de altura con cráter de aguas termales en ebullición y pozas termomedicinales curativas ricas en minerales, ubicado en Sacsamarca y en los cañones del río Sondondo.",
             CategoryId = catTermal.Id,
             Duration = "Full Day (8:30 AM - 5:00 PM)",
             DurationDays = 1,
-            PriceSoles = 120.00m,
-            PriceUsd = 33.00m,
+            PriceSoles = 130.00m,
+            PriceUsd = 36.00m,
             Difficulty = "Fácil",
-            AltitudeMax = "3,200 msnm",
-            StartingPoint = "Aucará / Cabana Sur",
+            AltitudeMax = "4,022 msnm",
+            StartingPoint = "Sacsamarca / Chipao, Lucanas",
             Featured = false,
-            DisplayOrder = 4,
+            DisplayOrder = 3,
             MainImageUrl = "/assets/images/volcan_pachapupum.jpg",
             GalleryImagesJson = JsonSerializer.Serialize(new[]
             {
@@ -268,8 +268,8 @@ public static class DbInitializer
             IncludedJson = JsonSerializer.Serialize(new[]
             {
                 "Transporte turístico privado para todo el itinerario",
-                "Entrada a los baños termales medicinales de Huancas Puquio y Gollpa",
-                "Guía local conocedor de las propiedades botánicas y medicinales",
+                "Entrada a las pozas termales medicinales de Pachapupum",
+                "Guía local conocedor de las propiedades botánicas y minerales",
                 "Almuerzo típico regional con productos orgánicos del valle",
                 "Degustación de quesos andinos madurados de la cuenca de Sondondo"
             }),
@@ -281,24 +281,65 @@ public static class DbInitializer
             RecommendationsJson = JsonSerializer.Serialize(new[]
             {
                 "Llevar ropa de baño, toalla de secado rápido y sandalias",
-                "Ropa ligera para el día y un abrigo ligero para el retorno",
+                "Ropa ligera para el día y un abrigo para el retorno",
                 "Bolsa impermeable para dispositivos móviles"
+            })
+        };
+
+        var tour4 = new Tour
+        {
+            Title = "Trek Pampa Galeras & Bofedales del Apu Qarhuarazo",
+            Slug = "apu-qarhuarazo-pampa-galeras",
+            Subtitle = "Travesía por la Reserva Nacional Pampa Galeras, manadas de vicuñas y nevado tutelar",
+            Description = "En el km 90 de la vía se encuentra la Reserva Nacional Bárbara d'Achille Pampa Galeras, que alberga la mayor población de vicuñas del país. Travesía de alta montaña por bofedales y pastizales andinos bajo la protección del nevado Apu Qarhuarazo.",
+            CategoryId = catMontana.Id,
+            Duration = "2 Días",
+            DurationDays = 2,
+            PriceSoles = 180.00m,
+            PriceUsd = 49.00m,
+            Difficulty = "Exigente",
+            AltitudeMax = "4,800 msnm",
+            StartingPoint = "Pampa Galeras / Lucanas, Ayacucho",
+            Featured = false,
+            DisplayOrder = 4,
+            MainImageUrl = "/assets/images/pampa_galeras_vicunas.jpg",
+            GalleryImagesJson = JsonSerializer.Serialize(new[]
+            {
+                "/assets/images/pampa_galeras_vicunas.jpg",
+                "/assets/images/pueblo_andamarca.jpg",
+                "/assets/images/rio_sondondo.jpg"
+            }),
+            IncludedJson = JsonSerializer.Serialize(new[]
+            {
+                "Transporte turístico privado para todo el circuito",
+                "Ingreso a la Reserva Nacional Pampa Galeras",
+                "Guía de montaña local con botiquín y oxígeno",
+                "Alimentación completa durante la expedición"
+            }),
+            NotIncludedJson = JsonSerializer.Serialize(new[]
+            {
+                "Gastos personales adicionales"
+            }),
+            RecommendationsJson = JsonSerializer.Serialize(new[]
+            {
+                "Ropa térmica de abrigo para puna alta",
+                "Zapatos de trekking y protección solar"
             })
         };
 
         var tour5 = new Tour
         {
-            Title = "Gran Travesía Valle del Sondondo: Tesoro Escondido de Ayacucho",
+            Title = "Gran Travesía Valle del Sondondo: Ruta de la Mancomunidad",
             Slug = "gran-travesia-valle-del-sondondo",
-            Subtitle = "El circuito más completo: Cóndores, Andenerías, Termales, Pueblos Mágicos y Gastronomía",
-            Description = "La travesía definitiva de 4 días y 3 noches para quienes quieren explorar a fondo uno de los secretos mejor guardados de los Andes peruanos. Cubre Aucará, Andamarca, Cabana Sur, Chipao, Mayobamba y Puquio. Combina avistamiento de cóndores, baños termales, senderos incas, templos con retablos coloniales y convivencia con comunidades quechuas campesinas galardonadas como Guardianes de la Biodiversidad.",
+            Subtitle = "La expedición definitiva por los seis distritos ancestrales de los Hurin Rukanas",
+            Description = "La travesía integral más completa de los Andes ayacuchanos a través de la mancomunidad de seis distritos (Andamarca, Aucará, Cabana Sur, Chipao, Mayobamba y Sondondo). Combina el avistamiento matutino de cóndores, las terrazas vivas de Andamarca, la fortaleza de Caniche, los baños termales, la laguna y el pueblo tradicional, con guías nativos quechuahablantes.",
             CategoryId = catCultura.Id,
             Duration = "4 Días / 3 Noches",
             DurationDays = 4,
             PriceSoles = 720.00m,
             PriceUsd = 195.00m,
             Difficulty = "Moderado",
-            AltitudeMax = "3,650 msnm",
+            AltitudeMax = "3,459 msnm",
             StartingPoint = "Puquio, Nasca o Ayacucho",
             Featured = true,
             DisplayOrder = 5,
@@ -308,7 +349,7 @@ public static class DbInitializer
                 "/assets/images/hero_sondondo.jpg",
                 "/assets/images/andenes_andamarca.jpg",
                 "/assets/images/condor_mayobamba.jpg",
-                "/assets/images/volcan_pachapupum.jpg"
+                "/assets/images/danza_tijeras.jpg"
             }),
             IncludedJson = JsonSerializer.Serialize(new[]
             {
@@ -317,7 +358,7 @@ public static class DbInitializer
                 "Todas las comidas incluidas (desayunos, almuerzos campestres, cenas)",
                 "Guía oficial de turismo residente con amplia experiencia en la zona",
                 "Ingresos a todos los atractivos, miradores, termas y sitios arqueológicos",
-                "Noche cultural con música andina tradicional en vivo y cata de pisco",
+                "Noche cultural con música andina tradicional en vivo",
                 "Seguro de asistencia médica local y botiquín completo"
             }),
             NotIncludedJson = JsonSerializer.Serialize(new[]
@@ -327,6 +368,7 @@ public static class DbInitializer
             RecommendationsJson = JsonSerializer.Serialize(new[]
             {
                 "Llevar maleta pequeña o mochila de 40L para mayor comodidad en traslados",
+                "Llevar dinero en efectivo en soles (único banco en Cabana)",
                 "Disposición para desconectarse y disfrutar de la calidez de la comunidad andina"
             })
         };
@@ -339,20 +381,20 @@ public static class DbInitializer
         {
             TourId = tour1.Id,
             DayNumber = 1,
-            Title = "Rumbo al Cañón de Mayobamba y Ccochapanpa",
-            Description = "Partida temprana desde el hotel hacia el mirador natural de Mayobamba. Despliegue de binoculares y telescopios para observar el vuelo matutino de los cóndores andinos. Caminata suave hacia la laguna sagrada de Ccochapanpa y almuerzo campestre con vista panorámica del cañón.",
-            Activities = "Avistamiento ornitológico de cóndores, fotografía de paisaje, interpretación de flora andina y charla sobre conservación.",
+            Title = "Mirador de Mayobamba y Cañón del Cóndor",
+            Description = "Partida temprana hacia el mirador natural de Mayobamba. Despliegue de binoculares para observar el vuelo de hasta 35 cóndores andinos sobrevolando a pocos metros en su hábitat silvestre.",
+            Activities = "Avistamiento ornitológico de cóndores, visita al cañón, mitos del Apu Huamaní e interpretación de flora.",
             Meals = "Almuerzo campestre andino, mates calientes de hierbas medicinales.",
-            Accommodation = "Retorno a hotel de origen al finalizar la tarde."
+            Accommodation = "Retorno al pueblo de origen al finalizar la tarde."
         };
 
         var it2_1 = new ItineraryDay
         {
             TourId = tour2.Id,
             DayNumber = 1,
-            Title = "Aucará y Andenerías Majestuosas de Andamarca",
-            Description = "Salida con dirección al distrito histórico de Andamarca. Recorrido por el colosal sistema de terrazas agrícolas escalonadas prehispánicas. Visita a la Casa del Saber de los Antamarkas y al centro arqueológico de Caniche.",
-            Activities = "Caminata por senderos preíncas, visita a museo comunal, diálogo con agricultores locales sobre semillas andinas.",
+            Title = "Andenes Prehispánicos de Andamarca y Sitio Arqueológico Caniche",
+            Description = "Salida hacia Andamarca. Recorrido vivencial por el colosal sistema de andenes en uso agrícola. Ascenso al complejo arqueológico de Caniche para apreciar sus murallas Wari de 12 metros, colcas y cantería ceremonial inca.",
+            Activities = "Caminata por terrazas vivas, exploración arqueológica de Caniche y diálogo con agricultores sobre agrobiodiversidad.",
             Meals = "Almuerzo típico en Andamarca, cena comunitaria tradicional.",
             Accommodation = "Posada rural con encanto en Andamarca."
         };
@@ -362,46 +404,13 @@ public static class DbInitializer
             TourId = tour2.Id,
             DayNumber = 2,
             Title = "Danza de las Tijeras y Cabana Sur",
-            Description = "Desayuno campesino. Espectacular encuentro privado con maestros de la Danza de las Tijeras, aprendiendo el significado místico del chasquido del acero y la conexión con los Apus. Traslado a Cabana Sur para apreciar su templo colonial y retorno.",
-            Activities = "Demostración de danza milenaria, visita a la plaza e iglesia histórica de Cabana Sur.",
+            Description = "Desayuno campesino. Demostración vivencial de la Danza de las Tijeras con maestro galas. Traslado a Cabana Sur para apreciar su templo colonial y la plaza histórica.",
+            Activities = "Demostración de danza milenaria (Patrimonio UNESCO), visita histórica a Cabana Sur.",
             Meals = "Desayuno andino, almuerzo regional.",
-            Accommodation = "Fin del tour y retorno a punto inicial."
+            Accommodation = "Fin del tour y retorno al punto de inicio."
         };
 
-        var it3_1 = new ItineraryDay
-        {
-            TourId = tour3.Id,
-            DayNumber = 1,
-            Title = "Aproximación al Macizo del Qarhuarazo",
-            Description = "Traslado en 4x4 hacia las faldas del Apu Qarhuarazo cruzando bofedales de altura. Inicio del trekking gradual hasta el Campamento Base a 4,400 msnm. Avistamiento de manadas de vicuñas protegidas por la comunidad.",
-            Activities = "Trekking de aclimatación, armado de campamento, fotografía de atardecer andino.",
-            Meals = "Box lunch energético, cena caliente de montaña.",
-            Accommodation = "Campamento de alta montaña en carpas térmicas."
-        };
-
-        var it3_2 = new ItineraryDay
-        {
-            TourId = tour3.Id,
-            DayNumber = 2,
-            Title = "Ascenso a la Cumbre Menor y Ceremonia del Pago",
-            Description = "Jornada cumbre. Salida al alba para alcanzar el collado y arista rocosa con vista a los glaciares y a todo el Valle del Sondondo. En la cúspide se realiza el ritual del Pago a la Tierra con hojas sagradas de coca y ofrendas. Descenso seguro.",
-            Activities = "Ascenso técnico moderado, meditación y pago a la tierra, descenso al campamento.",
-            Meals = "Desayuno de montaña, refrigerio de altura, cena reparadora.",
-            Accommodation = "Campamento base o refugio comunal."
-        };
-
-        var it3_3 = new ItineraryDay
-        {
-            TourId = tour3.Id,
-            DayNumber = 3,
-            Title = "Lagunas Glaciares y Descenso al Valle",
-            Description = "Caminata de retorno visitando las lagunas turquesas alimentadas por el deshielo. Despedida del Apu y traslado de regreso al valle para un reconfortante baño termal de despedida.",
-            Activities = "Caminata escénica, visita a lagunas, traslado en 4x4.",
-            Meals = "Desayuno en campamento, almuerzo de celebración en el valle.",
-            Accommodation = "Retorno a la ciudad."
-        };
-
-        await context.ItineraryDays.AddRangeAsync(it1_1, it2_1, it2_2, it3_1, it3_2, it3_3);
+        await context.ItineraryDays.AddRangeAsync(it1_1, it2_1, it2_2);
 
         // 4. Testimonials
         var t1 = new Testimonial
@@ -409,7 +418,7 @@ public static class DbInitializer
             AuthorName = "Valeria Monteagudo",
             Location = "Lima, Perú",
             Rating = 5,
-            Comment = "El Valle del Sondondo es mágico y casi virgen. Ver a los cóndores volar tan cerca en Mayobamba me sacó lágrimas de la emoción. El equipo de Valle del Sondondo Expeditions cuidó cada detalle, la comida deliciosa y el guía nos hizo sentir en familia.",
+            Comment = "El Valle del Sondondo es mágico y casi virgen. Ver a los cóndores volar tan cerca en Mayobamba y luego observarlos en el cañón me sacó lágrimas de la emoción. El equipo local cuidó cada detalle y la comida deliciosa.",
             TourName = "Kuntur Ñan: El Majestuoso Vuelo del Cóndor",
             Date = DateTime.UtcNow.AddDays(-15)
         };
@@ -419,8 +428,8 @@ public static class DbInitializer
             AuthorName = "Marc & Sophie Dupont",
             Location = "Lyon, Francia",
             Rating = 5,
-            Comment = "Una experiencia auténtica, lejos del turismo masivo. Las terrazas de Andamarca son más impresionantes que muchos sitios famosos. La demostración de los danzantes de tijeras fue algo electrizante. ¡100% recomendado!",
-            TourName = "Gran Circuito Andenes Vivos de Andamarca",
+            Comment = "Una experiencia auténtica, lejos del turismo masivo. Las terrazas vivas de Andamarca y la imponente fortaleza de Caniche con sus murallas de 12 metros son más impresionantes que muchos sitios famosos. ¡100% recomendado!",
+            TourName = "Andenes Vivos de Andamarca, Caniche y Danza de Tijeras",
             Date = DateTime.UtcNow.AddDays(-28)
         };
 
@@ -429,7 +438,7 @@ public static class DbInitializer
             AuthorName = "Carlos Mendoza R.",
             Location = "Arequipa, Perú",
             Rating = 5,
-            Comment = "Hicimos la travesía completa de 4 días. Todo el valle es un espectáculo: baños termales limpios, gente entrañable y paisajes infinitos. La logística de transporte y posadas estuvo impecable.",
+            Comment = "Hicimos la travesía completa de 4 días por toda la mancomunidad. Los baños termales de Pachapupum, las vicuñas de Pampa Galeras y los andenes de Andamarca nos fascinaron.",
             TourName = "Gran Travesía Valle del Sondondo",
             Date = DateTime.UtcNow.AddDays(-42)
         };

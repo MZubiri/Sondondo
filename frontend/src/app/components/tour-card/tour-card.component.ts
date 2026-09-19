@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TourSummary } from '../../models/tour.model';
+import { TranslationService } from '../../services/translation.service';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
@@ -10,10 +11,10 @@ import { IconComponent } from '../icon/icon.component';
   imports: [CommonModule, RouterModule, IconComponent],
   template: `
     <article class="tour-card">
-      <a [routerLink]="['/tour', tour.slug]" class="card-media" [attr.aria-label]="tour.title">
+      <a [routerLink]="['/tour', tour.slug]" class="card-media" [attr.aria-label]="getTourTitle()">
         <img 
           [src]="tour.mainImageUrl" 
-          [alt]="tour.title" 
+          [alt]="getTourTitle()" 
           loading="lazy" 
           class="card-img"
           (error)="onImageError($event)" />
@@ -23,7 +24,7 @@ import { IconComponent } from '../icon/icon.component';
         <div class="card-meta">
           <span class="meta-item">
             <app-icon name="clock" [size]="14"></app-icon>
-            {{ tour.duration }}
+            {{ getTourDuration() }}
           </span>
           <span class="meta-dot">•</span>
           <span class="meta-item">
@@ -33,17 +34,17 @@ import { IconComponent } from '../icon/icon.component';
         </div>
 
         <h3 class="card-title">
-          <a [routerLink]="['/tour', tour.slug]">{{ tour.title }}</a>
+          <a [routerLink]="['/tour', tour.slug]">{{ getTourTitle() }}</a>
         </h3>
 
         <div class="card-footer">
           <div class="price-box">
-            <span class="price-label">Precio</span>
+            <span class="price-label">{{ ts.t('tours.from') }}</span>
             <span class="price-val">
               @if (tour.priceSoles > 0) {
                 S/ {{ tour.priceSoles }}
               } @else {
-                Consultar
+                {{ ts.t('tours.book') }}
               }
             </span>
           </div>
@@ -54,7 +55,7 @@ import { IconComponent } from '../icon/icon.component';
               (click)="onBookClick.emit(tour)" 
               class="btn btn-primary btn-sm"
               title="Consultar por este recorrido">
-              <span>Consultar</span>
+              <span>{{ ts.t('tours.book') }}</span>
             </button>
           </div>
         </div>
@@ -174,8 +175,21 @@ import { IconComponent } from '../icon/icon.component';
   `]
 })
 export class TourCardComponent {
+  public ts = inject(TranslationService);
   @Input({ required: true }) tour!: TourSummary;
   @Output() onBookClick = new EventEmitter<TourSummary>();
+
+  getTourTitle(): string {
+    const key = `tour.${this.tour.id}.title`;
+    const trans = this.ts.t(key);
+    return trans !== key ? trans : this.tour.title;
+  }
+
+  getTourDuration(): string {
+    const key = `tour.${this.tour.id}.duration`;
+    const trans = this.ts.t(key);
+    return trans !== key ? trans : this.tour.duration;
+  }
 
   onImageError(e: Event): void {
     const target = e.target as HTMLImageElement;

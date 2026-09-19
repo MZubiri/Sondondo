@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { TourDetailComponent } from './pages/tour-detail/tour-detail.component';
+import { PaymentStatusComponent } from './pages/payment-status/payment-status.component';
 import { AdminLoginComponent } from './pages/admin/admin-login.component';
 import { AdminLayoutComponent } from './pages/admin/admin-layout.component';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard.component';
@@ -20,6 +21,16 @@ export const routes: Routes = [
     path: 'tour/:slug',
     component: TourDetailComponent,
     title: 'Detalle de Tour | Valle del Sondondo Expeditions'
+  },
+  {
+    path: 'pago/resultado',
+    component: PaymentStatusComponent,
+    title: 'Estado del Pago | Valle del Sondondo Expeditions'
+  },
+  {
+    path: 'pago/:status',
+    component: PaymentStatusComponent,
+    title: 'Resultado de Pago | Valle del Sondondo Expeditions'
   },
 
   // Admin Routes

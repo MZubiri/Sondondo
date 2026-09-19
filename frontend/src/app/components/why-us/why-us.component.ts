@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslationService } from '../../services/translation.service';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
@@ -10,11 +11,10 @@ import { IconComponent } from '../icon/icon.component';
     <section class="why-us-section" id="nosotros">
       <div class="container">
         <div class="section-title-wrap">
-          <span class="section-tag">Compromiso & Manera de Viajar</span>
-          <h2 class="section-title">¿Por Qué Expediciones con Guías Locales?</h2>
+          <span class="section-tag">{{ ts.t('why.badge') }}</span>
+          <h2 class="section-title">{{ ts.t('why.title') }}</h2>
           <p class="section-subtitle">
-            No somos intermediarios de oficina. Operamos desde el corazón de Lucanas, 
-            con baquianos e informadores comunales que conocen cada andén, cañón y sendero ancestral.
+            {{ ts.t('why.subtitle') }}
           </p>
         </div>
 
@@ -25,12 +25,10 @@ import { IconComponent } from '../icon/icon.component';
               <div class="arg-icon">
                 <app-icon name="compass" [size]="20" stroke="var(--forest-900)"></app-icon>
               </div>
-              <h3 class="arg-title">Guías Nativos & Quechuahablantes</h3>
+              <h3 class="arg-title">{{ ts.t('why.point1Title') }}</h3>
             </div>
             <p class="arg-desc">
-              Pobladores nacidos y criados en Andamarca, Aucará y Mayobamba. Su conocimiento sobre 
-              el Qapaq Ñan, la historia de los ayllus prehispánicos y los hábitos de vuelo del cóndor 
-              brindan una experiencia cultural auténtica y segura.
+              {{ ts.t('why.point1Desc') }}
             </p>
           </div>
 
@@ -39,12 +37,10 @@ import { IconComponent } from '../icon/icon.component';
               <div class="arg-icon">
                 <app-icon name="feather" [size]="20" stroke="var(--accent-clay)"></app-icon>
               </div>
-              <h3 class="arg-title">Turismo Comunitario & Respeto</h3>
+              <h3 class="arg-title">{{ ts.t('why.point2Title') }}</h3>
             </div>
             <p class="arg-desc">
-              Cada expedición retribuye de forma justa y directa a las comunidades campesinas del valle: 
-              hospedajes familiares, cocineras tradicionales y arrieros locales, respetando la fiesta del 
-              agua y los ciclos agrícolas de los andenes.
+              {{ ts.t('why.point2Desc') }}
             </p>
           </div>
 
@@ -53,11 +49,10 @@ import { IconComponent } from '../icon/icon.component';
               <div class="arg-icon">
                 <app-icon name="shield-check" [size]="20" stroke="var(--forest-900)"></app-icon>
               </div>
-              <h3 class="arg-title">Seguridad en Altura & Asistencia</h3>
+              <h3 class="arg-title">{{ ts.t('why.point3Title') }}</h3>
             </div>
             <p class="arg-desc">
-              Protocolos de aclimatación para alturas de 2,500 a 4,200 msnm (Pachapupum y Pampa Galeras), 
-              transporte turístico privado seguro, botiquín de primeros auxilios y coordinación permanente en territorio.
+              {{ ts.t('why.point3Desc') }}
             </p>
           </div>
         </div>
@@ -167,4 +162,6 @@ import { IconComponent } from '../icon/icon.component';
     }
   `]
 })
-export class WhyUsComponent {}
+export class WhyUsComponent {
+  public ts = inject(TranslationService);
+}

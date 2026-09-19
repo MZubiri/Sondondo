@@ -129,6 +129,95 @@ import { CommonModule } from '@angular/common';
       @if (name === 'whatsapp') {
         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
       }
+
+      <!-- Navigation / Route -->
+      @if (name === 'navigation') {
+        <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+      }
+
+      <!-- Bank / Dollar / Cash -->
+      @if (name === 'bank' || name === 'cash') {
+        <line x1="12" y1="1" x2="12" y2="23"></line>
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+      }
+
+      <!-- Info / Alert -->
+      @if (name === 'info') {
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      }
+
+      <!-- Sun / Climate -->
+      @if (name === 'sun') {
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      }
+
+      <!-- WiFi -->
+      @if (name === 'wifi') {
+        <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+        <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      }
+
+      <!-- TV -->
+      @if (name === 'tv') {
+        <rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect>
+        <polyline points="17 2 12 7 7 2"></polyline>
+      }
+
+      <!-- Bed -->
+      @if (name === 'bed') {
+        <path d="M2 4v16"></path>
+        <path d="M2 8h18a2 2 0 0 1 2 2v10"></path>
+        <path d="M2 17h20"></path>
+        <path d="M6 8v9"></path>
+      }
+
+      <!-- Bath / Shower -->
+      @if (name === 'bath' || name === 'shower') {
+        <path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1Z"></path>
+        <path d="M6 12V5a2 2 0 0 1 2-2h3v2"></path>
+        <line x1="4" y1="21" x2="5" y2="19"></line>
+        <line x1="20" y1="21" x2="19" y2="19"></line>
+      }
+
+      <!-- Car / Parking -->
+      @if (name === 'car' || name === 'parking') {
+        <rect x="1" y="3" width="22" height="18" rx="3" ry="3"></rect>
+        <path d="M9 17V7h4a3 3 0 0 1 0 6H9"></path>
+      }
+
+      <!-- Coffee -->
+      @if (name === 'coffee') {
+        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+        <line x1="6" y1="1" x2="6" y2="4"></line>
+        <line x1="10" y1="1" x2="10" y2="4"></line>
+        <line x1="14" y1="1" x2="14" y2="4"></line>
+      }
+
+      <!-- Credit Card / Payment -->
+      @if (name === 'credit-card' || name === 'card') {
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+        <line x1="1" y1="10" x2="23" y2="10"></line>
+      }
+
+      <!-- External Link -->
+      @if (name === 'external-link') {
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <line x1="10" y1="14" x2="21" y2="3"></line>
+      }
     </svg>
   `
 })
