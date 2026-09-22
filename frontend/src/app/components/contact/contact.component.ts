@@ -158,8 +158,9 @@ import { IconComponent } from '../icon/icon.component';
   styles: [`
     .contact-section {
       padding: 6rem 0;
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       border-top: 1px solid var(--border-light);
+      transition: background 0.3s ease;
     }
 
     .contact-layout {
@@ -179,7 +180,7 @@ import { IconComponent } from '../icon/icon.component';
     /* Tarjeta WhatsApp Directo */
     .wa-direct-card {
       background: var(--forest-50);
-      border: 1px solid rgba(27, 53, 39, 0.15);
+      border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
       padding: 1.5rem;
       margin-bottom: 2rem;

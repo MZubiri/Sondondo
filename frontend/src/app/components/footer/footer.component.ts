@@ -65,10 +65,11 @@ import { IconComponent } from '../icon/icon.component';
   `,
   styles: [`
     .footer-wrap {
-      background: var(--earth-950);
+      background: var(--footer-bg, var(--earth-950));
       color: #EDE8DE;
       padding-top: 4rem;
       border-top: 1px solid var(--border-light);
+      transition: background 0.3s ease;
     }
 
     .footer-grid {

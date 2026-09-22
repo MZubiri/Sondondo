@@ -186,9 +186,10 @@ import { TranslationService } from '../../services/translation.service';
   styles: [`
     .destination-section {
       padding: 6.5rem 0;
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       border-top: 1px solid var(--border-light);
       border-bottom: 1px solid var(--border-light);
+      transition: background 0.3s ease;
     }
 
     .editorial-feature {
@@ -258,7 +259,7 @@ import { TranslationService } from '../../services/translation.service';
     }
 
     .attraction-card {
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
       overflow: hidden;
@@ -271,7 +272,7 @@ import { TranslationService } from '../../services/translation.service';
     .attraction-card:hover {
       transform: translateY(-4px);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
-      border-color: rgba(27, 53, 39, 0.25);
+      border-color: var(--accent-clay);
     }
 
     .attraction-img-box {
@@ -336,7 +337,7 @@ import { TranslationService } from '../../services/translation.service';
       background: var(--forest-50);
       padding: 0.2rem 0.55rem;
       border-radius: var(--radius-xs);
-      border: 1px solid rgba(27, 53, 39, 0.12);
+      border: 1px solid var(--border-light);
     }
 
     .attraction-name {

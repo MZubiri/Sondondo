@@ -211,7 +211,7 @@ import { IconComponent } from '../icon/icon.component';
       grid-template-columns: 1.2fr 1fr;
       gap: 2.5rem;
       align-items: center;
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
       overflow: hidden;

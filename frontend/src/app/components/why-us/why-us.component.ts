@@ -99,7 +99,7 @@ import { IconComponent } from '../icon/icon.component';
       width: 38px;
       height: 38px;
       border-radius: var(--radius-xs);
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       border: 1px solid var(--border-light);
       display: flex;
       align-items: center;
@@ -122,7 +122,7 @@ import { IconComponent } from '../icon/icon.component';
     }
 
     .philosophy-strip {
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
       padding: 2.2rem 3rem;

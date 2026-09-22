@@ -77,7 +77,7 @@ import { IconComponent } from '../icon/icon.component';
     }
 
     .testimonial-card {
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
       padding: 2rem;
@@ -127,7 +127,7 @@ import { IconComponent } from '../icon/icon.component';
     }
 
     .community-box {
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
       padding: 2rem 2.5rem;

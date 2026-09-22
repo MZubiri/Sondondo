@@ -54,35 +54,16 @@ export interface PaymentTarget {
           </div>
         </div>
 
-        <!-- Payment Mode Selector: 100% or 50% deposit -->
-        <div class="payment-mode-selector">
-          <label class="mode-card" [class.active]="paymentMode() === 'full'">
-            <input 
-              type="radio" 
-              name="paymentMode" 
-              value="full" 
-              [checked]="paymentMode() === 'full'" 
-              (change)="setPaymentMode('full')" />
-            <div class="mode-info">
-              <strong>{{ ts.t('pay.modeFull') }}</strong>
-              <span>{{ ts.t('pay.modeFullDesc') }}</span>
-            </div>
-            <span class="mode-price">S/ {{ calculateTotal() }}</span>
-          </label>
-
-          <label class="mode-card" [class.active]="paymentMode() === 'deposit'">
-            <input 
-              type="radio" 
-              name="paymentMode" 
-              value="deposit" 
-              [checked]="paymentMode() === 'deposit'" 
-              (change)="setPaymentMode('deposit')" />
-            <div class="mode-info">
-              <strong>{{ ts.t('pay.modeDeposit') }}</strong>
-              <span>{{ ts.t('pay.modeDepositDesc') }}</span>
-            </div>
-            <span class="mode-price">S/ {{ calculateTotal() / 2 }}</span>
-          </label>
+        <!-- Seña de Reserva (50%) Banner -->
+        <div class="deposit-notice-card">
+          <div class="deposit-badge-row">
+            <span class="badge-deposit">
+              <app-icon name="shield-check" [size]="15" stroke="#FFFFFF"></app-icon>
+              {{ ts.t('pay.depositBadge') }}
+            </span>
+            <span class="deposit-percent-pill">50% Anticipo</span>
+          </div>
+          <p class="deposit-notice-text">{{ ts.t('pay.depositNotice') }}</p>
         </div>
 
         <!-- Payer Form -->
@@ -152,7 +133,7 @@ export interface PaymentTarget {
               class="form-control" />
           </div>
 
-          <!-- Total Calculation Banner -->
+          <!-- Total Calculation & Deposit Breakdown -->
           <div class="summary-box">
             <div class="summary-line">
               <span>{{ ts.t('pay.totalCalculated') }}</span>
@@ -160,11 +141,12 @@ export interface PaymentTarget {
             </div>
             <div class="summary-line total-highlight">
               <span><strong>{{ ts.t('pay.toPayToday') }}</strong></span>
-              <strong>S/ {{ getPayableAmount() }} PEN</strong>
+              <strong class="deposit-amount-highlight">S/ {{ getPayableAmount() }} PEN</strong>
             </div>
-            @if (paymentMode() === 'deposit') {
-              <span class="saldo-text">{{ ts.t('pay.saldoHint') }} {{ getPayableAmount() }} PEN</span>
-            }
+            <div class="saldo-notice-row">
+              <app-icon name="info" [size]="15" stroke="var(--accent-clay)"></app-icon>
+              <span>{{ ts.t('pay.saldoHint') }} {{ getPayableAmount() }} PEN</span>
+            </div>
           </div>
 
           <!-- Actions -->
@@ -258,33 +240,35 @@ export interface PaymentTarget {
       font-size: 0.75rem;
       font-weight: 700;
       color: #27AE60;
+      letter-spacing: 0.04em;
     }
 
     .modal-title {
-      font-size: 1.45rem;
+      font-size: 1.35rem;
       font-weight: 800;
       color: var(--earth-950);
-      margin: 0;
+      line-height: 1.2;
     }
 
     .modal-subtitle {
-      font-size: 0.88rem;
-      color: var(--earth-600);
-      margin: 0.25rem 0 0 0;
+      font-size: 0.85rem;
+      color: var(--earth-700);
+      margin-top: 0.2rem;
     }
 
     .close-btn {
       background: var(--cream-100);
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius-xs);
-      width: 38px;
-      height: 38px;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      color: var(--earth-900);
+      color: var(--earth-800);
       transition: var(--transition);
+      flex-shrink: 0;
     }
 
     .close-btn:hover {
@@ -293,13 +277,12 @@ export interface PaymentTarget {
 
     .selected-item-box {
       display: flex;
-      align-items: center;
       gap: 1rem;
       background: var(--cream-50);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
       padding: 0.85rem 1rem;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
     }
 
     .target-img {
@@ -339,50 +322,51 @@ export interface PaymentTarget {
       color: var(--forest-900);
     }
 
-    .payment-mode-selector {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.85rem;
+    /* Deposit Notice Card */
+    .deposit-notice-card {
+      background: linear-gradient(135deg, var(--forest-50), var(--cream-100));
+      border: 1px solid var(--border-light);
+      border-left: 4px solid var(--forest-900);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
       margin-bottom: 1.25rem;
     }
 
-    .mode-card {
-      border: 2px solid var(--border-light);
-      border-radius: var(--radius-sm);
-      padding: 0.85rem;
-      cursor: pointer;
+    .deposit-badge-row {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.35rem;
+    }
+
+    .badge-deposit {
+      display: inline-flex;
+      align-items: center;
       gap: 0.35rem;
-      transition: var(--transition);
-      background: #FFFFFF;
-    }
-
-    .mode-card.active {
-      border-color: #009EE3;
-      background: rgba(0, 158, 227, 0.04);
-    }
-
-    .mode-card input {
-      display: none;
-    }
-
-    .mode-info strong {
-      display: block;
-      font-size: 0.88rem;
-      color: var(--earth-950);
-    }
-
-    .mode-info span {
+      background: var(--forest-900);
+      color: #FFFFFF;
       font-size: 0.75rem;
-      color: var(--earth-600);
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-xs);
+      letter-spacing: 0.03em;
     }
 
-    .mode-price {
-      font-size: 1.15rem;
+    .deposit-percent-pill {
+      font-size: 0.76rem;
       font-weight: 800;
-      color: var(--forest-900);
-      margin-top: 0.25rem;
+      color: var(--accent-clay);
+      background: var(--surface-card);
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-light);
+    }
+
+    .deposit-notice-text {
+      font-size: 0.82rem;
+      color: var(--earth-800);
+      line-height: 1.45;
+      margin: 0;
     }
 
     .form-row {
@@ -436,7 +420,7 @@ export interface PaymentTarget {
       background: var(--cream-100);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
-      padding: 1rem;
+      padding: 1.1rem;
       margin: 1rem 0 1.25rem 0;
     }
 
@@ -449,33 +433,49 @@ export interface PaymentTarget {
     }
 
     .total-highlight {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       color: var(--forest-900);
       border-top: 1px solid var(--border-light);
-      padding-top: 0.5rem;
-      margin-top: 0.5rem;
+      padding-top: 0.6rem;
+      margin-top: 0.6rem;
+      align-items: center;
     }
 
-    .saldo-text {
-      font-size: 0.78rem;
+    .deposit-amount-highlight {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--forest-900);
+    }
+
+    .saldo-notice-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
       color: var(--accent-clay);
       font-weight: 600;
-      display: block;
-      margin-top: 0.25rem;
+      margin-top: 0.5rem;
+      background: var(--surface-card);
+      padding: 0.45rem 0.75rem;
+      border-radius: var(--radius-xs);
+      border: 1px dashed var(--border-light);
     }
 
     .btn-mercadopago {
       background: #009EE3;
       color: #FFFFFF;
       font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.85rem 1.2rem;
       border: none;
-      padding: 0.8rem;
-      font-size: 0.98rem;
-      display: flex;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.6rem;
+      cursor: pointer;
       transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(0, 158, 227, 0.25);
     }
 
     .btn-mercadopago:hover {
@@ -497,7 +497,7 @@ export interface PaymentTarget {
     .mt-2 { margin-top: 0.6rem; }
 
     @media (max-width: 600px) {
-      .form-row, .payment-mode-selector {
+      .form-row {
         grid-template-columns: 1fr;
       }
       .modal-dialog {
@@ -515,7 +515,6 @@ export class PaymentModalComponent {
   @Input() whatsAppNumber: string = '51966380590';
   @Output() close = new EventEmitter<void>();
 
-  paymentMode = signal<'full' | 'deposit'>('full');
   isLoading = signal(false);
 
   payerForm: FormGroup = this.fb.group({
@@ -526,10 +525,6 @@ export class PaymentModalComponent {
     travelDate: ['']
   });
 
-  setPaymentMode(mode: 'full' | 'deposit'): void {
-    this.paymentMode.set(mode);
-  }
-
   calculateTotal(): number {
     const qty = this.payerForm.get('quantity')?.value || 1;
     return this.target.unitPriceSoles * qty;
@@ -537,7 +532,7 @@ export class PaymentModalComponent {
 
   getPayableAmount(): number {
     const total = this.calculateTotal();
-    return this.paymentMode() === 'deposit' ? Math.round(total / 2) : total;
+    return Math.round(total / 2);
   }
 
   isFieldInvalid(field: string): boolean {
@@ -554,17 +549,16 @@ export class PaymentModalComponent {
     this.isLoading.set(true);
     const formVal = this.payerForm.value;
     const amount = this.getPayableAmount();
-    const isDeposit = this.paymentMode() === 'deposit';
 
     const req: CreatePreferenceRequest = {
-      title: `${this.target.title} (${isDeposit ? 'Seña 50%' : 'Pago Total 100%'})`,
-      description: `Reserva para ${formVal.quantity} ${this.target.type === 'Tour' ? 'persona(s)' : 'noche(s)'} - Fecha: ${formVal.travelDate || 'Por coordinar'}`,
+      title: `${this.target.title} (Seña de Reserva 50%)`,
+      description: `Seña 50% para ${formVal.quantity} ${this.target.type === 'Tour' ? 'persona(s)' : 'noche(s)'} - Fecha: ${formVal.travelDate || 'Por coordinar'} (Saldo restante: S/ ${amount} PEN al llegar)`,
       unitPrice: amount,
       quantity: 1,
       payerName: formVal.name,
       payerEmail: formVal.email,
       payerPhone: formVal.phone,
-      isDepositOnly: isDeposit,
+      isDepositOnly: true,
       paymentCategory: this.target.type,
       tourId: this.target.type === 'Tour' ? this.target.id : undefined,
       roomId: this.target.type === 'HotelRoom' ? this.target.id : undefined,
@@ -574,15 +568,9 @@ export class PaymentModalComponent {
     this.paymentService.createPreference(req).subscribe({
       next: (res) => {
         this.isLoading.set(false);
-        // Redirigir al Checkout de Mercado Pago
         const targetUrl = res.initPoint || res.sandboxInitPoint;
         if (targetUrl) {
-          if (targetUrl.startsWith('http')) {
-            window.location.href = targetUrl;
-          } else {
-            // Ruta interna simulada
-            window.location.href = targetUrl;
-          }
+          window.location.href = targetUrl;
         }
       },
       error: () => {
@@ -594,19 +582,21 @@ export class PaymentModalComponent {
 
   onWhatsAppPay(): void {
     const formVal = this.payerForm.value;
-    const amount = this.getPayableAmount();
-    const modeText = this.paymentMode() === 'deposit' ? 'Seña de Reserva (50%)' : 'Pago Total (100%)';
+    const depositAmount = this.getPayableAmount();
+    const totalAmount = this.calculateTotal();
+
     const text = encodeURIComponent(
       `¡Hola Valle del Sondondo Expeditions! 👋\n` +
-      `Deseo coordinar el pago de mi reserva:\n` +
+      `Deseo coordinar el pago de la *Seña de Reserva (50%)*:\n` +
       `📌 *Ítem:* ${this.target.title} (${this.target.type === 'Tour' ? 'Tour' : 'Hotel Punto Clave'})\n` +
       `👤 *Cliente:* ${formVal.name || 'Viajero'}\n` +
       `📱 *Teléfono:* ${formVal.phone || ''}\n` +
       `📅 *Fecha:* ${formVal.travelDate || 'Por coordinar'}\n` +
       `🔢 *Cantidad:* ${formVal.quantity || 1} ${this.target.type === 'Tour' ? 'persona(s)' : 'noche(s)'}\n` +
-      `💳 *Modalidad:* ${modeText}\n` +
-      `💰 *Monto a Pagar:* S/ ${amount} PEN\n\n` +
-      `Por favor indíquenme las cuentas bancarias o enlace de pago directo.`
+      `💰 *Total del Servicio:* S/ ${totalAmount} PEN\n` +
+      `💳 *Seña a Pagar Hoy (50%):* S/ ${depositAmount} PEN\n` +
+      `💵 *Saldo al Llegar (50%):* S/ ${depositAmount} PEN\n\n` +
+      `Por favor indíquenme las cuentas bancarias o enlace de pago para abonar la seña y confirmar mi cupo.`
     );
     window.open(`https://wa.me/${this.whatsAppNumber}?text=${text}`, '_blank');
   }

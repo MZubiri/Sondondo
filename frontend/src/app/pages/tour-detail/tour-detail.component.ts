@@ -316,7 +316,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
       flex-wrap: wrap;
       gap: 1.5rem;
       padding: 1.1rem 1.6rem;
-      background: rgba(18, 35, 26, 0.85);
+      background: rgba(0, 0, 0, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: var(--radius-sm);
       max-width: fit-content;
@@ -442,22 +442,20 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
     .step-card {
       flex-grow: 1;
       padding: 1.75rem;
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
     }
 
     .step-title {
-      font-size: 1.22rem;
+      font-size: 1.25rem;
       color: var(--earth-950);
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
     }
 
     .step-desc {
-      font-size: 0.95rem;
       color: var(--earth-700);
       line-height: 1.6;
-      margin-bottom: 1rem;
     }
 
     .step-detail-row {
@@ -472,15 +470,14 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
     .inclusions-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
+      gap: 2rem;
     }
 
     .inc-card {
       padding: 2rem;
-      border-radius: var(--radius-lg);
-      background: #FFFFFF;
+      border-radius: var(--radius-sm);
+      background: var(--surface-card, #FFFFFF);
       border: 1px solid var(--border-light);
-      box-shadow: var(--shadow-sm);
     }
 
     .included-box {
@@ -492,11 +489,12 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
     }
 
     .inc-title {
+      font-size: 1.15rem;
+      margin-bottom: 1.25rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 1.2rem;
-      margin-bottom: 1.25rem;
+      font-weight: 700;
     }
 
     .text-success { color: #27AE60; }
@@ -529,12 +527,12 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
       align-items: center;
       gap: 0.5rem;
       padding: 0.6rem 1rem;
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-full);
       font-size: 0.88rem;
       font-weight: 500;
-      color: var(--night-900);
+      color: var(--earth-900);
       box-shadow: var(--shadow-sm);
     }
 
@@ -543,9 +541,10 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
       position: sticky;
       top: 6.5rem;
       padding: 2.2rem;
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       box-shadow: var(--shadow-lg);
-      border: 1.5px solid rgba(192, 57, 43, 0.15);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
     }
 
     .card-price-header {

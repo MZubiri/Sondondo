@@ -189,8 +189,9 @@ import { IconComponent } from '../icon/icon.component';
   styles: [`
     .hotel-section {
       padding: 5rem 0;
-      background: linear-gradient(180deg, #FAF8F5 0%, #F3EFEA 100%);
+      background: var(--hotel-bg, linear-gradient(180deg, var(--cream-50) 0%, var(--section-bg-tint) 100%));
       position: relative;
+      transition: background 0.3s ease;
     }
 
     .section-header {
@@ -214,9 +215,10 @@ import { IconComponent } from '../icon/icon.component';
       text-transform: uppercase;
       letter-spacing: 0.12em;
       color: var(--forest-900);
-      background: rgba(27, 53, 39, 0.08);
+      background: var(--forest-100);
       padding: 0.35rem 0.85rem;
       border-radius: 999px;
+      border: 1px solid var(--border-light);
     }
 
     .stars-badge {
@@ -252,7 +254,7 @@ import { IconComponent } from '../icon/icon.component';
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 1rem;
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-md);
       padding: 1.25rem;
@@ -280,7 +282,7 @@ import { IconComponent } from '../icon/icon.component';
 
     /* Direct Booking Banner */
     .direct-booking-banner {
-      background: linear-gradient(135deg, #1B2B20 0%, #2D4A37 100%);
+      background: linear-gradient(135deg, var(--banner-bg-start, var(--forest-950)) 0%, var(--banner-bg-end, var(--forest-800)) 100%);
       color: #FFFFFF;
       border-radius: var(--radius-md);
       padding: 1.6rem 2rem;
@@ -289,6 +291,7 @@ import { IconComponent } from '../icon/icon.component';
       border: 1px solid rgba(255, 255, 255, 0.1);
       position: relative;
       overflow: hidden;
+      transition: background 0.3s ease;
     }
 
     .direct-badge-pill {
@@ -303,7 +306,7 @@ import { IconComponent } from '../icon/icon.component';
       font-weight: 700;
       letter-spacing: 0.05em;
       text-transform: uppercase;
-      color: #E2CEB8;
+      color: var(--banner-badge-color, var(--hero-kicker-color));
       margin-bottom: 0.6rem;
     }
 
@@ -333,7 +336,7 @@ import { IconComponent } from '../icon/icon.component';
     .perk-tag {
       font-size: 0.82rem;
       font-weight: 600;
-      color: #A3E635;
+      color: var(--banner-perk-color, #A3E635);
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;

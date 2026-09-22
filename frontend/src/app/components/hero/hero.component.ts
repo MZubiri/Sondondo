@@ -57,13 +57,9 @@ import { IconComponent } from '../icon/icon.component';
     .hero-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        180deg,
-        rgba(18, 35, 26, 0.5) 0%,
-        rgba(27, 21, 16, 0.78) 75%,
-        rgba(27, 21, 16, 0.92) 100%
-      );
+      background: var(--hero-overlay);
       pointer-events: none;
+      transition: background 0.4s ease;
     }
 
     .hero-container {
@@ -81,8 +77,9 @@ import { IconComponent } from '../icon/icon.component';
       font-weight: 700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: #E2CEB8;
+      color: var(--hero-kicker-color, #E2CEB8);
       margin-bottom: 1.25rem;
+      transition: color 0.3s ease;
     }
 
     .hero-title {

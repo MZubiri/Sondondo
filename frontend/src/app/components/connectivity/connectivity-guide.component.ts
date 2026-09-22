@@ -161,13 +161,14 @@ import { IconComponent } from '../icon/icon.component';
   styles: [`
     .connectivity-section {
       padding: 6rem 0;
-      background: #FAFAF7;
+      background: var(--section-bg-tint, #FAFAF7);
       border-top: 1px solid var(--border-light);
       border-bottom: 1px solid var(--border-light);
+      transition: background 0.3s ease;
     }
 
     .route-overview-card {
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-md);
       padding: 2.75rem;
@@ -296,7 +297,7 @@ import { IconComponent } from '../icon/icon.component';
     }
 
     .advice-card {
-      background: #FFFFFF;
+      background: var(--surface-card, #FFFFFF);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
       padding: 1.85rem;
@@ -307,7 +308,7 @@ import { IconComponent } from '../icon/icon.component';
     }
 
     .advice-card:hover {
-      border-color: rgba(27, 53, 39, 0.25);
+      border-color: var(--accent-clay);
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     }
 

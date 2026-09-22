@@ -3,11 +3,11 @@
    Inspirado en la geografía del Valle del Sondondo, Lucanas, Ayacucho, Perú
    ========================================================================== */
 
-:root {
-  /* Paleta Editorial Inspirada en Naturaleza */
+:root, [data-theme="editorial"] {
+  /* Tema 1: Paleta Editorial Valle del Sondondo (Inspirada en Naturaleza & Terrazas Andinas) */
   --forest-950: #12231A;
-  --forest-900: #1B3527;              /* Verde bosque profundo */
-  --forest-800: #244634;
+  --forest-900: #1B3527;              /* Verde bosque andino (Botón primario) */
+  --forest-800: #244634;              /* Hover botón primario */
   --forest-700: #2F5943;
   --forest-100: #E6EDE8;
   --forest-50:  #F2F6F3;
@@ -21,19 +21,34 @@
   --earth-200: #DCD4C7;              /* Líneas y bordes finos */
   --earth-100: #EFEAE1;              /* Fondos sutiles alternados */
 
-  --cream-50: #FAF8F5;               /* Fondo lienzo general */
+  --cream-50: #FAF8F5;               /* Fondo lienzo cálido marfil */
   --cream-100: #F4EFE6;
   --cream-200: #EAE3D5;
+  --section-bg-tint: #F3ECE2;
+  --surface-card: #FFFFFF;
+  --nav-bg: rgba(250, 248, 245, 0.96);
 
   --accent-clay: #C85A32;            /* Naranja quemado / arcilla (acento) */
   --accent-clay-hover: #AF4A25;
   --accent-clay-light: #F9ECE6;
+  --accent-highlight: #C85A32;
+
+  /* Hero overlay neutro sin filtro de color en la fotografía */
+  --hero-overlay: linear-gradient(180deg, rgba(15, 18, 16, 0.45) 0%, rgba(15, 18, 16, 0.72) 65%, rgba(15, 18, 16, 0.92) 100%);
+  --hero-kicker-color: #E2CEB8;
+  --footer-bg: #1B1510;
+
+  /* Hoteles */
+  --hotel-bg: linear-gradient(180deg, #FAF8F5 0%, #F3ECE2 100%);
+  --banner-bg-start: #1B3527;
+  --banner-bg-end: #244634;
+  --banner-badge-color: #E2CEB8;
+  --banner-perk-color: #A3E635;
 
   --whatsapp: #1E7E4B;               /* Verde WhatsApp sobrio */
   --whatsapp-hover: #16633A;
 
-  --surface-card: #FFFFFF;
-  --border-light: rgba(60, 49, 39, 0.12);
+  --border-light: rgba(60, 49, 39, 0.14);
   --border-dark: rgba(255, 255, 255, 0.15);
 
   /* Tipografías */
@@ -41,12 +56,12 @@
   --font-serif: 'Georgia', 'Times New Roman', serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Sombras sobrias y sutiles (sin brillos artificiales) */
+  /* Sombras sobrias y sutiles */
   --shadow-subtle: 0 1px 3px rgba(38, 31, 24, 0.05);
   --shadow-card: 0 4px 16px rgba(38, 31, 24, 0.06);
   --shadow-hover: 0 10px 30px rgba(38, 31, 24, 0.09);
 
-  /* Bordes humanos (reducidos, no tipo pastilla flotante) */
+  /* Bordes */
   --radius-xs: 3px;
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -55,6 +70,141 @@
 
   /* Transiciones */
   --transition: all 0.25s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+/* Tema 2: 06. Aire Libre y Natural (#2E4600 forest green, #486B00 grass, #A2C523 lime, #7D4427 earth) */
+[data-theme="aire-libre"] {
+  --forest-950: #152200;
+  --forest-900: #2E4600;              /* Forest green (Botón primario) */
+  --forest-800: #3B5800;              /* Hover botón primario */
+  --forest-700: #486B00;              /* Grass green */
+  --forest-100: #E4F2BE;              /* Lime suave */
+  --forest-50:  #F2F8DF;
+
+  --earth-950: #211208;
+  --earth-900: #351C0E;
+  --earth-800: #522D1A;
+  --earth-700: #5C321B;
+  --earth-500: #7D4427;              /* Earth cálido */
+  --earth-300: #CCA086;
+  --earth-200: #E4CAB9;
+  --earth-100: #F6ECE4;
+
+  --cream-50: #F3F8EA;               /* Fondo lienzo verde natural */
+  --cream-100: #E6F1CE;              /* Verde oliva/lima claro */
+  --cream-200: #D5E7AF;
+  --section-bg-tint: #EAF4D7;
+  --surface-card: #FFFFFF;
+  --nav-bg: rgba(243, 248, 234, 0.96);
+
+  --accent-clay: #7D4427;            /* Acento Earth marrón cálido */
+  --accent-clay-hover: #5E321C;
+  --accent-clay-light: #F7EFE9;
+  --accent-highlight: #A2C523;       /* Lime verde vibrante */
+
+  /* Hero overlay neutro sin filtro de color */
+  --hero-overlay: linear-gradient(180deg, rgba(15, 18, 16, 0.45) 0%, rgba(15, 18, 16, 0.72) 65%, rgba(15, 18, 16, 0.92) 100%);
+  --hero-kicker-color: #D2F24E;       /* Lime brillante para texto de alto contraste */
+  --footer-bg: #1B2900;              /* Verde bosque profundo */
+
+  /* Hoteles */
+  --hotel-bg: linear-gradient(180deg, #F3F8EA 0%, #E6F1CE 100%);
+  --banner-bg-start: #2E4600;
+  --banner-bg-end: #486B00;
+  --banner-badge-color: #D2F24E;
+  --banner-perk-color: #D2F24E;
+
+  --border-light: rgba(72, 107, 0, 0.22);
+}
+
+/* Tema 3: 04. Nítido y Dramático (#505160 thunder cloud, #68829E waterfall, #AEBD38 moss, #598234 meadow) */
+[data-theme="nitido-dramatico"] {
+  --forest-950: #181920;
+  --forest-900: #505160;              /* Thunder cloud (Botón primario) */
+  --forest-800: #3C3D4A;              /* Hover botón primario */
+  --forest-700: #68829E;              /* Waterfall azul */
+  --forest-100: #E1E8F0;
+  --forest-50:  #EFF4F8;
+
+  --earth-950: #16181E;
+  --earth-900: #242730;              /* Slate oscuro / texto */
+  --earth-800: #373B47;
+  --earth-700: #4B5263;
+  --earth-500: #68829E;              /* Waterfall azul cascada */
+  --earth-300: #96ABC1;
+  --earth-200: #C4D3E3;
+  --earth-100: #E6EFF6;
+
+  --cream-50: #EDF3F8;               /* Fondo lienzo glaciar / azul cascada suave */
+  --cream-100: #DDE8F3;              /* Azul cascada suave */
+  --cream-200: #C9DBEC;
+  --section-bg-tint: #E1EDF7;
+  --surface-card: #FFFFFF;
+  --nav-bg: rgba(237, 243, 248, 0.96);
+
+  --accent-clay: #598234;            /* Meadow verde prado */
+  --accent-clay-hover: #456627;
+  --accent-clay-light: #EFF6E8;
+  --accent-highlight: #AEBD38;       /* Moss verde musgo luminoso */
+
+  /* Hero overlay neutro sin filtro de color */
+  --hero-overlay: linear-gradient(180deg, rgba(15, 18, 16, 0.45) 0%, rgba(15, 18, 16, 0.72) 65%, rgba(15, 18, 16, 0.92) 100%);
+  --hero-kicker-color: #D6E74B;       /* Moss brillante */
+  --footer-bg: #1B1E26;              /* Gris noche tormenta */
+
+  /* Hoteles */
+  --hotel-bg: linear-gradient(180deg, #EDF3F8 0%, #DFE8F3 100%);
+  --banner-bg-start: #505160;
+  --banner-bg-end: #68829E;
+  --banner-badge-color: #AEBD38;
+  --banner-perk-color: #D6E74B;
+
+  --border-light: rgba(104, 130, 158, 0.24);
+}
+
+/* Tema 4: 11. Fresco y Enérgico (#34675C pine, #4CB5F5 blue sky, #B7B8B6 granite, #B3C100 fields) */
+[data-theme="fresco-energico"] {
+  --forest-950: #10211D;
+  --forest-900: #34675C;              /* Pine verde azulado (Botón primario) */
+  --forest-800: #264E46;              /* Hover botón primario */
+  --forest-700: #4CB5F5;              /* Blue Sky */
+  --forest-100: #D6EFEB;
+  --forest-50:  #EAF7F4;
+
+  --earth-950: #141C1A;
+  --earth-900: #202D2A;              /* Pizarra profunda */
+  --earth-800: #3A4543;
+  --earth-700: #4B5B58;
+  --earth-500: #748A85;
+  --earth-300: #B7B8B6;              /* Granite gris andino */
+  --earth-200: #D1D7D5;
+  --earth-100: #E6ECE9;
+
+  --cream-50: #E8F5FC;               /* Fondo lienzo celeste andino fresco */
+  --cream-100: #D2ECFA;              /* Celeste andino suave */
+  --cream-200: #B9E1F7;
+  --section-bg-tint: #DBF1FC;
+  --surface-card: #FFFFFF;
+  --nav-bg: rgba(232, 245, 252, 0.96);
+
+  --accent-clay: #1997DF;            /* Blue Sky enérgico */
+  --accent-clay-hover: #1277B1;
+  --accent-clay-light: #E4F4FC;
+  --accent-highlight: #B3C100;       /* Fields amarillo lima enérgico */
+
+  /* Hero overlay neutro sin filtro de color */
+  --hero-overlay: linear-gradient(180deg, rgba(15, 18, 16, 0.45) 0%, rgba(15, 18, 16, 0.72) 65%, rgba(15, 18, 16, 0.92) 100%);
+  --hero-kicker-color: #E2F216;       /* Fields amarillo luminoso */
+  --footer-bg: #112420;              /* Pine profundo noche */
+
+  /* Hoteles */
+  --hotel-bg: linear-gradient(180deg, #E8F5FC 0%, #D2ECFA 100%);
+  --banner-bg-start: #34675C;
+  --banner-bg-end: #1D3A34;
+  --banner-badge-color: #4CB5F5;
+  --banner-perk-color: #B3C100;
+
+  --border-light: rgba(76, 181, 245, 0.28);
 }
 
 /* Reset y Base */
@@ -142,14 +292,15 @@ button, input, textarea, select {
 .btn-primary {
   background-color: var(--forest-900);
   color: #FFFFFF;
-  border-color: var(--forest-950);
+  border-color: var(--forest-900);
 }
 
 .btn-primary:hover {
   background-color: var(--forest-800);
+  border-color: var(--forest-800);
   color: #FFFFFF;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(27, 53, 39, 0.2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 
 .btn-accent {
@@ -160,20 +311,23 @@ button, input, textarea, select {
 
 .btn-accent:hover {
   background-color: var(--accent-clay-hover);
+  border-color: var(--accent-clay-hover);
   color: #FFFFFF;
   transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 
 .btn-secondary {
-  background-color: #FFFFFF;
+  background-color: var(--surface-card, #FFFFFF);
   color: var(--earth-900);
-  border-color: var(--earth-200);
+  border-color: var(--border-light);
   box-shadow: var(--shadow-subtle);
 }
 
 .btn-secondary:hover {
   background-color: var(--cream-100);
-  border-color: var(--earth-300);
+  border-color: var(--accent-clay);
+  color: var(--accent-clay);
   transform: translateY(-1px);
 }
 
