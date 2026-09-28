@@ -6,8 +6,19 @@ export interface AdminUser {
   expiresAt: string;
 }
 
+export interface PassengerManifestItem {
+  id: string;
+  fullName: string;
+  documentType: 'DNI' | 'Pasaporte' | 'Carnet Ext.';
+  documentNumber: string;
+  nationality: string;
+  age: number;
+  emergencyPhone: string;
+}
+
 export interface AdminBooking {
   id: number;
+  voucherCode?: string;
   tourId?: number;
   tourTitle: string;
   fullName: string;
@@ -19,6 +30,19 @@ export interface AdminBooking {
   status: 'Pending' | 'Contacted' | 'Confirmed' | 'Cancelled';
   createdAt: string;
   whatsAppDirectUrl: string;
+
+  // Payments & receipts
+  paymentMethod?: 'MercadoPago' | 'Yape' | 'Plin' | 'Transferencia BCP' | 'Banco de la Nación' | 'Efectivo' | 'Pendiente';
+  paymentStatus?: 'Pendiente' | 'Adelanto 50%' | 'Pagado 100%' | 'Reembolsado';
+  totalAmount?: number;
+  paidAmount?: number;
+  paymentReceiptUrl?: string; // Base64 dataUrl or image url
+
+  // Passenger Manifest
+  passengers?: PassengerManifestItem[];
+  guideName?: string;
+  driverName?: string;
+  vehiclePlate?: string;
 }
 
 export interface AdminTour {
@@ -54,6 +78,7 @@ export interface DashboardStats {
   activeTours: number;
   totalTours: number;
   unreadMessages: number;
+  totalRevenueSoles?: number;
   recentBookings: AdminBooking[];
 }
 
@@ -66,4 +91,26 @@ export interface AdminContactMessage {
   message: string;
   createdAt: string;
   isRead: boolean;
+}
+
+export interface AdminTestimonial {
+  id: number;
+  authorName: string;
+  authorCityOrCountry: string;
+  rating: number; // 1 to 5
+  comment: string;
+  tourName: string;
+  date: string;
+  avatarUrl?: string;
+  isApproved: boolean; // Toggle visible on web
+}
+
+export interface GalleryItem {
+  id: string;
+  title: string;
+  category: 'Fauna' | 'Paisajes' | 'Cultura' | 'Aventura';
+  url: string;
+  location: string;
+  altText: string;
+  uploadedAt: string;
 }

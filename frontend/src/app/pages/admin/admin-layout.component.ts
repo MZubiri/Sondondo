@@ -73,6 +73,30 @@ import { AuthService } from '../../services/auth.service';
             </svg>
             <span>Mensajes de Contacto</span>
           </a>
+
+          <a 
+            routerLink="/admin/testimonios" 
+            routerLinkActive="active" 
+            class="nav-item"
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            <span>Testimonios & Reseñas</span>
+          </a>
+
+          <a 
+            routerLink="/admin/galeria" 
+            routerLinkActive="active" 
+            class="nav-item"
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <span>Galería Multimedia</span>
+          </a>
         </nav>
 
         <div class="sidebar-footer">

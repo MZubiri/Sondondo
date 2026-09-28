@@ -1,5 +1,9 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
+using ValleSondondo.API.Services;
 using ValleSondondo.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,8 +17,34 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddHttpClient();
+builder.Services.AddScoped<IWebhookService, WebhookService>();
 
-// 2. Database Connection (MySQL Pomelo)
+// 2. JWT Authentication Configuration
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings["SecretKey"] ?? "ValleDelSondondoExpeditions_SecretKey_AyacuchoPeru_2026_SecureKeyJwtToken!";
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"] ?? "ValleSondondoAPI",
+        ValidAudience = jwtSettings["Audience"] ?? "ValleSondondoClients",
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+        ClockSkew = TimeSpan.Zero
+    };
+});
+builder.Services.AddAuthorization();
+
+// 3. Database Connection (MySQL Pomelo)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -34,7 +64,7 @@ builder.Services.AddDbContext<ValleSondondoDbContext>(options =>
         });
 });
 
-// 3. CORS configuration (allowing Angular dev server & production)
+// 4. CORS configuration (allowing Angular dev server & production)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -45,7 +75,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 4. Swagger / OpenAPI documentation
+// 5. Swagger / OpenAPI documentation with Bearer Auth
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -55,9 +85,29 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
         Description = "API RESTful oficial para la plataforma turística de Valle del Sondondo Expeditions (Ayacucho, Perú)."
     });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Encabezado de autorización JWT utilizando el esquema Bearer. Ejemplo: \"Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
-// 5. Health Checks
+// 6. Health Checks
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
@@ -76,6 +126,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 }
 
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Health check endpoint

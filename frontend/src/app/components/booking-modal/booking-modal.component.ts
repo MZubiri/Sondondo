@@ -5,11 +5,12 @@ import { TourSummary, BookingInquiryResponse } from '../../models/tour.model';
 import { TourService } from '../../services/tour.service';
 import { TranslationService } from '../../services/translation.service';
 import { IconComponent } from '../icon/icon.component';
+import { TouristCalendarComponent } from '../tourist-calendar/tourist-calendar.component';
 
 @Component({
   selector: 'app-booking-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IconComponent],
+  imports: [CommonModule, ReactiveFormsModule, IconComponent, TouristCalendarComponent],
   template: `
     <div class="modal-backdrop" (click)="onClose()">
       <div class="modal-dialog glass-card" (click)="$event.stopPropagation()">
@@ -130,13 +131,15 @@ import { IconComponent } from '../icon/icon.component';
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="travelDate">{{ ts.t('bookModal.travelDate') }}</label>
-              <input 
-                id="travelDate" 
-                type="date" 
-                formControlName="travelDate" 
-                class="form-control" />
+            <div class="form-group cal-group">
+              <label class="cal-title-label">
+                <span>{{ ts.t('bookModal.travelDate') }}</span>
+                <span class="cal-hint-pill">Fechas disponibles</span>
+              </label>
+              <app-tourist-calendar 
+                [initialDate]="bookingForm.get('travelDate')?.value" 
+                (dateSelected)="onDateSelected($event)">
+              </app-tourist-calendar>
             </div>
 
             <div class="form-group">
@@ -309,6 +312,24 @@ import { IconComponent } from '../icon/icon.component';
       margin-bottom: 0.35rem;
     }
 
+    .cal-title-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .cal-hint-pill {
+      background: #eef7f0;
+      color: #27ae60;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
     .form-control {
       padding: 0.65rem 0.95rem;
       min-height: 44px;
@@ -429,6 +450,10 @@ export class BookingModalComponent {
   isFieldInvalid(field: string): boolean {
     const control = this.bookingForm.get(field);
     return !!(control && control.invalid && (control.dirty || control.touched));
+  }
+
+  onDateSelected(dateStr: string): void {
+    this.bookingForm.get('travelDate')?.setValue(dateStr);
   }
 
   onSubmit(): void {

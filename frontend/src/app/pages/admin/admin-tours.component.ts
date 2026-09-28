@@ -1,8 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../services/admin.service';
-import { AdminTour } from '../../models/admin.model';
+import { AdminTour, GalleryItem } from '../../models/admin.model';
 
 @Component({
   selector: 'app-admin-tours',
@@ -25,6 +25,50 @@ import { AdminTour } from '../../models/admin.model';
         </button>
       </div>
 
+      <!-- TOAST FEEDBACK -->
+      <div *ngIf="toastMessage()" class="admin-toast">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>{{ toastMessage() }}</span>
+      </div>
+
+      <!-- FILTER CONTROLS -->
+      <div class="filters-bar">
+        <div class="filter-pills">
+          <button 
+            type="button" 
+            class="pill" 
+            [class.active]="activeFilter() === 'all'"
+            (click)="activeFilter.set('all')"
+          >
+            Todos los Tours ({{ allCount() }})
+          </button>
+          <button 
+            type="button" 
+            class="pill pill-green" 
+            [class.active]="activeFilter() === 'active'"
+            (click)="activeFilter.set('active')"
+          >
+            🟢 Publicados en Web ({{ activeCount() }})
+          </button>
+          <button 
+            type="button" 
+            class="pill pill-amber" 
+            [class.active]="activeFilter() === 'hidden'"
+            (click)="activeFilter.set('hidden')"
+          >
+            👁️‍🗨️ Ocultos / Pausados ({{ hiddenCount() }})
+          </button>
+        </div>
+
+        <div class="filter-hint">
+          <span>💡 Puedes <strong>ocultar</strong> un tour temporalmente (ej. por lluvias o mantenimiento) sin perder sus datos.</span>
+        </div>
+      </div>
+
       <!-- TOURS TABLE -->
       <div class="table-card">
         <div class="table-responsive">
@@ -38,12 +82,12 @@ import { AdminTour } from '../../models/admin.model';
                 <th>Precio S/</th>
                 <th>Precio USD</th>
                 <th>Altitud Máx.</th>
-                <th>Visible en Web</th>
+                <th>Estado Web</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let tour of tours()">
+              <tr *ngFor="let tour of filteredTours()" [class.row-hidden]="!tour.isActive">
                 <td class="thumb-cell">
                   <img [src]="tour.mainImageUrl" [alt]="tour.title" class="tour-thumb" onerror="this.src='/assets/images/hero_sondondo.jpg'" />
                 </td>
@@ -51,7 +95,10 @@ import { AdminTour } from '../../models/admin.model';
                   <div class="tour-name-box">
                     <strong class="tour-title">{{ tour.title }}</strong>
                     <span class="tour-sub">{{ tour.subtitle }}</span>
-                    <span *ngIf="tour.featured" class="featured-badge">★ Destacado</span>
+                    <div class="badge-row">
+                      <span *ngIf="tour.featured" class="featured-badge">★ Destacado</span>
+                      <span *ngIf="!tour.isActive" class="paused-badge">Pausado / Oculto</span>
+                    </div>
                   </div>
                 </td>
                 <td>
@@ -66,13 +113,29 @@ import { AdminTour } from '../../models/admin.model';
                     class="toggle-active-btn" 
                     [class.active]="tour.isActive" 
                     (click)="onToggleActive(tour)"
-                    title="Clic para cambiar visibilidad en la web"
+                    [title]="tour.isActive ? 'Clic para ocultar de la web (no se borra)' : 'Clic para publicar en la web'"
                   >
-                    {{ tour.isActive ? 'Activo' : 'Oculto' }}
+                    <span class="dot">●</span>
+                    <span>{{ tour.isActive ? 'Publicado' : 'Oculto' }}</span>
                   </button>
                 </td>
                 <td>
                   <div class="row-actions">
+                    <button 
+                      class="btn-action-icon btn-vis" 
+                      [class.is-hidden]="!tour.isActive"
+                      (click)="onToggleActive(tour)" 
+                      [title]="tour.isActive ? 'Ocultar tour de la web' : 'Publicar tour en la web'"
+                    >
+                      <svg *ngIf="tour.isActive" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+                      <svg *ngIf="!tour.isActive" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
                     <button class="btn-action-icon btn-edit" (click)="openEditModal(tour)" title="Editar tour">
                       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -158,9 +221,181 @@ import { AdminTour } from '../../models/admin.model';
                 <input type="text" [(ngModel)]="formData.startingPoint" name="startingPoint" placeholder="Ej: Aucará / Puquio" />
               </div>
 
-              <div class="form-field">
-                <label>URL de Imagen Principal</label>
-                <input type="text" [(ngModel)]="formData.mainImageUrl" name="mainImageUrl" placeholder="/assets/images/condor_mayobamba.jpg" />
+              <!-- FOTO PRINCIPAL / PORTADA -->
+              <div class="form-field full-width media-upload-section">
+                <div class="media-section-header">
+                  <div class="media-title-group">
+                    <label class="media-label">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                      </svg>
+                      <span>Fotografía de Portada Principal</span>
+                    </label>
+                    <span class="media-hint">Imagen principal que se verá en las tarjetas del catálogo y encabezados</span>
+                  </div>
+
+                  <button type="button" class="btn-picker-link" (click)="openGalleryPicker('main')">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="7" height="7"></rect>
+                      <rect x="14" y="3" width="7" height="7"></rect>
+                      <rect x="14" y="14" width="7" height="7"></rect>
+                      <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>Elegir de Galería</span>
+                  </button>
+                </div>
+
+                <div class="main-image-uploader-box">
+                  <div *ngIf="formData.mainImageUrl" class="main-image-preview-card">
+                    <img [src]="formData.mainImageUrl" alt="Portada" class="preview-img" (click)="activeLightboxPhoto.set(formData.mainImageUrl!)" />
+                    <div class="preview-overlay">
+                      <span class="badge-cover">⭐ Portada Principal Actual</span>
+                      <div class="overlay-actions">
+                        <label for="mainImageUploadInput" class="btn-action-icon" title="Subir otra imagen desde tu dispositivo">
+                          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                          </svg>
+                          <span>Cambiar Foto</span>
+                        </label>
+                        <button type="button" class="btn-action-icon danger" (click)="removeMainImage()" title="Remover imagen">
+                          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div *ngIf="!formData.mainImageUrl" class="main-image-dropzone">
+                    <label for="mainImageUploadInput" class="dropzone-inner">
+                      <div class="drop-icon">
+                        <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#e09f3e" stroke-width="2">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="17 8 12 3 7 8"></polyline>
+                          <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                      </div>
+                      <span class="drop-title">Haz clic aquí para subir la foto de portada</span>
+                      <span class="drop-sub">Soporta JPG, PNG, WebP directamente desde tu computadora o celular</span>
+                    </label>
+                  </div>
+
+                  <input 
+                    type="file" 
+                    id="mainImageUploadInput" 
+                    accept="image/*" 
+                    (change)="onMainImageFileSelected($event)" 
+                    class="hidden-file-input" 
+                  />
+                </div>
+              </div>
+
+              <!-- FOTOS DENTRO DEL DETALLE DEL TOUR -->
+              <div class="form-field full-width media-upload-section">
+                <div class="media-section-header">
+                  <div class="media-title-group">
+                    <label class="media-label">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                      </svg>
+                      <span>Fotografías del Detalle del Tour (Galería del Circuito)</span>
+                      <span class="count-pill">{{ formData.galleryImages?.length || 0 }} fotos añadidas</span>
+                    </label>
+                    <span class="media-hint">Estas imágenes aparecen dentro de la página del tour (/tour/{{ formData.slug || 'nombre-tour' }}) para mostrar la experiencia a los turistas</span>
+                  </div>
+
+                  <div class="gallery-action-buttons">
+                    <button type="button" class="btn-picker-link" (click)="openGalleryPicker('detail')">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                      </svg>
+                      <span>Elegir de Galería</span>
+                    </button>
+
+                    <label for="detailImagesUploadInput" class="btn-upload-direct">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                      <span>+ Subir Fotos Directamente</span>
+                    </label>
+                    <input 
+                      type="file" 
+                      id="detailImagesUploadInput" 
+                      multiple 
+                      accept="image/*" 
+                      (change)="onDetailImagesFilesSelected($event)" 
+                      class="hidden-file-input" 
+                    />
+                  </div>
+                </div>
+
+                <div class="detail-gallery-container">
+                  <div *ngIf="formData.galleryImages && formData.galleryImages.length > 0" class="detail-gallery-grid">
+                    <div 
+                      *ngFor="let img of formData.galleryImages; let i = index" 
+                      class="detail-gallery-item"
+                      [class.is-current-cover]="img === formData.mainImageUrl"
+                    >
+                      <img [src]="img" [alt]="'Foto ' + (i + 1)" (click)="activeLightboxPhoto.set(img)" />
+                      <span *ngIf="img === formData.mainImageUrl" class="cover-tag">Portada</span>
+                      <div class="item-hover-actions">
+                        <button 
+                          type="button" 
+                          class="action-btn-circle" 
+                          (click)="setAsMainImage(img)" 
+                          title="Usar como Portada Principal"
+                          *ngIf="img !== formData.mainImageUrl"
+                        >
+                          ⭐
+                        </button>
+                        <button 
+                          type="button" 
+                          class="action-btn-circle" 
+                          (click)="activeLightboxPhoto.set(img)" 
+                          title="Ver imagen ampliada"
+                        >
+                          🔍
+                        </button>
+                        <button 
+                          type="button" 
+                          class="action-btn-circle danger" 
+                          (click)="removeDetailImage(i)" 
+                          title="Quitar de este tour"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Add card inside grid -->
+                    <label for="detailImagesUploadInput" class="detail-add-card">
+                      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                      <span>Añadir más fotos</span>
+                    </label>
+                  </div>
+
+                  <div *ngIf="!formData.galleryImages || formData.galleryImages.length === 0" class="empty-gallery-state">
+                    <div class="empty-icon">📷</div>
+                    <p class="empty-text">No has agregado fotos al detalle de este tour todavía.</p>
+                    <label for="detailImagesUploadInput" class="btn-empty-upload">
+                      Subir fotos desde mi computadora o celular
+                    </label>
+                  </div>
+                </div>
               </div>
 
               <div class="form-field full-width">
@@ -186,6 +421,48 @@ import { AdminTour } from '../../models/admin.model';
               <button type="submit" class="btn-save">Guardar Cambios</button>
             </div>
           </form>
+        </div>
+      </div>
+
+      <!-- MODAL PARA ELEGIR FOTOS DE LA GALERÍA GENERAL (SIN ESCRIBIR RUTAS) -->
+      <div class="modal-backdrop-picker" *ngIf="showGalleryPicker()" (click)="showGalleryPicker.set(false)">
+        <div class="picker-modal-card" (click)="$event.stopPropagation()">
+          <div class="picker-header">
+            <div>
+              <h3>Seleccionar Foto de la Galería Multimedia</h3>
+              <p class="picker-sub">
+                {{ galleryPickerTarget === 'main' ? 'Haz clic en una imagen para asignarla como Portada Principal del tour' : 'Haz clic en cualquier imagen para agregarla al detalle del tour' }}
+              </p>
+            </div>
+            <button class="btn-close" (click)="showGalleryPicker.set(false)">×</button>
+          </div>
+
+          <div class="picker-body">
+            <div class="picker-grid">
+              <div 
+                *ngFor="let photo of galleryPhotos()" 
+                class="picker-photo-card"
+                (click)="selectPhotoFromPicker(photo.url)"
+              >
+                <img [src]="photo.url" [alt]="photo.title" />
+                <div class="picker-photo-info">
+                  <span class="photo-title">{{ photo.title }}</span>
+                  <span class="photo-cat">{{ photo.category }}</span>
+                </div>
+                <div class="picker-photo-select-badge">
+                  ✓ Seleccionar
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIGHTBOX ZOOM PREVIEW -->
+      <div class="modal-backdrop-lightbox" *ngIf="activeLightboxPhoto()" (click)="activeLightboxPhoto.set(null)">
+        <div class="lightbox-content" (click)="$event.stopPropagation()">
+          <button class="lightbox-close" (click)="activeLightboxPhoto.set(null)">✕</button>
+          <img [src]="activeLightboxPhoto()!" alt="Visualización ampliada" class="lightbox-img" />
         </div>
       </div>
     </div>
@@ -217,6 +494,111 @@ import { AdminTour } from '../../models/admin.model';
       color: #94a3b8;
       font-size: 0.9rem;
       margin: 0;
+    }
+
+    .admin-toast {
+      background: #1e293b;
+      border: 1px solid #38bdf8;
+      color: #f0f9ff;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.88rem;
+    }
+
+    .filters-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      padding: 0.45rem 0.9rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pill:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+
+    .pill.active {
+      background: #c85a32;
+      color: #ffffff;
+      border-color: #c85a32;
+    }
+
+    .pill-green.active {
+      background: #15803d;
+      border-color: #22c55e;
+    }
+
+    .pill-amber.active {
+      background: #b45309;
+      border-color: #f59e0b;
+    }
+
+    .filter-hint {
+      color: #94a3b8;
+      font-size: 0.8rem;
+    }
+
+    .row-hidden {
+      opacity: 0.65;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.25rem;
+    }
+
+    .paused-badge {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .btn-vis {
+      background: rgba(148, 163, 184, 0.15);
+      color: #94a3b8;
+    }
+
+    .btn-vis:hover {
+      background: #475569;
+      color: #ffffff;
+    }
+
+    .btn-vis.is-hidden {
+      color: #f59e0b;
+    }
+
+    .dot {
+      font-size: 0.65rem;
+      margin-right: 0.25rem;
     }
 
     .btn-create {
@@ -410,8 +792,8 @@ import { AdminTour } from '../../models/admin.model';
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
       width: 100%;
-      max-width: 680px;
-      max-height: 90vh;
+      max-width: 860px;
+      max-height: 92vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -533,19 +915,586 @@ import { AdminTour } from '../../models/admin.model';
     .btn-save:hover {
       background: #b34a24;
     }
+
+    /* MEDIA UPLOAD SECTIONS */
+    .media-upload-section {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 10px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .media-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .media-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .media-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .media-hint {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    .count-pill {
+      background: rgba(224, 159, 62, 0.2);
+      border: 1px solid rgba(224, 159, 62, 0.4);
+      color: #e09f3e;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-left: 0.25rem;
+    }
+
+    .gallery-action-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-picker-link {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-picker-link:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-upload-direct {
+      background: #c85a32;
+      color: #ffffff;
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-upload-direct:hover {
+      background: #b34a24;
+      transform: translateY(-1px);
+    }
+
+    .hidden-file-input {
+      display: none !important;
+    }
+
+    .main-image-uploader-box {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .main-image-preview-card {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      max-height: 250px;
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .preview-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      cursor: pointer;
+    }
+
+    .preview-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 1rem;
+    }
+
+    .badge-cover {
+      background: #10b981;
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .overlay-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-action-icon {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f1f5f9;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .btn-action-icon:hover {
+      background: #1e293b;
+      border-color: #cbd5e1;
+    }
+
+    .btn-action-icon.danger:hover {
+      background: #ef4444;
+      border-color: #ef4444;
+      color: #fff;
+    }
+
+    .main-image-dropzone {
+      border: 2px dashed rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      padding: 2.25rem 1rem;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.25);
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .main-image-dropzone:hover {
+      border-color: #e09f3e;
+    }
+
+    .dropzone-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      color: #94a3b8;
+    }
+
+    .drop-icon {
+      color: #e09f3e;
+      margin-bottom: 0.5rem;
+    }
+
+    .drop-title {
+      font-size: 0.95rem;
+      color: #f1f5f9;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+
+    .drop-sub {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    /* TOUR DETAIL GALLERY GRID */
+    .detail-gallery-container {
+      margin-top: 0.25rem;
+    }
+
+    .detail-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .detail-gallery-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #090f13;
+      cursor: pointer;
+    }
+
+    .detail-gallery-item.is-current-cover {
+      border: 2px solid #e09f3e;
+      box-shadow: 0 0 10px rgba(224, 159, 62, 0.3);
+    }
+
+    .detail-gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .detail-gallery-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .cover-tag {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: #e09f3e;
+      color: #090f13;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+      z-index: 2;
+    }
+
+    .item-hover-actions {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      z-index: 3;
+    }
+
+    .detail-gallery-item:hover .item-hover-actions {
+      opacity: 1;
+    }
+
+    .action-btn-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      border: none;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .action-btn-circle:hover {
+      transform: scale(1.15);
+      background: #ffffff;
+    }
+
+    .action-btn-circle.danger:hover {
+      background: #f87171;
+    }
+
+    .detail-add-card {
+      border: 2px dashed rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      aspect-ratio: 4 / 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.2s ease;
+      text-align: center;
+      padding: 0.5rem;
+    }
+
+    .detail-add-card:hover {
+      border-color: #e09f3e;
+      color: #f1f5f9;
+      background: rgba(224, 159, 62, 0.08);
+    }
+
+    .detail-add-card span {
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .empty-gallery-state {
+      padding: 1.5rem;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+
+    .empty-icon {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-text {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      margin: 0 0 0.85rem;
+    }
+
+    .btn-empty-upload {
+      background: #c85a32;
+      color: #ffffff;
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-block;
+      transition: background 0.2s;
+    }
+
+    .btn-empty-upload:hover {
+      background: #b34a24;
+    }
+
+    /* GALLERY PICKER MODAL */
+    .modal-backdrop-picker {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      z-index: 1100;
+    }
+
+    .picker-modal-card {
+      background: #121c23;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 820px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+    }
+
+    .picker-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .picker-header h3 {
+      margin: 0 0 0.25rem;
+      color: #f8fafc;
+      font-size: 1.15rem;
+    }
+
+    .picker-sub {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+
+    .picker-body {
+      padding: 1.25rem;
+      overflow-y: auto;
+    }
+
+    .picker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+
+    .picker-photo-card {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #090f13;
+      cursor: pointer;
+      aspect-ratio: 4 / 3;
+      transition: all 0.2s ease;
+    }
+
+    .picker-photo-card:hover {
+      border-color: #e09f3e;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    .picker-photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .picker-photo-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.5rem;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .photo-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .photo-cat {
+      font-size: 0.65rem;
+      color: #e09f3e;
+    }
+
+    .picker-photo-select-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: #e09f3e;
+      color: #090f13;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .picker-photo-card:hover .picker-photo-select-badge {
+      opacity: 1;
+    }
+
+    /* LIGHTBOX ZOOM */
+    .modal-backdrop-lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1200;
+      padding: 2rem;
+    }
+
+    .lightbox-content {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 85vh;
+      border-radius: 8px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+      object-fit: contain;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -2.5rem;
+      right: 0;
+      background: none;
+      border: none;
+      color: #ffffff;
+      font-size: 1.75rem;
+      cursor: pointer;
+      line-height: 1;
+    }
   `]
 })
 export class AdminToursComponent implements OnInit {
   private adminService = inject(AdminService);
 
   tours = signal<AdminTour[]>([]);
+  galleryPhotos = signal<GalleryItem[]>([]);
   showModal = signal(false);
   editingTour = signal<AdminTour | null>(null);
+
+  activeFilter = signal<'all' | 'active' | 'hidden'>('all');
+  toastMessage = signal<string | null>(null);
+
+  // Gallery Picker & Lightbox states
+  showGalleryPicker = signal(false);
+  galleryPickerTarget: 'main' | 'detail' = 'main';
+  activeLightboxPhoto = signal<string | null>(null);
+
+  allCount = computed(() => this.tours().length);
+  activeCount = computed(() => this.tours().filter(t => t.isActive).length);
+  hiddenCount = computed(() => this.tours().filter(t => !t.isActive).length);
+
+  filteredTours = computed(() => {
+    const f = this.activeFilter();
+    if (f === 'active') return this.tours().filter(t => t.isActive);
+    if (f === 'hidden') return this.tours().filter(t => !t.isActive);
+    return this.tours();
+  });
 
   formData: Partial<AdminTour> = {};
 
   ngOnInit(): void {
     this.loadTours();
+    this.loadGallery();
   }
 
   loadTours(): void {
@@ -554,9 +1503,25 @@ export class AdminToursComponent implements OnInit {
     });
   }
 
+  loadGallery(): void {
+    this.adminService.getGalleryItems().subscribe(res => {
+      this.galleryPhotos.set(res);
+    });
+  }
+
+  showToast(msg: string): void {
+    this.toastMessage.set(msg);
+    setTimeout(() => {
+      this.toastMessage.set(null);
+    }, 4500);
+  }
+
   onToggleActive(tour: AdminTour): void {
     this.adminService.toggleTourActive(tour.id).subscribe(() => {
       tour.isActive = !tour.isActive;
+      this.showToast(tour.isActive 
+        ? `✅ El tour "${tour.title}" ahora está VISIBLE en el catálogo web público.` 
+        : `👁️‍🗨️ El tour "${tour.title}" ahora está OCULTO / PAUSADO de la web (no se borró).`);
     });
   }
 
@@ -574,6 +1539,7 @@ export class AdminToursComponent implements OnInit {
       altitudeMax: '3,500 msnm',
       startingPoint: 'Aucará / Puquio',
       mainImageUrl: '/assets/images/hero_sondondo.jpg',
+      galleryImages: ['/assets/images/hero_sondondo.jpg'],
       description: '',
       featured: false,
       isActive: true
@@ -583,7 +1549,14 @@ export class AdminToursComponent implements OnInit {
 
   openEditModal(tour: AdminTour): void {
     this.editingTour.set(tour);
-    this.formData = { ...tour };
+    const existingGallery = (tour.galleryImages && tour.galleryImages.length > 0)
+      ? [...tour.galleryImages]
+      : (tour.mainImageUrl ? [tour.mainImageUrl] : []);
+
+    this.formData = {
+      ...tour,
+      galleryImages: existingGallery
+    };
     this.showModal.set(true);
   }
 
@@ -591,6 +1564,141 @@ export class AdminToursComponent implements OnInit {
     this.showModal.set(false);
   }
 
+  // --- COMPRESIÓN DE FOTOS DIRECTA PARA LOCALSTORAGE EFICIENTE ---
+  private compressImageFile(file: File, maxDim = 1400, quality = 0.82): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(e.target.result);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+          resolve(compressedBase64);
+        };
+        img.onerror = () => resolve(e.target.result);
+        img.src = e.target.result;
+      };
+      reader.onerror = err => reject(err);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // --- SUBIDA DIRECTA DE FOTO DE PORTADA ---
+  async onMainImageFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    try {
+      const base64 = await this.compressImageFile(file);
+      this.formData.mainImageUrl = base64;
+      
+      if (!this.formData.galleryImages) {
+        this.formData.galleryImages = [];
+      }
+      if (!this.formData.galleryImages.includes(base64)) {
+        this.formData.galleryImages.unshift(base64);
+      }
+      this.showToast('📸 Foto de portada cargada y optimizada con éxito.');
+    } catch (err) {
+      console.error('Error al procesar la foto:', err);
+      alert('Hubo un error al procesar la imagen seleccionada.');
+    } finally {
+      input.value = '';
+    }
+  }
+
+  removeMainImage(): void {
+    this.formData.mainImageUrl = '';
+  }
+
+  // --- SUBIDA DIRECTA DE FOTOS PARA LA GALERÍA DEL DETALLE DEL TOUR ---
+  async onDetailImagesFilesSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const files = Array.from(input.files);
+    try {
+      const processed = await Promise.all(files.map(f => this.compressImageFile(f)));
+      if (!this.formData.galleryImages) {
+        this.formData.galleryImages = [];
+      }
+      for (const img of processed) {
+        if (!this.formData.galleryImages.includes(img)) {
+          this.formData.galleryImages.push(img);
+        }
+      }
+      if (!this.formData.mainImageUrl && this.formData.galleryImages.length > 0) {
+        this.formData.mainImageUrl = this.formData.galleryImages[0];
+      }
+      this.showToast(`✨ Se añadieron ${files.length} foto(s) al detalle del tour.`);
+    } catch (err) {
+      console.error('Error al procesar las fotos del detalle:', err);
+      alert('Hubo un error al procesar las imágenes seleccionadas.');
+    } finally {
+      input.value = '';
+    }
+  }
+
+  removeDetailImage(index: number): void {
+    if (!this.formData.galleryImages) return;
+    const removed = this.formData.galleryImages.splice(index, 1)[0];
+    if (this.formData.mainImageUrl === removed) {
+      this.formData.mainImageUrl = this.formData.galleryImages[0] || '';
+    }
+    this.showToast('🗑️ Foto eliminada del detalle del tour.');
+  }
+
+  setAsMainImage(imgUrl: string): void {
+    this.formData.mainImageUrl = imgUrl;
+    this.showToast('⭐ Imagen fijada como Portada Principal del tour.');
+  }
+
+  // --- PICKER MODAL DE GALERÍA (ELEGIR FOTOS EXISTENTES EN 1 CLIC) ---
+  openGalleryPicker(target: 'main' | 'detail'): void {
+    this.galleryPickerTarget = target;
+    this.showGalleryPicker.set(true);
+  }
+
+  selectPhotoFromPicker(photoUrl: string): void {
+    if (this.galleryPickerTarget === 'main') {
+      this.formData.mainImageUrl = photoUrl;
+      if (!this.formData.galleryImages) this.formData.galleryImages = [];
+      if (!this.formData.galleryImages.includes(photoUrl)) {
+        this.formData.galleryImages.unshift(photoUrl);
+      }
+      this.showToast('⭐ Foto asignada como Portada Principal.');
+    } else {
+      if (!this.formData.galleryImages) this.formData.galleryImages = [];
+      if (!this.formData.galleryImages.includes(photoUrl)) {
+        this.formData.galleryImages.push(photoUrl);
+        this.showToast('📷 Foto agregada al detalle de este tour.');
+      } else {
+        this.showToast('ℹ️ Esta foto ya estaba incluida en el detalle del tour.');
+      }
+    }
+    this.showGalleryPicker.set(false);
+  }
+
+  // --- GUARDAR TOUR ---
   onSaveTour(): void {
     if (!this.formData.title) {
       alert('Por favor ingrese el título del tour.');
@@ -614,12 +1722,16 @@ export class AdminToursComponent implements OnInit {
       featured: !!this.formData.featured,
       isActive: this.formData.isActive !== false,
       mainImageUrl: this.formData.mainImageUrl || '/assets/images/hero_sondondo.jpg',
+      galleryImages: this.formData.galleryImages && this.formData.galleryImages.length > 0 
+        ? this.formData.galleryImages 
+        : [this.formData.mainImageUrl || '/assets/images/hero_sondondo.jpg'],
       displayOrder: this.formData.displayOrder || 1
     };
 
     this.adminService.saveTour(tourToSave).subscribe(() => {
       this.closeModal();
       this.loadTours();
+      this.showToast(`✅ Tour "${tourToSave.title}" guardado exitosamente con sus fotos.`);
     });
   }
 
@@ -627,7 +1739,9 @@ export class AdminToursComponent implements OnInit {
     if (confirm(`¿Estás seguro de eliminar el tour "${tour.title}"?`)) {
       this.adminService.deleteTour(tour.id).subscribe(() => {
         this.loadTours();
+        this.showToast(`🗑️ Tour "${tour.title}" eliminado.`);
       });
     }
   }
 }
+

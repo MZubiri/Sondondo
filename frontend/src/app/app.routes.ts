@@ -8,6 +8,8 @@ import { AdminDashboardComponent } from './pages/admin/admin-dashboard.component
 import { AdminBookingsComponent } from './pages/admin/admin-bookings.component';
 import { AdminToursComponent } from './pages/admin/admin-tours.component';
 import { AdminMessagesComponent } from './pages/admin/admin-messages.component';
+import { AdminTestimonialsComponent } from './pages/admin/admin-testimonials.component';
+import { AdminGalleryComponent } from './pages/admin/admin-gallery.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -68,6 +70,16 @@ export const routes: Routes = [
         path: 'mensajes',
         component: AdminMessagesComponent,
         title: 'Bandeja de Contacto | Panel de Control'
+      },
+      {
+        path: 'testimonios',
+        component: AdminTestimonialsComponent,
+        title: 'Testimonios & Reseñas | Panel de Control'
+      },
+      {
+        path: 'galeria',
+        component: AdminGalleryComponent,
+        title: 'Galería Multimedia | Panel de Control'
       }
     ]
   },

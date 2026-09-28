@@ -25,6 +25,7 @@ export interface TourSummary {
   startingPoint: string;
   featured: boolean;
   mainImageUrl: string;
+  isActive?: boolean;
 }
 
 export interface ItineraryDay {
