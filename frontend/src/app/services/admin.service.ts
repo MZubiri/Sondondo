@@ -768,7 +768,21 @@ export class AdminService {
   getTours(includeInactive = true): Observable<AdminTour[]> {
     return this.http.get<AdminTour[]>(`${this.apiUrl}/tours?includeInactive=${includeInactive}`, { headers: this.getAuthHeaders() }).pipe(
       map(tours => tours.map(t => this.sanitizeAdminTour(t))),
-      tap(tours => this.saveTours(tours)),
+      tap(apiTours => {
+        const stored = this.loadStoredTours();
+        const merged = apiTours.map(apiTour => {
+          const found = stored.find(s => s.id === apiTour.id);
+          if (!found) return apiTour;
+          return {
+            ...apiTour,
+            priceSoles: apiTour.priceSoles > 0 ? apiTour.priceSoles : (found.priceSoles || apiTour.priceSoles),
+            priceUsd: apiTour.priceUsd > 0 ? apiTour.priceUsd : (found.priceUsd || apiTour.priceUsd),
+            galleryImages: (found.galleryImages && found.galleryImages.length > 0) ? found.galleryImages : apiTour.galleryImages,
+            mainImageUrl: found.mainImageUrl || apiTour.mainImageUrl
+          };
+        });
+        this.saveTours(merged);
+      }),
       catchError(() => {
         const stored = this.loadStoredTours();
         const filtered = includeInactive ? stored : stored.filter(t => t.isActive !== false);

@@ -54,14 +54,11 @@ public class CreateTourDto
     [StringLength(250)]
     public string Subtitle { get; set; } = string.Empty;
 
-    [Required]
     public string Description { get; set; } = string.Empty;
 
-    [Required]
-    public int CategoryId { get; set; }
+    public int CategoryId { get; set; } = 1;
 
-    [Required]
-    public string Duration { get; set; } = string.Empty;
+    public string Duration { get; set; } = "Full Day";
     public int DurationDays { get; set; } = 1;
 
     public decimal PriceSoles { get; set; }
@@ -81,9 +78,41 @@ public class CreateTourDto
     public List<string> Recommendations { get; set; } = new();
 }
 
-public class UpdateTourDto : CreateTourDto
+public class UpdateTourDto
 {
     public int Id { get; set; }
+
+    [StringLength(150)]
+    public string? Title { get; set; }
+
+    [StringLength(150)]
+    public string? Slug { get; set; }
+
+    [StringLength(250)]
+    public string? Subtitle { get; set; }
+
+    public string? Description { get; set; }
+
+    public int? CategoryId { get; set; }
+
+    public string? Duration { get; set; }
+    public int? DurationDays { get; set; }
+
+    public decimal? PriceSoles { get; set; }
+    public decimal? PriceUsd { get; set; }
+
+    public string? Difficulty { get; set; }
+    public string? AltitudeMax { get; set; }
+    public string? StartingPoint { get; set; }
+    public bool? Featured { get; set; }
+    public bool? IsActive { get; set; }
+    public string? MainImageUrl { get; set; }
+    public int? DisplayOrder { get; set; }
+
+    public List<string>? GalleryImages { get; set; }
+    public List<string>? Included { get; set; }
+    public List<string>? NotIncluded { get; set; }
+    public List<string>? Recommendations { get; set; }
 }
 
 public class DashboardStatsDto

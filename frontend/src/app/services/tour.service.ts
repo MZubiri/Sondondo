@@ -508,7 +508,25 @@ export class TourService {
     if (search) params = params.set('search', search);
 
     return this.http.get<TourSummary[]>(`${this.apiUrl}/tours`, { params }).pipe(
-      map(tours => tours.map(t => this.sanitizeTour(t))),
+      map(tours => {
+        let localTours: any[] = [];
+        try {
+          const stored = localStorage.getItem(TOURS_STORAGE_KEY);
+          if (stored) localTours = JSON.parse(stored);
+        } catch {}
+
+        return tours.map(t => {
+          const local = localTours.find(lt => lt.id === t.id);
+          const merged = local ? {
+            ...t,
+            priceSoles: local.priceSoles !== undefined ? local.priceSoles : t.priceSoles,
+            priceUsd: local.priceUsd !== undefined ? local.priceUsd : t.priceUsd,
+            mainImageUrl: local.mainImageUrl || t.mainImageUrl,
+            isActive: local.isActive !== undefined ? local.isActive : t.isActive
+          } : t;
+          return this.sanitizeTour(merged);
+        });
+      }),
       catchError(() => {
         let allTours: TourSummary[] = [];
         try {
@@ -538,7 +556,22 @@ export class TourService {
   getTourBySlug(slug: string): Observable<TourDetail> {
     return this.http.get<TourDetail>(`${this.apiUrl}/tours/${slug}`).pipe(
       map(detail => {
-        const sanitized = this.sanitizeTour(detail);
+        let localTours: any[] = [];
+        try {
+          const stored = localStorage.getItem(TOURS_STORAGE_KEY);
+          if (stored) localTours = JSON.parse(stored);
+        } catch {}
+        const local = localTours.find(lt => lt.id === detail.id || (lt.slug && detail.slug && lt.slug.toLowerCase() === detail.slug.toLowerCase()));
+
+        const mergedDetail = local ? {
+          ...detail,
+          priceSoles: local.priceSoles !== undefined ? local.priceSoles : detail.priceSoles,
+          priceUsd: local.priceUsd !== undefined ? local.priceUsd : detail.priceUsd,
+          mainImageUrl: local.mainImageUrl || detail.mainImageUrl,
+          galleryImages: (local.galleryImages && local.galleryImages.length > 0) ? local.galleryImages : detail.galleryImages
+        } : detail;
+
+        const sanitized = this.sanitizeTour(mergedDetail);
         const detailedInfo = this.detailedCatalogById[sanitized.id] || this.detailedCatalogById[1];
         
         let gallery = (sanitized.galleryImages && sanitized.galleryImages.length > 0)

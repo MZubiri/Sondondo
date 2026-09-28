@@ -61,6 +61,7 @@ public class ToursController : ControllerBase
                 Title = t.Title,
                 Slug = t.Slug,
                 Subtitle = t.Subtitle,
+                Description = t.Description,
                 CategoryId = t.CategoryId,
                 CategoryName = t.Category != null ? t.Category.Name : string.Empty,
                 CategorySlug = t.Category != null ? t.Category.Slug : string.Empty,
@@ -203,36 +204,90 @@ public class ToursController : ControllerBase
             return NotFound(new { message = $"Tour con ID {id} no encontrado." });
         }
 
-        tour.Title = dto.Title.Trim();
+        if (!string.IsNullOrWhiteSpace(dto.Title))
+        {
+            tour.Title = dto.Title.Trim();
+        }
         if (!string.IsNullOrWhiteSpace(dto.Slug) && dto.Slug != tour.Slug)
         {
             tour.Slug = GenerateSlug(dto.Slug);
         }
-        tour.Subtitle = dto.Subtitle?.Trim() ?? string.Empty;
-        tour.Description = dto.Description.Trim();
-        tour.CategoryId = dto.CategoryId;
-        tour.Duration = dto.Duration.Trim();
-        tour.DurationDays = dto.DurationDays;
-        tour.PriceSoles = dto.PriceSoles;
-        tour.PriceUsd = dto.PriceUsd;
-        tour.Difficulty = dto.Difficulty;
-        tour.AltitudeMax = dto.AltitudeMax;
-        tour.StartingPoint = dto.StartingPoint;
-        tour.Featured = dto.Featured;
-        tour.IsActive = dto.IsActive;
-        tour.DisplayOrder = dto.DisplayOrder;
+        if (dto.Subtitle != null)
+        {
+            tour.Subtitle = dto.Subtitle.Trim();
+        }
+        if (!string.IsNullOrWhiteSpace(dto.Description))
+        {
+            tour.Description = dto.Description.Trim();
+        }
+        if (dto.CategoryId.HasValue && dto.CategoryId.Value > 0)
+        {
+            tour.CategoryId = dto.CategoryId.Value;
+        }
+        if (!string.IsNullOrWhiteSpace(dto.Duration))
+        {
+            tour.Duration = dto.Duration.Trim();
+        }
+        if (dto.DurationDays.HasValue && dto.DurationDays.Value > 0)
+        {
+            tour.DurationDays = dto.DurationDays.Value;
+        }
+        if (dto.PriceSoles.HasValue && dto.PriceSoles.Value >= 0)
+        {
+            tour.PriceSoles = dto.PriceSoles.Value;
+        }
+        if (dto.PriceUsd.HasValue && dto.PriceUsd.Value >= 0)
+        {
+            tour.PriceUsd = dto.PriceUsd.Value;
+        }
+        if (!string.IsNullOrWhiteSpace(dto.Difficulty))
+        {
+            tour.Difficulty = dto.Difficulty;
+        }
+        if (!string.IsNullOrWhiteSpace(dto.AltitudeMax))
+        {
+            tour.AltitudeMax = dto.AltitudeMax;
+        }
+        if (!string.IsNullOrWhiteSpace(dto.StartingPoint))
+        {
+            tour.StartingPoint = dto.StartingPoint;
+        }
+        if (dto.Featured.HasValue)
+        {
+            tour.Featured = dto.Featured.Value;
+        }
+        if (dto.IsActive.HasValue)
+        {
+            tour.IsActive = dto.IsActive.Value;
+        }
+        if (dto.DisplayOrder.HasValue)
+        {
+            tour.DisplayOrder = dto.DisplayOrder.Value;
+        }
         if (!string.IsNullOrWhiteSpace(dto.MainImageUrl))
         {
             tour.MainImageUrl = dto.MainImageUrl.Trim();
         }
-        tour.GalleryImagesJson = JsonSerializer.Serialize(dto.GalleryImages ?? new List<string>());
-        tour.IncludedJson = JsonSerializer.Serialize(dto.Included ?? new List<string>());
-        tour.NotIncludedJson = JsonSerializer.Serialize(dto.NotIncluded ?? new List<string>());
-        tour.RecommendationsJson = JsonSerializer.Serialize(dto.Recommendations ?? new List<string>());
+        if (dto.GalleryImages != null && dto.GalleryImages.Count > 0)
+        {
+            tour.GalleryImagesJson = JsonSerializer.Serialize(dto.GalleryImages);
+        }
+        if (dto.Included != null && dto.Included.Count > 0)
+        {
+            tour.IncludedJson = JsonSerializer.Serialize(dto.Included);
+        }
+        if (dto.NotIncluded != null && dto.NotIncluded.Count > 0)
+        {
+            tour.NotIncludedJson = JsonSerializer.Serialize(dto.NotIncluded);
+        }
+        if (dto.Recommendations != null && dto.Recommendations.Count > 0)
+        {
+            tour.RecommendationsJson = JsonSerializer.Serialize(dto.Recommendations);
+        }
 
         await _context.SaveChangesAsync();
 
-        return Ok(new { success = true, id = tour.Id, title = tour.Title });
+        return Ok(new { success = true, id = tour.Id, title = tour.Title, priceSoles = tour.PriceSoles, priceUsd = tour.PriceUsd });
     }
 
     [HttpPatch("{id}/toggle-active")]

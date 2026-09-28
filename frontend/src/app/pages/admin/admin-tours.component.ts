@@ -1606,6 +1606,7 @@ export class AdminToursComponent implements OnInit {
 
     this.formData = {
       ...tour,
+      description: tour.description || 'Expedición auténtica por el Valle del Sondondo.',
       isActive: tour.isActive !== false,
       galleryImages: existingGallery
     };
@@ -1757,12 +1758,16 @@ export class AdminToursComponent implements OnInit {
       return;
     }
 
+    const currentDesc = this.formData.description?.trim() 
+      || this.editingTour()?.description 
+      || 'Expedición auténtica por los paisajes, andenerías y miradores del Valle del Sondondo.';
+
     const tourToSave: AdminTour = {
       id: this.editingTour()?.id ?? 0,
       title: this.formData.title!,
       slug: this.formData.slug || this.formData.title!.toLowerCase().replace(/\s+/g, '-'),
       subtitle: this.formData.subtitle || '',
-      description: this.formData.description || '',
+      description: currentDesc,
       categoryId: Number(this.formData.categoryId) || 1,
       duration: this.formData.duration || 'Full Day',
       durationDays: Number(this.formData.durationDays) || 1,
@@ -1780,10 +1785,18 @@ export class AdminToursComponent implements OnInit {
       displayOrder: this.formData.displayOrder || 1
     };
 
-    this.adminService.saveTour(tourToSave).subscribe(() => {
-      this.closeModal();
-      this.loadTours();
-      this.showToast(`✅ Tour "${tourToSave.title}" guardado exitosamente con sus fotos.`);
+    this.adminService.saveTour(tourToSave).subscribe({
+      next: (savedTour) => {
+        this.closeModal();
+        this.loadTours();
+        this.showToast(`✅ Tour "${savedTour.title}" guardado exitosamente (Precio: S/ ${savedTour.priceSoles}).`);
+      },
+      error: (err) => {
+        console.error('Error al guardar el tour:', err);
+        this.closeModal();
+        this.loadTours();
+        this.showToast(`⚠️ Guardado localmente. Error al sincronizar con servidor: ${err.message || 'Error de red'}`);
+      }
     });
   }
 

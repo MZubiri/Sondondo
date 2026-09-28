@@ -17,6 +17,7 @@ public class TourSummaryDto
     public string Title { get; set; } = string.Empty;
     public string Slug { get; set; } = string.Empty;
     public string Subtitle { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
     public int CategoryId { get; set; }
     public string CategoryName { get; set; } = string.Empty;
     public string CategorySlug { get; set; } = string.Empty;
@@ -34,7 +35,6 @@ public class TourSummaryDto
 
 public class TourDetailDto : TourSummaryDto
 {
-    public string Description { get; set; } = string.Empty;
     public List<string> GalleryImages { get; set; } = new();
     public List<string> Included { get; set; } = new();
     public List<string> NotIncluded { get; set; } = new();
