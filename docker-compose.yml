@@ -19,8 +19,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
-    networks:
-      - sondondo_net
 
   # 2. Backend ASP.NET Core 9 Web API
   backend:
@@ -45,8 +43,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - sondondo_net
 
   # 3. Frontend Angular SPA servido por Nginx (Coolify Traefik enruta automáticamente al puerto 80)
   frontend:
@@ -58,13 +54,7 @@ services:
       - 80
     depends_on:
       - backend
-    networks:
-      - sondondo_net
 
 volumes:
   mysql_data:
     driver: local
-
-networks:
-  sondondo_net:
-    driver: bridge
