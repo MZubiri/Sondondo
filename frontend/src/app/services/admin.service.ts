@@ -549,7 +549,11 @@ export class AdminService {
         img = '/assets/images/hero_sondondo.jpg';
       }
     }
-    return { ...tour, mainImageUrl: img };
+    return { 
+      ...tour, 
+      isActive: tour.isActive !== false,
+      mainImageUrl: img 
+    };
   }
 
   // Default initial tours
@@ -733,6 +737,7 @@ export class AdminService {
             const initialMatch = this.initialTours.find(it => it.id === t.id);
             return {
               ...t,
+              isActive: t.isActive !== false,
               galleryImages: t.galleryImages && t.galleryImages.length > 0
                 ? t.galleryImages
                 : (initialMatch?.galleryImages || [
@@ -766,7 +771,7 @@ export class AdminService {
       tap(tours => this.saveTours(tours)),
       catchError(() => {
         const stored = this.loadStoredTours();
-        const filtered = includeInactive ? stored : stored.filter(t => t.isActive);
+        const filtered = includeInactive ? stored : stored.filter(t => t.isActive !== false);
         return of(filtered.map(t => this.sanitizeAdminTour(t)));
       })
     );
@@ -774,7 +779,13 @@ export class AdminService {
 
   toggleTourActive(id: number): Observable<boolean> {
     const tours = this.loadStoredTours();
-    const updated = tours.map(t => t.id === id ? { ...t, isActive: !t.isActive } : t);
+    const updated = tours.map(t => {
+      if (t.id === id) {
+        const currentActive = t.isActive !== false;
+        return { ...t, isActive: !currentActive };
+      }
+      return t;
+    });
     this.saveTours(updated);
 
     return this.http.patch<any>(`${this.apiUrl}/tours/${id}/toggle-active`, {}, { headers: this.getAuthHeaders() }).pipe(

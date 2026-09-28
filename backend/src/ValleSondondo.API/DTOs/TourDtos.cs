@@ -29,6 +29,7 @@ public class TourSummaryDto
     public string StartingPoint { get; set; } = string.Empty;
     public bool Featured { get; set; }
     public string MainImageUrl { get; set; } = string.Empty;
+    public bool IsActive { get; set; } = true;
 }
 
 public class TourDetailDto : TourSummaryDto

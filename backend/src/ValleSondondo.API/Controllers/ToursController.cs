@@ -72,7 +72,8 @@ public class ToursController : ControllerBase
                 AltitudeMax = t.AltitudeMax,
                 StartingPoint = t.StartingPoint,
                 Featured = t.Featured,
-                MainImageUrl = t.MainImageUrl
+                MainImageUrl = t.MainImageUrl,
+                IsActive = t.IsActive
             })
             .ToListAsync();
 

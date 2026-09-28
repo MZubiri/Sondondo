@@ -47,34 +47,39 @@ export class TourService {
         img = '/assets/images/hero_sondondo.jpg';
       }
     }
-    return { ...tour, mainImageUrl: img };
+    return { 
+      ...tour, 
+      isActive: tour.isActive !== false,
+      mainImageUrl: img 
+    };
   }
 
-  // Fallback initial data for instant loading
+  // Canonical tours catalog with synchronized slugs
   private fallbackTours: TourSummary[] = [
     {
       id: 1,
-      title: 'Kuntur Ñan: El Majestuoso Vuelo del Cóndor',
-      slug: 'kuntur-nan-vuelo-del-condor',
-      subtitle: 'Avistamiento de hasta 35 cóndores en Mayobamba y descenso al bebedero sagrado',
+      title: 'Kuntur Ñan: El Vuelo del Cóndor en Mayobamba',
+      slug: 'vuelo-del-condor-mayobamba',
+      subtitle: 'Avistamiento a 6:30 a.m. en el Cañón de Mayobamba, Aucará',
       categoryId: 1,
       categoryName: 'Ruta del Cóndor',
       categorySlug: 'ruta-condor',
-      duration: 'Full Day',
+      duration: 'Full Day (8 horas)',
       durationDays: 1,
-      priceSoles: 140,
-      priceUsd: 38,
-      difficulty: 'Fácil a Moderado',
-      altitudeMax: '3,200 msnm',
-      startingPoint: 'Mayobamba / Andamarca, Lucanas, Ayacucho',
+      priceSoles: 180,
+      priceUsd: 48,
+      difficulty: 'Moderada',
+      altitudeMax: '3,450 msnm',
+      startingPoint: 'Aucará / Puquio',
       featured: true,
+      isActive: true,
       mainImageUrl: '/assets/images/condor_mayobamba.jpg'
     },
     {
       id: 2,
-      title: 'Andenes Vivos de Andamarca, Caniche & Danza de Tijeras',
+      title: 'Gran Circuito Andenes Vivos de Andamarca & Danza de Tijeras',
       slug: 'andenes-andamarca-danza-tijeras',
-      subtitle: 'Colosal sistema agrícola preínca Huari e Inca, fortaleza de Caniche y ritual de tijeras',
+      subtitle: 'Patrimonio de la Humanidad UNESCO, ingeniería pre-Inca y mística andina',
       categoryId: 2,
       categoryName: 'Cultura Viva & Andenes',
       categorySlug: 'cultura-viva-andenes',
@@ -82,72 +87,415 @@ export class TourService {
       durationDays: 2,
       priceSoles: 320,
       priceUsd: 88,
-      difficulty: 'Fácil a Moderado',
+      difficulty: 'Fácil - Moderada',
       altitudeMax: '3,459 msnm',
-      startingPoint: 'Plaza Mayor de Andamarca, Lucanas',
+      startingPoint: 'Carmen Salcedo de Andamarca',
       featured: true,
+      isActive: true,
       mainImageUrl: '/assets/images/andenes_andamarca.jpg'
     },
     {
       id: 3,
       title: 'Minivolcanes de Pachapupum & Termas Medicinales',
-      slug: 'volcan-pachapupum-termas-mayobamba',
-      subtitle: 'Monumento pétreo volcánico de sal y azufre a 4,022 msnm y pozas termomedicinales',
+      slug: 'volcan-pachapupum-termas',
+      subtitle: 'Monumento geotermal de sal y azufre a 4,022 msnm en Sacsamarca',
       categoryId: 3,
       categoryName: 'Aguas Termales & Cañones',
       categorySlug: 'aguas-termales-canones',
-      duration: 'Full Day',
+      duration: 'Full Day (10 horas)',
       durationDays: 1,
-      priceSoles: 130,
-      priceUsd: 36,
-      difficulty: 'Fácil',
+      priceSoles: 220,
+      priceUsd: 59,
+      difficulty: 'Moderada',
       altitudeMax: '4,022 msnm',
-      startingPoint: 'Sacsamarca / Chipao, Lucanas',
+      startingPoint: 'Huancasancos / Sacsamarca',
       featured: false,
+      isActive: true,
       mainImageUrl: '/assets/images/volcan_pachapupum.jpg'
     },
     {
       id: 4,
       title: 'Trek Pampa Galeras & Bofedales del Apu Qarhuarazo',
-      slug: 'apu-qarhuarazo-pampa-galeras',
-      subtitle: 'Travesía por la Reserva Nacional Pampa Galeras, manadas de vicuñas y nevado tutelar',
+      slug: 'pampa-galeras-vicunas-apu-qarhuarazo',
+      subtitle: 'Santuario de vicuñas silvestres y vistas al glaciar sagrado (5,112 msnm)',
       categoryId: 4,
       categoryName: 'Alta Montaña & Vicuñas',
       categorySlug: 'alta-montana-vicunas',
-      duration: '2 Días',
+      duration: '2 Días / 1 Noche',
       durationDays: 2,
-      priceSoles: 180,
-      priceUsd: 49,
-      difficulty: 'Exigente',
+      priceSoles: 280,
+      priceUsd: 75,
+      difficulty: 'Moderada - Exigente',
       altitudeMax: '4,800 msnm',
-      startingPoint: 'Pampa Galeras / Lucanas, Ayacucho',
+      startingPoint: 'Puquio / Lucanas',
       featured: false,
+      isActive: true,
       mainImageUrl: '/assets/images/pampa_galeras_vicunas.jpg'
     },
     {
       id: 5,
-      title: 'Gran Travesía Valle del Sondondo: Ruta de la Mancomunidad',
-      slug: 'gran-travesia-valle-del-sondondo',
-      subtitle: 'Expedición completa por los seis distritos ancestrales de los Hurin Rukanas',
-      categoryId: 2,
-      categoryName: 'Mancomunidad Sondondo',
-      categorySlug: 'mancomunidad-sondondo',
-      duration: '4 Días / 3 Noches',
-      durationDays: 4,
-      priceSoles: 720,
-      priceUsd: 195,
-      difficulty: 'Moderado',
-      altitudeMax: '3,459 msnm',
-      startingPoint: 'Puquio / Nasca / Ayacucho',
+      title: 'Ruta de los Pueblos Mágicos: Aucará, Cabana Sur & Chipao',
+      slug: 'pueblos-magicos-aucara-cabana-chipao',
+      subtitle: 'Templos coloniales de piedra, mirador Chauccalla y la ruta de Guamán Poma',
+      categoryId: 5,
+      categoryName: 'Pueblos Vivos',
+      categorySlug: 'pueblos-historicos',
+      duration: 'Full Day (7 horas)',
+      durationDays: 1,
+      priceSoles: 160,
+      priceUsd: 43,
+      difficulty: 'Fácil',
+      altitudeMax: '3,300 msnm',
+      startingPoint: 'Aucará / Sondondo',
+      featured: false,
+      isActive: true,
+      mainImageUrl: '/assets/images/pueblo_andamarca.jpg'
+    },
+    {
+      id: 6,
+      title: 'Gran Travesía Valle del Sondondo (3 Días / 2 Noches)',
+      slug: 'gran-travesia-valle-sondondo-3d2n',
+      subtitle: 'El viaje definitivo: Cóndores, Andenes, Volcán Pachapupum y Pampa Galeras',
+      categoryId: 6,
+      categoryName: 'Circuito 3 Días',
+      categorySlug: 'expedicion-integral',
+      duration: '3 Días / 2 Noches',
+      durationDays: 3,
+      priceSoles: 680,
+      priceUsd: 182,
+      difficulty: 'Moderada',
+      altitudeMax: '4,022 msnm',
+      startingPoint: 'Puquio / Aucará',
       featured: true,
+      isActive: true,
       mainImageUrl: '/assets/images/hero_sondondo.jpg'
     }
   ];
 
+  // Catálogo completo de itinerarios auténticos por cada tour
+  private detailedCatalogById: Record<number, {
+    description: string;
+    galleryImages: string[];
+    included: string[];
+    notIncluded: string[];
+    recommendations: string[];
+    itineraries: any[];
+  }> = {
+    1: {
+      description: 'Vive una experiencia sobrecogedora en el mirador de Mayobamba (3,450 msnm), el punto más privilegiado del Perú para la observación del Cóndor Andino (Apu Huamaní) en libertad. Al alba, contempla el despegue de más de 20 cóndores planeando en las corrientes térmicas ascendentes del cañón a escasos metros de distancia, guiado por baquianos quechuas de Aucará con respeto total por la avifauna.',
+      galleryImages: [
+        '/assets/images/condor_mayobamba.jpg',
+        '/assets/images/andenes_andamarca.jpg',
+        '/assets/images/bosque_piedras.jpg',
+        '/assets/images/rio_sondondo.jpg',
+        '/assets/images/pueblo_andamarca.jpg'
+      ],
+      included: [
+        'Transporte turístico privado ida y vuelta desde punto de encuentro',
+        'Guía oficial local especializado en avifauna andina',
+        'Préstamo de binoculares de alta definición para avistamiento',
+        'Desayuno andino campestre con mate caliente de muña y coca',
+        'Almuerzo típico con trucha fresca del río Sondondo',
+        'Botiquín de primeros auxilios y balón de oxígeno medicinal',
+        'Tickets de acceso a miradores comunales'
+      ],
+      notIncluded: [
+        'Gastos y compras personales de artesanías',
+        'Propinas voluntarias para el guía y conductor'
+      ],
+      recommendations: [
+        'Llegar abrigado en capas para la madrugada (polar, cortaviento, guantes)',
+        'Calzado de trekking con suela antideslizante',
+        'Cámara fotográfica con teleobjetivo o zoom óptico',
+        'Lentes con protección UV y bloqueador solar'
+      ],
+      itineraries: [
+        {
+          id: 101,
+          dayNumber: 1,
+          title: '05:30 AM - Salida hacia el Cañón de Mayobamba & Avistamiento del Cóndor Andino',
+          description: 'Salida de madrugada hacia el mirador natural de Mayobamba (Aucará). A partir de las 6:30 AM observaremos el despertar y vuelo circular de más de 20 cóndores andinos sobre las térmicas del cañón. Caminata guiada por el borde del precipicio hacia el bebedero ancestral de las aves y charla sobre conservación comunitaria.',
+          activities: 'Avistamiento de cóndores andinos con binoculares ópticos, fotografía de paisaje y avifauna, descenso guiado a miradores intermedios.',
+          meals: 'Desayuno campestre con mate caliente de muña y coca, almuerzo tradicional andino con trucha de río.',
+          accommodation: 'Retorno a Aucará / Puquio al finalizar la tarde.'
+        }
+      ]
+    },
+    2: {
+      description: 'Sumérgete en el sistema agrícola vivo más impresionante de los Andes peruanos: más de 5,000 hectáreas de andenes preíncas en uso continuo en Carmen Salcedo de Andamarca (declarados Patrimonio de la Humanidad por la UNESCO). Explora la fortaleza arqueológica de Caniche con sus colosales murallas defensivas de 12 metros de altura (culturas Wari e Inca) y asiste a una presentación exclusiva y sagrada de la Danza de las Tijeras con galas y arpistas tradicionales.',
+      galleryImages: [
+        '/assets/images/andenes_andamarca.jpg',
+        '/assets/images/pueblo_andamarca.jpg',
+        '/assets/images/condor_mayobamba.jpg',
+        '/assets/images/bosque_piedras.jpg',
+        '/assets/images/rio_sondondo.jpg'
+      ],
+      included: [
+        'Transporte turístico privado durante los dos días',
+        '1 Noche de alojamiento en posada rural típica en Andamarca',
+        'Alimentación completa (1 desayuno andino, 2 almuerzos típicos, 1 cena campestre)',
+        'Exhibición privada y conversatorio sobre la Danza de Tijeras con maestros Danzaq',
+        'Guía local bilingüe y baquiano de la comunidad de Andamarca',
+        'Entradas al complejo arqueológico de Caniche y museo comunitario',
+        'Asistencia personalizada y botiquín de altura'
+      ],
+      notIncluded: [
+        'Bebidas alcohólicas y consumos adicionales en posada',
+        'Souvenirs textiles o artesanías locales'
+      ],
+      recommendations: [
+        'Ropa cómoda para caminatas diurnas y abrigo fuerte para las noches andinas',
+        'Calzado de trekking con buen agarre para subir andenes',
+        'Llevar dinero en efectivo en soles (no hay cajeros automáticos en el pueblo)',
+        'Batería externa o cargador portátil para cámara y celular'
+      ],
+      itineraries: [
+        {
+          id: 201,
+          dayNumber: 1,
+          title: 'Día 1: El Gran Anfiteatro de Andenerías de Andamarca (UNESCO) & Fortaleza de Caniche',
+          description: 'Llegada a Carmen Salcedo de Andamarca (3,250 msnm). Recorrido a pie por los milenarios andenes de Waylla y Aya Urqu, el mayor sistema continuo de terrazas agrícolas vivas del continente. Ascenso al complejo arqueológico de Caniche con sus imponentes murallas defensivas de 12 metros de altura (culturas Wari e Inca) y visita al museo comunal de sitio.',
+          activities: 'Caminata entre terrazas prehispánicas, interpretación de canales de irrigación hidráulica preínca, visita guiada al complejo de Caniche.',
+          meals: 'Almuerzo típico andino en restaurante comunal, cena tradicional con productos orgánicos de la cuenca.',
+          accommodation: 'Noche en posada rural tradicional en Carmen Salcedo de Andamarca.'
+        },
+        {
+          id: 202,
+          dayNumber: 2,
+          title: 'Día 2: Mística Andina, Templo Colonial & Demostración Sagrada de la Danza de Tijeras',
+          description: 'Desayuno andino con panes tradicionales de trigo y queso artesanal. Recorrido por las callejuelas empedradas de Andamarca y su iglesia virreinal de piedra. A media mañana, encuentro exclusivo con los maestros Danzaq (danzantes de tijeras) y músicos de arpa y violín, presenciando una exhibición ritual del Atipanakuy y conociendo el significado espiritual del pacto con los Apus.',
+          activities: 'Demostración íntima de la Danza de las Tijeras (Patrimonio UNESCO), diálogo con maestros galas, taller vivencial y retorno por la tarde.',
+          meals: 'Desayuno tradicional andino, almuerzo de despedida.',
+          accommodation: 'Fin de la expedición.'
+        }
+      ]
+    },
+    3: {
+      description: 'Una expedición geotermal única hacia uno de los monumentos geológicos más asombrosos del continente: el cono volcánico de sal y azufre de Pachapupum, ubicado a 4,022 msnm en Sacsamarca. Con 30 metros de altura sobre la meseta andina, su cráter expulsa aguas minerales calientes en constante ebullición. Disfruta de un baño reconstituyente en sus pozas termomedicinales ricas en azufre, hierro y sales que alivian el cansancio y benefician la salud.',
+      galleryImages: [
+        '/assets/images/volcan_pachapupum.jpg',
+        '/assets/images/rio_sondondo.jpg',
+        '/assets/images/bosque_piedras.jpg',
+        '/assets/images/hero_sondondo.jpg'
+      ],
+      included: [
+        'Transporte 4x4 o van turística acondicionada para alta montaña',
+        'Guía oficial conocedor de la geología y cosmovisión local',
+        'Ingreso al circuito geotermal y pozas termomedicinales de Pachapupum',
+        'Almuerzo andino campestre caliente y mate de coca para aclimatación',
+        'Botiquín de primeros auxilios y oxímetro/oxígeno'
+      ],
+      notIncluded: [
+        'Toalla y artículos de aseo personal para las termas',
+        'Gastos no especificados en el programa'
+      ],
+      recommendations: [
+        'Llevar traje de baño, toalla, sandalias y muda de ropa seca',
+        'Abrigo para la salida de las termas debido al viento de la puna',
+        'Bloqueador solar resistente al agua y sombrero',
+        'Hidratación abundante previa para evitar el soroche'
+      ],
+      itineraries: [
+        {
+          id: 301,
+          dayNumber: 1,
+          title: 'Expedición al Cono Geotermal de Pachapupum & Circuito de Aguas Termomedicinales',
+          description: 'Salida hacia la puna alta de Sacsamarca / Chipao hasta alcanzar los 4,022 msnm. Llegada al colosal monumento geotermal de Pachapupum, una formación cónica única en el mundo de 30 metros de altura compuesta de sal, azufre y toba volcánica. Ascenso por sus gradas naturales hasta el cráter para ver el borboteo de agua a alta temperatura y tiempo libre de relax en las pozas termales curativas ricas en minerales.',
+          activities: 'Trekking geológico sobre depósitos volcánicos, ascenso al cráter de Pachapupum, baño relajante en pozas termales medicinales y fotografía del cañón de Chipao.',
+          meals: 'Box lunch energético andino, almuerzo típico de montaña caliente.',
+          accommodation: 'Retorno al punto de origen al atardecer.'
+        }
+      ]
+    },
+    4: {
+      description: 'Una travesía inolvidable por la inmensidad del altiplano ayacuchano. Conoce la Reserva Nacional Pampa Galeras Barbara D\'Achille, principal centro mundial de conservación y recuperación de la vicuña silvestre, el camélido de fibra más fina del planeta. Posteriormente, asciende a los bofedales altoandinos con vistas directas al colosal nevado Apu Qarhuarazo (5,112 msnm), montaña sagrada de los Rukanas, en un entorno de lagunas glaciares y fauna de puna.',
+      galleryImages: [
+        '/assets/images/pampa_galeras_vicunas.jpg',
+        '/assets/images/bosque_piedras.jpg',
+        '/assets/images/hero_sondondo.jpg',
+        '/assets/images/andenes_andamarca.jpg'
+      ],
+      included: [
+        'Transporte turístico privado adaptado a rutas de altura',
+        '1 Noche de alojamiento en albergue ecológico o posada en Puquio',
+        'Pensión completa (1 desayuno, 2 almuerzos campestres, 1 cena reconfortante)',
+        'Guía especializado en biología y fauna altoandina',
+        'Boletos de ingreso a la Reserva Nacional Pampa Galeras',
+        'Ceremonia tradicional de pago a la tierra (Haywarikuy) con paqo local',
+        'Botiquín de alta montaña y balón de oxígeno'
+      ],
+      notIncluded: [
+        'Bolsa de dormir (si aplica campamento)',
+        'Snacks energéticos adicionales'
+      ],
+      recommendations: [
+        'Indumentaria técnica para frío extremo (primera capa térmica, polar, casaca cortaviento)',
+        'Gorro de lana, guantes térmicos y bufanda',
+        'Zapatillas o botas de trekking impermeables',
+        'Gafas de sol con filtro UV de alta protección para el resplandor de altura'
+      ],
+      itineraries: [
+        {
+          id: 401,
+          dayNumber: 1,
+          title: 'Día 1: Reserva Nacional Pampa Galeras Barbara D\'Achille & El Santuario de la Vicuña',
+          description: 'Viaje hacia la meseta altoandina de Pampa Galeras (4,100 msnm), el mayor refugio de vicuñas del planeta. Visita al Centro de Interpretación, recorrido por los cercos de manejo de vicuñas y safari fotográfico observando tropillas silvestres de vicuñas, guanacos, vizcachas y aves migratorias en los bofedales.',
+          activities: 'Safari fotográfico de fauna silvestre andina, caminata de aclimatación por bofedales y charla sobre el Chaccu ancestral.',
+          meals: 'Almuerzo campestre altoandino, cena reconfortante en albergue.',
+          accommodation: 'Albergue ecológico en Pampa Galeras o posada en Puquio.'
+        },
+        {
+          id: 402,
+          dayNumber: 2,
+          title: 'Día 2: Trekking Hacia las Faldas Glaciares del Apu Qarhuarazo (4,800 msnm)',
+          description: 'Caminata de altura hacia las bases del nevado tutelar Apu Qarhuarazo (5,112 msnm), montaña sagrada de los pueblos Rukanas. Observación de lagunas glaciares turquesas, morrenas y flora de tundra andina (yaretas y puyas). Ceremonia ancestral de pago a la tierra (Haywarikuy) guiada por el guía local.',
+          activities: 'Trekking de alta montaña, fotografía de glaciares y lagunas altoandinas, ritual tradicional de agradecimiento a los Apus.',
+          meals: 'Desayuno de alta montaña con quinua y maca, refrigerio de marcha y almuerzo caliente de retorno.',
+          accommodation: 'Fin del tour.'
+        }
+      ]
+    },
+    5: {
+      description: 'Un recorrido fascinante por la historia virreinal y precolombina de la cuenca del Sondondo. Visita los seis pueblos históricos de la mancomunidad: en Sondondo conoce la casa solariega de don Felipe Guamán Poma de Ayala, autor de la emblemática "Primer Nueva Corónica y Buen Gobierno"; admira en Aucará su iglesia colonial de piedra con retablos barrocos en pan de oro; asciende al mirador de Chauccalla; y maravíllate en Chipao con sus plazas de arte topiario talladas en cipreses centenarios.',
+      galleryImages: [
+        '/assets/images/pueblo_andamarca.jpg',
+        '/assets/images/andenes_andamarca.jpg',
+        '/assets/images/rio_sondondo.jpg',
+        '/assets/images/hero_sondondo.jpg'
+      ],
+      included: [
+        'Transporte turístico privado para todo el circuito distrital',
+        'Guía historiador e intérprete cultural de la zona',
+        'Entradas a museos locales, casas históricas y templos coloniales',
+        'Almuerzo gastronómico regional con recetas tradicionales de la cuenca',
+        'Degustación de panes andinos en horno de leña colonial'
+      ],
+      notIncluded: [
+        'Compras de artesanías de piedra o madera',
+        'Gastos no contemplados en el programa'
+      ],
+      recommendations: [
+        'Ropa ligera para el mediodía y casaca para el atardecer',
+        'Sombrero de ala ancha y protector solar',
+        'Cámara fotográfica para arquitectura colonial y panorámicas',
+        'Zapatos cómodos para caminar por empedrados históricos'
+      ],
+      itineraries: [
+        {
+          id: 501,
+          dayNumber: 1,
+          title: 'Ruta de la Historia y Tradición: Tierra de Guamán Poma, Templos Coloniales & Miradores',
+          description: 'Recorrido cultural por el corazón histórico del Valle del Sondondo. Visita en Sondondo a la casa-monumento del insigne cronista indígena Felipe Guamán Poma de Ayala. Continuación hacia Cabana Sur con su pintoresca plaza y templos de piedra sillar. En Aucará, visita a la majestuosa iglesia colonial con retablos barrocos en pan de oro, subida al mirador de Chauccalla y parada en Chipao, famoso por sus esculturas de ciprés en arte topiario.',
+          activities: 'Recorrido cultural e histórico guiado, lectura de pasajes de la Nueva Corónica, visita a talleres de artesanos de piedra y madera, fotografía en mirador Chauccalla.',
+          meals: 'Desayuno típico con café de altura y tamales, almuerzo gastronómico regional con productos de la cuenca.',
+          accommodation: 'Retorno al punto de inicio.'
+        }
+      ]
+    },
+    6: {
+      description: 'El viaje definitivo para conocer a fondo la magia del Valle del Sondondo en una sola expedición integral de 3 días y 2 noches. Integra los cuatro grandes hitos del destino: el majestuoso vuelo del cóndor andino en Mayobamba, el milenario anfiteatro de andenes vivos de Andamarca con la mística Danza de las Tijeras, el monumento geotermal de Pachapupum y los paisajes de la Reserva Nacional Pampa Galeras. La experiencia más completa de turismo rural comunitario en Ayacucho.',
+      galleryImages: [
+        '/assets/images/hero_sondondo.jpg',
+        '/assets/images/condor_mayobamba.jpg',
+        '/assets/images/andenes_andamarca.jpg',
+        '/assets/images/volcan_pachapupum.jpg',
+        '/assets/images/pampa_galeras_vicunas.jpg',
+        '/assets/images/pueblo_andamarca.jpg'
+      ],
+      included: [
+        'Transporte turístico privado integral durante los 3 días de expedición',
+        '2 Noches de hospedaje rural con encanto en Carmen Salcedo de Andamarca',
+        'Pensión completa: 2 desayunos andinos, 3 almuerzos típicos y 2 cenas campestres',
+        'Avistamiento de cóndores con binoculares ópticos en Mayobamba',
+        'Ingreso y circuito de aguas termales en el volcán Pachapupum',
+        'Entradas al complejo arqueológico de Caniche y andenes de Andamarca',
+        'Presentación ritual de Danza de Tijeras con músicos en vivo y fogata',
+        'Guía oficial de turismo bilingüe nativo del Valle del Sondondo',
+        'Botiquín de primeros auxilios y asistencia permanente 24/7'
+      ],
+      notIncluded: [
+        'Pasajes de traslado interprovincial hacia el punto de inicio en Puquio o Ayacucho',
+        'Gastos y compras personales',
+        'Propinas voluntarias para guías y arrieros'
+      ],
+      recommendations: [
+        'Mochila de viaje ligera con ropa abrigadora y muda térmica',
+        'Ropa de baño y toalla para las aguas termales de Pachapupum',
+        'Zapatos de trekking confortables ya adaptados al pie',
+        'Cámara fotográfica con memorias y baterías de repuesto'
+      ],
+      itineraries: [
+        {
+          id: 601,
+          dayNumber: 1,
+          title: 'Día 1: Puquio - Volcán Geotermal Pachapupum & Llegada al Valle de Andamarca',
+          description: 'Recepción y traslado privado hacia la cuenca del Sondondo. Visita al volcán mineral de Pachapupum (4,022 msnm) y sus termas curativas. Descenso panorámico por el cañón hacia el verde valle de Carmen Salcedo de Andamarca.',
+          activities: 'Visita geotermal, baño termomedicinal y recepción con música andina en Andamarca.',
+          meals: 'Almuerzo campestre, cena andina orgánica.',
+          accommodation: 'Posada rural en Andamarca.'
+        },
+        {
+          id: 602,
+          dayNumber: 2,
+          title: 'Día 2: Andenerías Patrimonio UNESCO, Sitio Arqueológico de Caniche & Velada de Tijeras',
+          description: 'Caminata entre los andenes agrícolas prehispánicos de Waylla y Aya Urqu. Exploración de las murallas de Caniche y los pueblos coloniales de Cabana Sur y Sondondo. Por la noche, fogata mística y presentación exclusiva de la Danza de las Tijeras.',
+          activities: 'Trekking cultural, exploración arqueológica Wari-Inca, demostración nocturna de Danza de Tijeras con arpistas.',
+          meals: 'Desayuno tradicional, almuerzo típico de trucha fresca, cena con fogata andina.',
+          accommodation: 'Posada rural en Andamarca.'
+        },
+        {
+          id: 603,
+          dayNumber: 3,
+          title: 'Día 3: Cañón de Mayobamba, Vuelo Libre de Cóndores, Aucará & Retorno',
+          description: 'Partida a las 5:30 AM hacia el Cañón de Mayobamba para presenciar el despertar y planeo majestuoso de cóndores andinos. Visita a la iglesia colonial de Aucará, laguna Ccochapampa y retorno a Puquio o Ayacucho con paradas fotográficas.',
+          activities: 'Avistamiento de cóndores andinos en vuelo libre, fotografía panorámica, visita colonial y traslado final.',
+          meals: 'Desayuno con vista al cañón de cóndores, almuerzo regional de despedida.',
+          accommodation: 'Fin de los servicios.'
+        }
+      ]
+    }
+  };
+
+  private resolveTourItemBySlug(allTours: any[], slug: string): any {
+    const cleanSlug = (slug || '').toLowerCase().trim();
+
+    // 1. Direct slug match
+    let match = allTours.find(t => (t.slug || '').toLowerCase() === cleanSlug);
+    if (match) return match;
+
+    // 2. Intelligent keyword / alias matcher
+    if (cleanSlug.includes('condor') || cleanSlug.includes('mayobamba') || cleanSlug.includes('kuntur')) {
+      match = allTours.find(t => t.id === 1 || (t.slug || '').includes('condor') || (t.title || '').toLowerCase().includes('cóndor'));
+      if (match) return match;
+    }
+    if (cleanSlug.includes('andenes') || cleanSlug.includes('andamarca') || cleanSlug.includes('tijeras')) {
+      match = allTours.find(t => t.id === 2 || (t.slug || '').includes('andenes') || (t.title || '').toLowerCase().includes('andamarca'));
+      if (match) return match;
+    }
+    if (cleanSlug.includes('pachapupum') || cleanSlug.includes('volcan') || cleanSlug.includes('termal') || cleanSlug.includes('termas')) {
+      match = allTours.find(t => t.id === 3 || (t.slug || '').includes('pachapupum') || (t.slug || '').includes('volcan'));
+      if (match) return match;
+    }
+    if (cleanSlug.includes('galeras') || cleanSlug.includes('qarhuarazo') || cleanSlug.includes('vicuna') || cleanSlug.includes('vicuñas')) {
+      match = allTours.find(t => t.id === 4 || (t.slug || '').includes('galeras') || (t.slug || '').includes('qarhuarazo'));
+      if (match) return match;
+    }
+    if (cleanSlug.includes('pueblo') || cleanSlug.includes('aucara') || cleanSlug.includes('cabana') || cleanSlug.includes('chipao') || cleanSlug.includes('guaman')) {
+      match = allTours.find(t => t.id === 5 || (t.slug || '').includes('pueblo'));
+      if (match) return match;
+    }
+    if (cleanSlug.includes('travesia') || cleanSlug.includes('mancomunidad') || cleanSlug.includes('integral') || cleanSlug.includes('3d2n')) {
+      match = allTours.find(t => t.id === 6 || (t.slug || '').includes('travesia'));
+      if (match) return match;
+    }
+
+    return allTours[0] || this.fallbackTours[0];
+  }
+
   private fallbackCategories: Category[] = [
     { id: 1, name: 'Ruta del Cóndor', slug: 'ruta-condor', description: 'Avistamiento de cóndores en Mayobamba', icon: 'feather', displayOrder: 1, toursCount: 1 },
     { id: 2, name: 'Andenes & Danza', slug: 'cultura-viva-andenes', description: 'Terrazas de Andamarca y Danzantes de Tijeras', icon: 'compass', displayOrder: 2, toursCount: 1 },
-    { id: 3, name: 'Aguas Termales', slug: 'aguas-termales-volcanes', description: 'Volcán Pachapupum y baños medicinales', icon: 'droplets', displayOrder: 3, toursCount: 1 },
+    { id: 3, name: 'Aguas Termales', slug: 'aguas-termales-canones', description: 'Volcán Pachapupum y baños medicinales', icon: 'droplets', displayOrder: 3, toursCount: 1 },
     { id: 4, name: 'Pampa Galeras', slug: 'alta-montana-vicunas', description: 'Reserva de vicuñas y Apu Qarhuarazo', icon: 'mountain', displayOrder: 4, toursCount: 1 },
     { id: 5, name: 'Pueblos Vivos', slug: 'pueblos-historicos', description: 'Aucará, Cabana Sur, Chipao y Guamán Poma', icon: 'compass', displayOrder: 5, toursCount: 1 },
     { id: 6, name: 'Circuito 3 Días', slug: 'expedicion-integral', description: 'La expedición completa por todo el valle', icon: 'map', displayOrder: 6, toursCount: 1 }
@@ -191,19 +539,24 @@ export class TourService {
     return this.http.get<TourDetail>(`${this.apiUrl}/tours/${slug}`).pipe(
       map(detail => {
         const sanitized = this.sanitizeTour(detail);
-        let gallery = sanitized.galleryImages || [];
-        if (gallery.length === 0 || gallery.some(g => !g || g.includes('unsplash.com') || g.startsWith('http'))) {
-          gallery = [
-            sanitized.mainImageUrl,
-            '/assets/images/andenes_andamarca.jpg',
-            '/assets/images/pueblo_andamarca.jpg',
-            '/assets/images/bosque_piedras.jpg',
-            '/assets/images/rio_sondondo.jpg'
-          ];
-        }
+        const detailedInfo = this.detailedCatalogById[sanitized.id] || this.detailedCatalogById[1];
+        
+        let gallery = (sanitized.galleryImages && sanitized.galleryImages.length > 0)
+          ? sanitized.galleryImages
+          : detailedInfo.galleryImages;
+
+        let itineraries = (sanitized.itineraries && sanitized.itineraries.length > 0)
+          ? sanitized.itineraries
+          : detailedInfo.itineraries;
+
         return {
           ...sanitized,
-          galleryImages: gallery
+          description: sanitized.description || detailedInfo.description,
+          galleryImages: gallery,
+          included: (sanitized.included && sanitized.included.length > 0) ? sanitized.included : detailedInfo.included,
+          notIncluded: (sanitized.notIncluded && sanitized.notIncluded.length > 0) ? sanitized.notIncluded : detailedInfo.notIncluded,
+          recommendations: (sanitized.recommendations && sanitized.recommendations.length > 0) ? sanitized.recommendations : detailedInfo.recommendations,
+          itineraries: itineraries
         };
       }),
       catchError(() => {
@@ -216,76 +569,18 @@ export class TourService {
           allTours = [...this.fallbackTours];
         }
 
-        const item = allTours.find((t: any) => t.slug === slug) || allTours[0] || this.fallbackTours[0];
-        const is3Days = item.durationDays === 3;
+        const item = this.resolveTourItemBySlug(allTours, slug);
+        const detailedInfo = this.detailedCatalogById[item.id] || this.detailedCatalogById[1];
+
         const detail: TourDetail = {
           ...item,
-          description: item.description || `Explora ${item.title} en el corazón del Valle del Sondondo (Lucanas, Ayacucho) con guías locales nativos, conocimiento ancestral de las rutas prehispánicas y respeto total por las comunidades campesinas.`,
-          galleryImages: (item.galleryImages && item.galleryImages.length > 0) ? item.galleryImages : [
-            item.mainImageUrl || '/assets/images/hero_sondondo.jpg',
-            '/assets/images/andenes_andamarca.jpg',
-            '/assets/images/pueblo_andamarca.jpg',
-            '/assets/images/bosque_piedras.jpg',
-            '/assets/images/rio_sondondo.jpg'
-          ],
-          included: [
-            'Transporte turístico privado ida y vuelta desde Ayacucho / Puquio',
-            'Guía oficial y baquianos locales nacidos en el Valle del Sondondo',
-            'Entradas a todos los miradores, zonas arqueológicas y baños termales',
-            'Alimentación con productos locales andinos de la cuenca',
-            'Noche cultural y conversatorio sobre mitos, leyendas y Danza de Tijeras',
-            'Botiquín de primeros auxilios y asistencia permanente'
-          ],
-          notIncluded: [
-            'Gastos personales y compras de artesanías',
-            'Propinas voluntarias para guías y arrieros locales'
-          ],
-          recommendations: [
-            'Ropa abrigadora para la noche y mañanas en altura',
-            'Calzado cómodo de trekking con buen agarre',
-            'Bloqueador solar, sombrero de ala ancha y lentes con protección UV',
-            'Botella reutilizable para agua',
-            'Cámara fotográfica o binoculares para avistamiento de aves'
-          ],
-          itineraries: is3Days ? [
-            {
-              id: 1,
-              dayNumber: 1,
-              title: 'Día 1: Ayacucho / Huancasancos - Volcán Pachapupum - Andamarca',
-              description: 'Salida temprana hacia el cañón y catarata Wiskiri. Visita al volcán pétreo de Pachapupum (4,022 msnm), baño en pozas termomedicinales y llegada a Andamarca.',
-              activities: 'Visita geológica a Pachapupum, termalismo andino y acomodación en Andamarca.',
-              meals: 'Desayuno andino, almuerzo campestre y cena.',
-              accommodation: 'Hospedaje rural en Andamarca.'
-            },
-            {
-              id: 2,
-              dayNumber: 2,
-              title: 'Día 2: Andenerías de Andamarca, Sitio Arqueológico de Kanichi & Aucará',
-              description: 'Recorrido por el anfiteatro de andenes vivos de Waylla y Aya Urqu, sitio arqueológico de Kanichi Antamarkas, pueblo de Cabana Sur, casa de Felipe Guamán Poma de Ayala en Sondondo y laguna Ccochapampa en Aucará.',
-              activities: 'Caminata entre terrazas prehispánicas, interpretación histórica y demostración de Danza de Tijeras.',
-              meals: 'Desayuno, almuerzo típico y cena con fogata cultural.',
-              accommodation: 'Hospedaje rural en Andamarca.'
-            },
-            {
-              id: 3,
-              dayNumber: 3,
-              title: 'Día 3: Mirador de Cóndores Mayobamba, Bosque de Piedras, Chipao & Retorno',
-              description: 'Avistamiento de cóndores en Mayobamba (6:30 - 8:30 am), recorrido por el bosque de piedras de Julián Cuaresma, minivolcanes de Villa San José, arte topiario en Chipao y retorno a Ayacucho o Puquio.',
-              activities: 'Avistamiento del Cóndor Andino en vuelo, fotografía y retorno.',
-              meals: 'Desayuno con vista al cañón y almuerzo regional.',
-              accommodation: 'Fin de los servicios.'
-            }
-          ] : [
-            {
-              id: 1,
-              dayNumber: 1,
-              title: 'Encuentro e inicio de la expedición en Valle del Sondondo',
-              description: 'Recepción en el punto de encuentro, charla de contextualización cultural y recorrido por los atractivos emblemáticos del circuito.',
-              activities: 'Recorrido guiado, fotografía paisajística e interacción con la comunidad local.',
-              meals: 'Refrigerio andino o almuerzo típico según programa.',
-              accommodation: 'Retorno o alojamiento local según paquete.'
-            }
-          ]
+          isActive: item.isActive !== false,
+          description: item.description || detailedInfo.description,
+          galleryImages: (item.galleryImages && item.galleryImages.length > 0) ? item.galleryImages : detailedInfo.galleryImages,
+          included: (item.included && item.included.length > 0) ? item.included : detailedInfo.included,
+          notIncluded: (item.notIncluded && item.notIncluded.length > 0) ? item.notIncluded : detailedInfo.notIncluded,
+          recommendations: (item.recommendations && item.recommendations.length > 0) ? item.recommendations : detailedInfo.recommendations,
+          itineraries: (item.itineraries && item.itineraries.length > 0) ? item.itineraries : detailedInfo.itineraries
         };
         return of(detail);
       })

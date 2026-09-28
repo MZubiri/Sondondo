@@ -60,7 +60,7 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
             [class.active]="activeFilter() === 'hidden'"
             (click)="activeFilter.set('hidden')"
           >
-            👁️‍🗨️ Ocultos / Pausados ({{ hiddenCount() }})
+            ⏸️ Ocultos / Pausados ({{ hiddenCount() }})
           </button>
         </div>
 
@@ -87,7 +87,7 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let tour of filteredTours()" [class.row-hidden]="!tour.isActive">
+              <tr *ngFor="let tour of filteredTours()" [class.row-hidden]="tour.isActive === false">
                 <td class="thumb-cell">
                   <img [src]="tour.mainImageUrl" [alt]="tour.title" class="tour-thumb" onerror="this.src='/assets/images/hero_sondondo.jpg'" />
                 </td>
@@ -97,7 +97,7 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
                     <span class="tour-sub">{{ tour.subtitle }}</span>
                     <div class="badge-row">
                       <span *ngIf="tour.featured" class="featured-badge">★ Destacado</span>
-                      <span *ngIf="!tour.isActive" class="paused-badge">Pausado / Oculto</span>
+                      <span *ngIf="tour.isActive === false" class="paused-badge">Pausado / Oculto</span>
                     </div>
                   </div>
                 </td>
@@ -109,33 +109,44 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
                 <td class="price-cell-usd">$ {{ tour.priceUsd }}</td>
                 <td>{{ tour.altitudeMax }}</td>
                 <td>
-                  <button 
-                    class="toggle-active-btn" 
-                    [class.active]="tour.isActive" 
-                    (click)="onToggleActive(tour)"
-                    [title]="tour.isActive ? 'Clic para ocultar de la web (no se borra)' : 'Clic para publicar en la web'"
+                  <span 
+                    class="badge-status-web" 
+                    [class.is-active]="tour.isActive !== false" 
+                    [class.is-paused]="tour.isActive === false"
                   >
-                    <span class="dot">●</span>
-                    <span>{{ tour.isActive ? 'Publicado' : 'Oculto' }}</span>
-                  </button>
+                    <span class="status-dot">●</span>
+                    <span>{{ tour.isActive !== false ? 'Visible en Web' : 'Oculto (Pausado)' }}</span>
+                  </span>
                 </td>
                 <td>
                   <div class="row-actions">
                     <button 
-                      class="btn-action-icon btn-vis" 
-                      [class.is-hidden]="!tour.isActive"
+                      *ngIf="tour.isActive !== false"
+                      type="button"
+                      class="btn-action-pill btn-pause" 
                       (click)="onToggleActive(tour)" 
-                      [title]="tour.isActive ? 'Ocultar tour de la web' : 'Publicar tour en la web'"
+                      title="Ocultar o pausar tour de la web pública (no se borra)"
                     >
-                      <svg *ngIf="tour.isActive" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                        <rect x="5" y="4" width="4" height="16" rx="1"></rect>
+                        <rect x="15" y="4" width="4" height="16" rx="1"></rect>
                       </svg>
-                      <svg *ngIf="!tour.isActive" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                      </svg>
+                      <span>Pausar</span>
                     </button>
+
+                    <button 
+                      *ngIf="tour.isActive === false"
+                      type="button"
+                      class="btn-action-pill btn-publish" 
+                      (click)="onToggleActive(tour)" 
+                      title="Publicar en el catálogo de la web pública"
+                    >
+                      <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                      </svg>
+                      <span>Publicar</span>
+                    </button>
+
                     <button class="btn-action-icon btn-edit" (click)="openEditModal(tour)" title="Editar tour">
                       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -582,23 +593,78 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
       letter-spacing: 0.04em;
     }
 
-    .btn-vis {
-      background: rgba(148, 163, 184, 0.15);
-      color: #94a3b8;
+    .badge-status-web {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
     }
 
-    .btn-vis:hover {
-      background: #475569;
-      color: #ffffff;
+    .badge-status-web.is-active {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.35);
     }
 
-    .btn-vis.is-hidden {
+    .badge-status-web.is-paused {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .status-dot {
+      font-size: 0.7rem;
+    }
+
+    .badge-status-web.is-active .status-dot {
+      color: #22c55e;
+    }
+
+    .badge-status-web.is-paused .status-dot {
       color: #f59e0b;
     }
 
-    .dot {
-      font-size: 0.65rem;
-      margin-right: 0.25rem;
+    .btn-action-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-action-pill.btn-pause {
+      background: rgba(245, 158, 11, 0.12);
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.25);
+    }
+
+    .btn-action-pill.btn-pause:hover {
+      background: rgba(245, 158, 11, 0.25);
+      color: #ffffff;
+      border-color: #f59e0b;
+    }
+
+    .btn-action-pill.btn-publish {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .btn-action-pill.btn-publish:hover {
+      background: #16a34a;
+      color: #ffffff;
+      border-color: #22c55e;
     }
 
     .btn-create {
@@ -718,25 +784,9 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
       color: #94a3b8;
     }
 
-    .toggle-active-btn {
-      padding: 0.35rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      background: rgba(239, 68, 68, 0.15);
-      color: #f87171;
-      transition: all 0.2s ease;
-    }
-
-    .toggle-active-btn.active {
-      background: rgba(34, 197, 94, 0.15);
-      color: #4ade80;
-    }
-
     .row-actions {
       display: flex;
+      align-items: center;
       gap: 0.5rem;
     }
 
@@ -1480,13 +1530,13 @@ export class AdminToursComponent implements OnInit {
   activeLightboxPhoto = signal<string | null>(null);
 
   allCount = computed(() => this.tours().length);
-  activeCount = computed(() => this.tours().filter(t => t.isActive).length);
-  hiddenCount = computed(() => this.tours().filter(t => !t.isActive).length);
+  activeCount = computed(() => this.tours().filter(t => t.isActive !== false).length);
+  hiddenCount = computed(() => this.tours().filter(t => t.isActive === false).length);
 
   filteredTours = computed(() => {
     const f = this.activeFilter();
-    if (f === 'active') return this.tours().filter(t => t.isActive);
-    if (f === 'hidden') return this.tours().filter(t => !t.isActive);
+    if (f === 'active') return this.tours().filter(t => t.isActive !== false);
+    if (f === 'hidden') return this.tours().filter(t => t.isActive === false);
     return this.tours();
   });
 
@@ -1517,11 +1567,12 @@ export class AdminToursComponent implements OnInit {
   }
 
   onToggleActive(tour: AdminTour): void {
+    const nextActiveState = !(tour.isActive !== false);
     this.adminService.toggleTourActive(tour.id).subscribe(() => {
-      tour.isActive = !tour.isActive;
-      this.showToast(tour.isActive 
+      this.tours.update(list => list.map(t => t.id === tour.id ? { ...t, isActive: nextActiveState } : t));
+      this.showToast(nextActiveState 
         ? `✅ El tour "${tour.title}" ahora está VISIBLE en el catálogo web público.` 
-        : `👁️‍🗨️ El tour "${tour.title}" ahora está OCULTO / PAUSADO de la web (no se borró).`);
+        : `⏸️ El tour "${tour.title}" ahora está OCULTO / PAUSADO de la web pública (no se borró).`);
     });
   }
 
@@ -1555,6 +1606,7 @@ export class AdminToursComponent implements OnInit {
 
     this.formData = {
       ...tour,
+      isActive: tour.isActive !== false,
       galleryImages: existingGallery
     };
     this.showModal.set(true);

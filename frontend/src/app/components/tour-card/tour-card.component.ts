@@ -50,6 +50,12 @@ import { IconComponent } from '../icon/icon.component';
           </div>
 
           <div class="card-actions">
+            <a 
+              [routerLink]="['/tour', tour.slug]" 
+              class="btn-outline-itinerary"
+              title="Ver itinerario completo día por día">
+              <span>{{ ts.t('tours.viewDetails') }}</span>
+            </a>
             <button 
               type="button" 
               (click)="onBookClick.emit(tour)" 
@@ -164,6 +170,36 @@ import { IconComponent } from '../icon/icon.component';
       font-family: var(--font-display);
       font-size: 1.15rem;
       font-weight: 700;
+      color: var(--forest-900);
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-outline-itinerary {
+      padding: 0.45rem 0.85rem;
+      font-size: 0.82rem;
+      min-height: 40px;
+      border: 1px solid var(--earth-300);
+      background: transparent;
+      color: var(--forest-900);
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-outline-itinerary:hover {
+      background: var(--earth-100);
+      border-color: var(--forest-900);
       color: var(--forest-900);
     }
 
