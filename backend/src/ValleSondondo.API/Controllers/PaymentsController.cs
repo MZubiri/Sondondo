@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using ValleSondondo.API.DTOs;
 using ValleSondondo.Domain.Entities;
@@ -30,6 +31,7 @@ public class PaymentsController : ControllerBase
         _logger = logger;
     }
 
+    [EnableRateLimiting("contact-policy")]
     [HttpPost("create-preference")]
     public async Task<ActionResult<PaymentPreferenceResponseDto>> CreatePreference([FromBody] CreatePaymentPreferenceDto dto)
     {
@@ -162,6 +164,7 @@ public class PaymentsController : ControllerBase
         });
     }
 
+    [EnableRateLimiting("contact-policy")]
     [HttpPost("process-payment")]
     public async Task<IActionResult> ProcessPayment([FromBody] MercadoPagoPaymentProcessDto dto)
     {

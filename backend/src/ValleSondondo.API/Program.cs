@@ -1,8 +1,11 @@
+using System.Text;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 using ValleSondondo.API.Services;
 using ValleSondondo.Infrastructure.Data;
 
@@ -21,7 +24,10 @@ builder.Services.AddScoped<IWebhookService, WebhookService>();
 
 // 2. JWT Authentication Configuration
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["SecretKey"] ?? "ValleDelSondondoExpeditions_SecretKey_AyacuchoPeru_2026_SecureKeyJwtToken!";
+var secretKey = builder.Configuration["JWT_SECRET_KEY"]
+    ?? Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
+    ?? jwtSettings["SecretKey"]
+    ?? "ValleDelSondondoExpeditions_SecretKey_AyacuchoPeru_2026_SecureKeyJwtToken!";
 
 builder.Services.AddAuthentication(options =>
 {
@@ -44,7 +50,57 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 
-// 3. Database Connection (MySQL Pomelo)
+// 3. Rate Limiting Configuration (.NET 9)
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.ContentType = "application/json";
+        await context.HttpContext.Response.WriteAsync("{\"error\": \"Demasiadas solicitudes. Por favor espera un momento antes de reintentar.\"}", token);
+    };
+
+    // Login protection: 5 attempts per minute per IP
+    options.AddPolicy("login-policy", httpContext =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+            factory: _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 3,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
+
+    // Contact/Booking form spam protection: 6 requests per minute per IP
+    options.AddPolicy("contact-policy", httpContext =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+            factory: _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 6,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 3,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
+
+    // General API rate limit: 120 requests per minute
+    options.AddPolicy("general-policy", httpContext =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+            factory: _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 120,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 4,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 10
+            }));
+});
+
+// 4. Database Connection (MySQL Pomelo)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -64,7 +120,7 @@ builder.Services.AddDbContext<ValleSondondoDbContext>(options =>
         });
 });
 
-// 4. CORS configuration (allowing Angular dev server & production)
+// 5. CORS configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -75,7 +131,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 5. Swagger / OpenAPI documentation with Bearer Auth
+// 6. Swagger / OpenAPI documentation with Bearer Auth
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -107,13 +163,20 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// 6. Health Checks
+// 7. Health Checks
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
+// Forwarded Headers for Reverse Proxy (Nginx / Traefik / Coolify HTTPS)
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
 // Configure the HTTP request pipeline
 app.UseCors("AllowAll");
+app.UseRateLimiter();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
@@ -157,7 +220,6 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var logger = services.GetRequiredService<ILogger<Program>>();
     
-    // In Docker, MySQL might take a few seconds to become ready
     int maxRetries = 10;
     for (int retry = 1; retry <= maxRetries; retry++)
     {

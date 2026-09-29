@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, of, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { HotelInfo, HotelRoom } from '../models/hotel.model';
+import { HOTEL_STORAGE_KEY } from './admin.service';
 
 @Injectable({
   providedIn: 'root'
@@ -131,17 +132,37 @@ export class HotelService {
   };
 
   getHotelInfo(): Observable<HotelInfo> {
-    return this.http.get<HotelInfo>(`${this.apiUrl}/hotel`).pipe(
-      catchError(() => of(this.fallbackHotelInfo))
+    return this.http.get<HotelInfo>(`${this.apiUrl}/hotel?includeInactive=false`).pipe(
+      map(data => ({
+        ...data,
+        rooms: (data.rooms || []).filter(r => r.isActive !== false)
+      })),
+      catchError(() => {
+        try {
+          const cached = localStorage.getItem(HOTEL_STORAGE_KEY);
+          if (cached) {
+            const parsed = JSON.parse(cached) as HotelInfo;
+            if (parsed && parsed.name) {
+              return of({
+                ...parsed,
+                rooms: (parsed.rooms || []).filter(r => r.isActive !== false)
+              });
+            }
+          }
+        } catch {}
+        return of({
+          ...this.fallbackHotelInfo,
+          rooms: this.fallbackHotelInfo.rooms.filter(r => r.isActive !== false)
+        });
+      })
     );
   }
 
   getRooms(): Observable<HotelRoom[]> {
-    return of(this.fallbackHotelInfo.rooms);
+    return this.getHotelInfo().pipe(map(info => info.rooms));
   }
 
   getRoomBySlug(slug: string): Observable<HotelRoom | undefined> {
-    const room = this.fallbackHotelInfo.rooms.find(r => r.slug === slug);
-    return of(room);
+    return this.getRooms().pipe(map(rooms => rooms.find(r => r.slug === slug)));
   }
 }

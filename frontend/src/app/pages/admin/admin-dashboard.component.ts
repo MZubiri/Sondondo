@@ -17,6 +17,15 @@ import { DashboardStats, AdminBooking } from '../../models/admin.model';
           <p class="page-desc">Métricas y cotizaciones en tiempo real para Valle del Sondondo Expeditions</p>
         </div>
         <div class="header-actions">
+          <a routerLink="/admin/hospedaje" class="btn-action btn-gold">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 4v16"></path>
+              <path d="M2 8h18a2 2 0 0 1 2 2v10"></path>
+              <path d="M2 17h20"></path>
+              <path d="M6 8v9"></path>
+            </svg>
+            <span>Hospedaje & Hotel</span>
+          </a>
           <a routerLink="/admin/tours" class="btn-action btn-primary">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -223,8 +232,14 @@ import { DashboardStats, AdminBooking } from '../../models/admin.model';
       color: #ffffff;
     }
 
-    .btn-primary:hover {
-      background: #b34a24;
+    .btn-gold {
+      background: #e09f3e;
+      color: #0b1216;
+    }
+
+    .btn-gold:hover {
+      background: #cf8e30;
+      transform: translateY(-1px);
     }
 
     .btn-secondary {

@@ -10,6 +10,11 @@ import { AdminToursComponent } from './pages/admin/admin-tours.component';
 import { AdminMessagesComponent } from './pages/admin/admin-messages.component';
 import { AdminTestimonialsComponent } from './pages/admin/admin-testimonials.component';
 import { AdminGalleryComponent } from './pages/admin/admin-gallery.component';
+import { AdminHotelComponent } from './pages/admin/admin-hotel.component';
+import { TerminosCondicionesComponent } from './pages/legal/terminos-condiciones.component';
+import { PoliticaCancelacionComponent } from './pages/legal/politica-cancelacion.component';
+import { PoliticaPrivacidadComponent } from './pages/legal/politica-privacidad.component';
+import { LibroReclamacionesComponent } from './pages/legal/libro-reclamaciones.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -33,6 +38,28 @@ export const routes: Routes = [
     path: 'pago/:status',
     component: PaymentStatusComponent,
     title: 'Resultado de Pago | Valle del Sondondo Expeditions'
+  },
+
+  // Legal & Compliance Routes (INDECOPI / Ley 29733)
+  {
+    path: 'terminos-y-condiciones',
+    component: TerminosCondicionesComponent,
+    title: 'Términos y Condiciones | Valle del Sondondo Expeditions'
+  },
+  {
+    path: 'politica-de-cancelacion',
+    component: PoliticaCancelacionComponent,
+    title: 'Políticas de Cancelación y Reembolso | Valle del Sondondo Expeditions'
+  },
+  {
+    path: 'politica-de-privacidad',
+    component: PoliticaPrivacidadComponent,
+    title: 'Política de Privacidad | Valle del Sondondo Expeditions'
+  },
+  {
+    path: 'libro-de-reclamaciones',
+    component: LibroReclamacionesComponent,
+    title: 'Libro de Reclamaciones Virtual | Valle del Sondondo Expeditions'
   },
 
   // Admin Routes
@@ -65,6 +92,11 @@ export const routes: Routes = [
         path: 'tours',
         component: AdminToursComponent,
         title: 'Gestión de Tours | Panel de Control'
+      },
+      {
+        path: 'hospedaje',
+        component: AdminHotelComponent,
+        title: 'Gestión de Hospedaje & Habitaciones | Panel de Control'
       },
       {
         path: 'mensajes',

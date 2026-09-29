@@ -114,3 +114,6 @@ export interface GalleryItem {
   altText: string;
   uploadedAt: string;
 }
+
+export * from './hotel.model';
+

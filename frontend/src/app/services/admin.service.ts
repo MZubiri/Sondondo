@@ -8,7 +8,10 @@ import {
   AdminContactMessage, 
   AdminTestimonial, 
   GalleryItem,
-  PassengerManifestItem 
+  PassengerManifestItem,
+  HotelInfo,
+  HotelRoom,
+  HotelBooking
 } from '../models/admin.model';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
@@ -18,6 +21,8 @@ export const TOURS_STORAGE_KEY = 'sondondo_admin_tours_cache';
 export const MESSAGES_STORAGE_KEY = 'sondondo_admin_messages_cache';
 export const TESTIMONIALS_STORAGE_KEY = 'sondondo_admin_testimonials_cache';
 export const GALLERY_STORAGE_KEY = 'sondondo_admin_gallery_cache';
+export const HOTEL_STORAGE_KEY = 'sondondo_admin_hotel_cache';
+export const HOTEL_BOOKINGS_STORAGE_KEY = 'sondondo_admin_hotel_bookings_cache';
 
 @Injectable({
   providedIn: 'root'
@@ -286,6 +291,215 @@ export class AdminService {
   messagesSignal = signal<AdminContactMessage[]>(this.loadStoredMessages());
   testimonialsSignal = signal<AdminTestimonial[]>(this.loadStoredTestimonials());
   gallerySignal = signal<GalleryItem[]>(this.loadStoredGallery());
+  hotelInfoSignal = signal<HotelInfo>(this.loadStoredHotelInfo());
+  hotelBookingsSignal = signal<HotelBooking[]>(this.loadStoredHotelBookings());
+
+  private initialHotelInfo: HotelInfo = {
+    name: 'Hotel Punto Clave',
+    stars: 3,
+    tagline: 'Alojamiento oficial y descanso confortable con balcón privado, terraza e hidromasaje',
+    address: 'Mz.B - Lt.6 Calle Los Ficus',
+    city: 'Ica',
+    postalCode: '11004',
+    description: 'Punto Clave, que cuenta con jardín, terraza y servicio de habitaciones, es un hotel de 3 estrellas en Ica. Ofrece recepción abierta las 24 horas, WiFi gratuito de alta velocidad en todo el establecimiento y estacionamiento privado gratuito. Cada habitación dispone de balcón privado con vistas, baño privado con ducha y artículos de aseo gratuitos, TV de pantalla plana, escritorio y ropa de cama.',
+    whatsAppNumber: environment.fallbackWhatsApp || '51966380590',
+    checkInTime: 'A partir de las 13:00 hrs',
+    checkOutTime: 'Hasta las 12:00 hrs',
+    featuredAmenities: [
+      { name: 'WiFi Gratis', icon: 'wifi', description: 'Conexión de alta velocidad en todo el alojamiento' },
+      { name: 'Parking Privado Gratis', icon: 'parking', description: 'Estacionamiento seguro en el establecimiento' },
+      { name: 'Recepción 24 Horas', icon: 'clock', description: 'Atención continua y asistencia a huéspedes' },
+      { name: 'Balcón en Cada Habitación', icon: 'sun', description: 'Vistas exteriores y ventilación natural' },
+      { name: 'Bañera de Hidromasaje', icon: 'bath', description: 'Relax y descanso en apartamentos dúplex' },
+      { name: 'Terraza & Jardín', icon: 'compass', description: 'Áreas al aire libre para relajarse' },
+      { name: 'Cocina Privada (Dúplex)', icon: 'coffee', description: 'Equipada para estancias prolongadas' },
+      { name: 'TV Pantalla Plana', icon: 'tv', description: 'Entretenimiento y confort en cada habitación' }
+    ],
+    rooms: [
+      {
+        id: 1,
+        title: 'Habitación Doble',
+        slug: 'habitacion-doble',
+        shortDescription: 'Acogedora habitación matrimonial con balcón exterior, TV y baño privado.',
+        description: 'Habitación privada con 1 cama doble matrimonial, balcón privado, televisión de pantalla plana, escritorio de trabajo y baño privado equipado con ducha y artículos de aseo gratuitos. Perfecta para parejas o viajeros que buscan confort y descanso reparador.',
+        capacityText: '2 Adultos',
+        capacityAdults: 2,
+        bedConfiguration: '1 Cama Doble',
+        pricePerNightSoles: 85,
+        pricePerNightUsd: 23,
+        mainImage: '/assets/images/hotel/room_double.jpg',
+        gallery: [
+          '/assets/images/hotel/room_double.jpg',
+          '/assets/images/hotel/room_double_alt.jpg',
+          '/assets/images/hotel/hotel_bathroom.jpg',
+          '/assets/images/hotel/hotel_terrace.jpg',
+          '/assets/images/hotel/hotel_main.jpg'
+        ],
+        amenities: [
+          'WiFi de alta velocidad gratuito',
+          'Balcón privado con vista',
+          'Baño privado con ducha y agua caliente',
+          'Artículos de aseo gratuitos y toallas',
+          'TV de pantalla plana',
+          'Escritorio de trabajo',
+          'Ropa de cama hipoalergénica',
+          'Caja fuerte'
+        ],
+        highlights: ['1 cama doble', 'Balcón privado', 'Baño privado', 'WiFi gratis'],
+        isActive: true,
+        totalUnits: 3,
+        floorOrZone: 'Piso 1 y 2'
+      },
+      {
+        id: 2,
+        title: 'Habitación Triple Estándar',
+        slug: 'habitacion-triple-estandar',
+        shortDescription: 'Habitación amplia con 3 camas (2 individuales + 1 doble), balcón y baño privado.',
+        description: 'Espaciosa y funcional, ideal para familias o grupos de amigos. Equipada con 2 camas individuales confortables y 1 cama doble, balcón privado exterior, TV de pantalla plana, escritorio y baño privado completo con ducha y amenidades de cortesía.',
+        capacityText: 'Hasta 4 Huéspedes',
+        capacityAdults: 4,
+        bedConfiguration: '2 Camas Individuales + 1 Cama Doble',
+        pricePerNightSoles: 130,
+        pricePerNightUsd: 35,
+        mainImage: '/assets/images/hotel/room_triple.jpg',
+        gallery: [
+          '/assets/images/hotel/room_triple.jpg',
+          '/assets/images/hotel/room_triple_alt.jpg',
+          '/assets/images/hotel/hotel_bathroom.jpg',
+          '/assets/images/hotel/hotel_terrace.jpg',
+          '/assets/images/hotel/hotel_facade.jpg'
+        ],
+        amenities: [
+          'WiFi de alta velocidad gratuito',
+          'Balcón privado',
+          'Baño privado con ducha y agua caliente',
+          'Artículos de aseo gratuitos y toallas',
+          'TV de pantalla plana',
+          'Escritorio de trabajo',
+          'Ropa de cama completa',
+          'Caja fuerte'
+        ],
+        highlights: ['2 individuales + 1 doble', 'Capacidad 4 personas', 'Balcón exterior', 'Baño privado'],
+        isActive: true,
+        totalUnits: 2,
+        floorOrZone: 'Piso 2'
+      },
+      {
+        id: 3,
+        title: 'Apartamento Dúplex',
+        slug: 'apartamento-duplex',
+        shortDescription: 'Apartamento en dos plantas con cocina equipada, sala, terraza e hidromasaje.',
+        description: 'La experiencia premium de Punto Clave. Diseñado en dos niveles, dispone de dormitorio principal con cama grande, zona de cocina privada equipada con electrodomésticos, sala de estar, terraza privada al aire libre, TV de pantalla plana y baño amplio con bañera de hidromasaje para relajación total.',
+        capacityText: '3 a 4 Huéspedes',
+        capacityAdults: 4,
+        bedConfiguration: '1 Cama Doble Grande + Sala de Estar Dúplex',
+        pricePerNightSoles: 175,
+        pricePerNightUsd: 48,
+        mainImage: '/assets/images/hotel/room_duplex.jpg',
+        gallery: [
+          '/assets/images/hotel/room_duplex.jpg',
+          '/assets/images/hotel/room_duplex_alt.jpg',
+          '/assets/images/hotel/hotel_kitchen.jpg',
+          '/assets/images/hotel/hotel_terrace.jpg',
+          '/assets/images/hotel/hotel_bathroom.jpg',
+          '/assets/images/hotel/hotel_main.jpg'
+        ],
+        amenities: [
+          'Bañera de hidromasaje / Jacuzzi',
+          'Zona de cocina privada y equipada',
+          'Terraza / balcón amplio con vistas',
+          'WiFi de alta velocidad gratuito',
+          'Sala de estar integrada',
+          'TV de pantalla plana',
+          'Baño privado de lujo con artículos de aseo',
+          'Ropa de cama y toallas de algodón'
+        ],
+        highlights: ['Cocina privada equipada', 'Bañera de hidromasaje', 'Terraza privada', 'Diseño dúplex'],
+        isActive: true,
+        totalUnits: 1,
+        floorOrZone: 'Piso 3 Ático'
+      }
+    ]
+  };
+
+  private initialHotelBookings: HotelBooking[] = [
+    {
+      id: 1,
+      voucherCode: 'HPC-2026-001',
+      guestName: 'Eduardo Ramos Palomino',
+      guestEmail: 'eduardo.ramos@outlook.com',
+      guestPhone: '+51 984 567 890',
+      guestDocumentType: 'DNI',
+      guestDocumentNumber: '43892019',
+      roomId: 1,
+      roomTitle: 'Habitación Doble',
+      checkInDate: '2026-10-14',
+      checkOutDate: '2026-10-16',
+      nights: 2,
+      numberOfGuests: 2,
+      totalPriceSoles: 170,
+      paidAmountSoles: 170,
+      paymentMethod: 'MercadoPago',
+      paymentStatus: 'Pagado 100%',
+      status: 'Confirmed',
+      specialRequests: 'Llegada estimada a las 15:00 hrs. Cama matrimonial requerida.',
+      createdAt: new Date(Date.now() - 48 * 3600000).toISOString(),
+      whatsAppDirectUrl: 'https://wa.me/51984567890?text=Hola%20Eduardo,%20confirmamos%20tu%20estadia%20en%20Hotel%20Punto%20Clave.'
+    },
+    {
+      id: 2,
+      voucherCode: 'HPC-2026-002',
+      guestName: 'Martina Valenzuela Soto',
+      guestEmail: 'mvalenzuela@empresa.pe',
+      guestPhone: '+51 966 234 111',
+      guestDocumentType: 'DNI',
+      guestDocumentNumber: '71209382',
+      roomId: 3,
+      roomTitle: 'Apartamento Dúplex',
+      checkInDate: '2026-11-01',
+      checkOutDate: '2026-11-04',
+      nights: 3,
+      numberOfGuests: 4,
+      totalPriceSoles: 525,
+      paidAmountSoles: 262.5,
+      paymentMethod: 'Transferencia BCP',
+      paymentStatus: 'Adelanto 50%',
+      status: 'Pending',
+      specialRequests: 'Solicitan preparación de jacuzzi y estacionamiento para camioneta 4x4.',
+      createdAt: new Date(Date.now() - 18 * 3600000).toISOString(),
+      whatsAppDirectUrl: 'https://wa.me/51966234111?text=Hola%20Martina,%20recibimos%20tu%20solicitud%20de%20reserva.'
+    }
+  ];
+
+  private loadStoredHotelInfo(): HotelInfo {
+    try {
+      const stored = localStorage.getItem(HOTEL_STORAGE_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return this.initialHotelInfo;
+  }
+
+  private saveHotelInfoToStorage(info: HotelInfo): void {
+    try {
+      localStorage.setItem(HOTEL_STORAGE_KEY, JSON.stringify(info));
+    } catch {}
+    this.hotelInfoSignal.set(info);
+  }
+
+  private loadStoredHotelBookings(): HotelBooking[] {
+    try {
+      const stored = localStorage.getItem(HOTEL_BOOKINGS_STORAGE_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return this.initialHotelBookings;
+  }
+
+  private saveHotelBookingsToStorage(bookings: HotelBooking[]): void {
+    try {
+      localStorage.setItem(HOTEL_BOOKINGS_STORAGE_KEY, JSON.stringify(bookings));
+    } catch {}
+    this.hotelBookingsSignal.set(bookings);
+  }
 
   private loadStoredBookings(): AdminBooking[] {
     try {
@@ -921,4 +1135,245 @@ export class AdminService {
     this.saveGallery(list);
     return of(true);
   }
+
+  // --- HOTEL & LODGING MANAGEMENT ---
+
+  getHotelInfo(includeInactive = true): Observable<HotelInfo> {
+    return this.http.get<HotelInfo>(`${this.apiUrl}/hotel?includeInactive=${includeInactive}`, { headers: this.getAuthHeaders() }).pipe(
+      tap(apiInfo => {
+        if (apiInfo && apiInfo.name) {
+          this.saveHotelInfoToStorage(apiInfo);
+        }
+      }),
+      catchError(() => {
+        const stored = this.loadStoredHotelInfo();
+        const res: HotelInfo = {
+          ...stored,
+          rooms: includeInactive ? stored.rooms : stored.rooms.filter(r => r.isActive !== false)
+        };
+        return of(res);
+      })
+    );
+  }
+
+  updateHotelInfo(info: HotelInfo): Observable<HotelInfo> {
+    this.saveHotelInfoToStorage(info);
+
+    return this.http.put<HotelInfo>(`${this.apiUrl}/hotel`, info, { headers: this.getAuthHeaders() }).pipe(
+      tap(saved => this.saveHotelInfoToStorage(saved)),
+      catchError(() => of(info))
+    );
+  }
+
+  getHotelRooms(includeInactive = true): Observable<HotelRoom[]> {
+    return this.http.get<HotelRoom[]>(`${this.apiUrl}/hotel/rooms?includeInactive=${includeInactive}`, { headers: this.getAuthHeaders() }).pipe(
+      tap(rooms => {
+        const current = this.loadStoredHotelInfo();
+        current.rooms = rooms;
+        this.saveHotelInfoToStorage(current);
+      }),
+      catchError(() => {
+        const stored = this.loadStoredHotelInfo();
+        const rooms = includeInactive ? stored.rooms : stored.rooms.filter(r => r.isActive !== false);
+        return of(rooms);
+      })
+    );
+  }
+
+  saveHotelRoom(room: HotelRoom): Observable<HotelRoom> {
+    const currentInfo = this.loadStoredHotelInfo();
+    const rooms = [...currentInfo.rooms];
+    const isEdit = room.id > 0;
+    const finalRoom: HotelRoom = isEdit ? { ...room } : { ...room, id: Date.now() };
+
+    if (isEdit && rooms.some(r => r.id === room.id)) {
+      currentInfo.rooms = rooms.map(r => r.id === room.id ? finalRoom : r);
+    } else {
+      currentInfo.rooms = [finalRoom, ...rooms];
+    }
+    this.saveHotelInfoToStorage(currentInfo);
+
+    if (isEdit) {
+      return this.http.put<HotelRoom>(`${this.apiUrl}/hotel/rooms/${room.id}`, room, { headers: this.getAuthHeaders() }).pipe(
+        map(() => finalRoom),
+        catchError(() => of(finalRoom))
+      );
+    } else {
+      return this.http.post<HotelRoom>(`${this.apiUrl}/hotel/rooms`, room, { headers: this.getAuthHeaders() }).pipe(
+        map(res => ({ ...finalRoom, id: res.id || finalRoom.id })),
+        catchError(() => of(finalRoom))
+      );
+    }
+  }
+
+  deleteHotelRoom(id: number): Observable<boolean> {
+    const current = this.loadStoredHotelInfo();
+    current.rooms = current.rooms.filter(r => r.id !== id);
+    this.saveHotelInfoToStorage(current);
+
+    return this.http.delete<any>(`${this.apiUrl}/hotel/rooms/${id}`, { headers: this.getAuthHeaders() }).pipe(
+      map(() => true),
+      catchError(() => of(true))
+    );
+  }
+
+  toggleHotelRoomActive(id: number): Observable<boolean> {
+    const current = this.loadStoredHotelInfo();
+    current.rooms = current.rooms.map(r => {
+      if (r.id === id) {
+        return { ...r, isActive: r.isActive === false ? true : false };
+      }
+      return r;
+    });
+    this.saveHotelInfoToStorage(current);
+
+    return this.http.patch<any>(`${this.apiUrl}/hotel/rooms/${id}/toggle-active`, {}, { headers: this.getAuthHeaders() }).pipe(
+      map(() => true),
+      catchError(() => of(true))
+    );
+  }
+
+  // --- HOTEL BOOKINGS ---
+
+  getHotelBookings(status?: string, search?: string): Observable<HotelBooking[]> {
+    let url = `${this.apiUrl}/hotel/bookings`;
+    const params: string[] = [];
+    if (status && status !== 'all') params.push(`status=${encodeURIComponent(status)}`);
+    if (search) params.push(`search=${encodeURIComponent(search)}`);
+    if (params.length > 0) url += `?${params.join('&')}`;
+
+    return this.http.get<HotelBooking[]>(url, { headers: this.getAuthHeaders() }).pipe(
+      tap(bookings => this.saveHotelBookingsToStorage(bookings)),
+      catchError(() => {
+        let list = this.loadStoredHotelBookings();
+        if (status && status !== 'all') {
+          list = list.filter(b => b.status.toLowerCase() === status.toLowerCase());
+        }
+        if (search) {
+          const s = search.toLowerCase();
+          list = list.filter(b => 
+            b.guestName.toLowerCase().includes(s) ||
+            b.guestPhone.includes(s) ||
+            b.roomTitle.toLowerCase().includes(s) ||
+            b.voucherCode.toLowerCase().includes(s)
+          );
+        }
+        return of(list);
+      })
+    );
+  }
+
+  saveHotelBooking(booking: HotelBooking): Observable<HotelBooking> {
+    const bookings = this.loadStoredHotelBookings();
+    const isEdit = booking.id > 0;
+    const finalBooking: HotelBooking = isEdit 
+      ? { ...booking } 
+      : { 
+          ...booking, 
+          id: Date.now(), 
+          createdAt: new Date().toISOString(),
+          voucherCode: booking.voucherCode || `HPC-2026-${(bookings.length + 1).toString().padStart(3, '0')}`
+        };
+
+    const cleanPhone = booking.guestPhone.replace(/\D/g, '');
+    const phoneToUse = cleanPhone.length === 9 ? '51' + cleanPhone : cleanPhone;
+    finalBooking.whatsAppDirectUrl = `https://wa.me/${phoneToUse || '51966380590'}?text=${encodeURIComponent(
+      `Hola ${booking.guestName}, te saludamos de Hotel Punto Clave respecto a tu reserva ${finalBooking.voucherCode} para ${booking.roomTitle}.`
+    )}`;
+
+    let updated: HotelBooking[];
+    if (isEdit && bookings.some(b => b.id === booking.id)) {
+      updated = bookings.map(b => b.id === booking.id ? finalBooking : b);
+    } else {
+      updated = [finalBooking, ...bookings];
+    }
+    this.saveHotelBookingsToStorage(updated);
+
+    return this.http.post<HotelBooking>(`${this.apiUrl}/hotel/bookings`, finalBooking, { headers: this.getAuthHeaders() }).pipe(
+      catchError(() => of(finalBooking))
+    );
+  }
+
+  updateHotelBookingStatus(id: number, status: HotelBooking['status']): Observable<boolean> {
+    const bookings = this.loadStoredHotelBookings().map(b => b.id === id ? { ...b, status } : b);
+    this.saveHotelBookingsToStorage(bookings);
+
+    return this.http.patch<any>(`${this.apiUrl}/hotel/bookings/${id}/status`, { status }, { headers: this.getAuthHeaders() }).pipe(
+      map(() => true),
+      catchError(() => of(true))
+    );
+  }
+
+  deleteHotelBooking(id: number): Observable<boolean> {
+    const filtered = this.loadStoredHotelBookings().filter(b => b.id !== id);
+    this.saveHotelBookingsToStorage(filtered);
+
+    return this.http.delete<any>(`${this.apiUrl}/hotel/bookings/${id}`, { headers: this.getAuthHeaders() }).pipe(
+      map(() => true),
+      catchError(() => of(true))
+    );
+  }
+
+  exportHotelBookingsCsv(): void {
+    const bookings = this.loadStoredHotelBookings();
+    const headers = [
+      'ID',
+      'Código Voucher',
+      'Huésped',
+      'Teléfono',
+      'Email',
+      'Documento',
+      'Habitación Reservada',
+      'Fecha Check-In',
+      'Fecha Check-Out',
+      'Noches',
+      'N° Huéspedes',
+      'Total (S/)',
+      'Pagado (S/)',
+      'Saldo Pendiente (S/)',
+      'Método de Pago',
+      'Estado de Pago',
+      'Estado Reserva',
+      'Fecha Creación',
+      'Peticiones Especiales'
+    ];
+
+    const rows = bookings.map(b => {
+      const total = b.totalPriceSoles || 0;
+      const paid = b.paidAmountSoles || 0;
+      const pending = Math.max(0, total - paid);
+      return [
+        b.id,
+        b.voucherCode,
+        `"${(b.guestName || '').replace(/"/g, '""')}"`,
+        b.guestPhone,
+        b.guestEmail,
+        `${b.guestDocumentType || 'DNI'}: ${b.guestDocumentNumber || '-'}`,
+        `"${(b.roomTitle || '').replace(/"/g, '""')}"`,
+        b.checkInDate,
+        b.checkOutDate,
+        b.nights,
+        b.numberOfGuests,
+        total,
+        paid,
+        pending,
+        b.paymentMethod || 'Pendiente',
+        b.paymentStatus || 'Pendiente',
+        b.status,
+        new Date(b.createdAt).toLocaleDateString('es-PE'),
+        `"${(b.specialRequests || '').replace(/"/g, '""')}"`
+      ].join(';');
+    });
+
+    const csvContent = '\uFEFF' + [headers.join(';'), ...rows].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Reservas_Hospedaje_Punto_Clave_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 }
+

@@ -17,6 +17,10 @@ import { IconComponent } from '../icon/icon.component';
           <p class="footer-text">
             {{ ts.t('footer.bio') }}
           </p>
+          <div class="agency-reg-tag">
+            <app-icon name="shield" [size]="14" stroke="#10B981"></app-icon>
+            <span>Operador Turístico & Hotelero Formal en Lucanas</span>
+          </div>
         </div>
 
         <!-- Col 2: Enlaces Rápidos -->
@@ -32,7 +36,27 @@ import { IconComponent } from '../icon/icon.component';
           </ul>
         </div>
 
-        <!-- Col 3: Contacto & Redes -->
+        <!-- Col 3: Transparencia & Marco Legal -->
+        <div class="footer-legal">
+          <span class="footer-col-header">Transparencia & Legal</span>
+          <ul class="legal-links">
+            <li><a routerLink="/terminos-y-condiciones">Términos y Condiciones</a></li>
+            <li><a routerLink="/politica-de-cancelacion">Políticas de Cancelación</a></li>
+            <li><a routerLink="/politica-de-privacidad">Protección de Datos (Ley 29733)</a></li>
+          </ul>
+          
+          <a routerLink="/libro-de-reclamaciones" class="reclamaciones-badge">
+            <div class="badge-icon">
+              <app-icon name="book" [size]="20" stroke="#F59E0B"></app-icon>
+            </div>
+            <div class="badge-info">
+              <span class="badge-title">Libro de Reclamaciones</span>
+              <span class="badge-sub">Virtual conforme a INDECOPI</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- Col 4: Contacto & Redes -->
         <div class="footer-contact">
           <span class="footer-col-header">{{ ts.t('footer.directContact') }}</span>
           <div class="contact-links">
@@ -58,6 +82,13 @@ import { IconComponent } from '../icon/icon.component';
       <div class="footer-bottom">
         <div class="container bottom-row">
           <p>{{ ts.t('footer.rights') }}</p>
+          <div class="bottom-links">
+            <a routerLink="/terminos-y-condiciones">Términos</a>
+            <span>•</span>
+            <a routerLink="/politica-de-privacidad">Privacidad</a>
+            <span>•</span>
+            <a routerLink="/libro-de-reclamaciones">Libro de Reclamaciones</a>
+          </div>
           <span class="bottom-tag">{{ ts.t('footer.location') }}</span>
         </div>
       </div>
@@ -74,8 +105,8 @@ import { IconComponent } from '../icon/icon.component';
 
     .footer-grid {
       display: grid;
-      grid-template-columns: 1.5fr 1fr 1.2fr;
-      gap: 3.5rem;
+      grid-template-columns: 1.4fr 0.9fr 1.2fr 1.1fr;
+      gap: 2.5rem;
       padding-bottom: 3.5rem;
     }
 
@@ -92,7 +123,20 @@ import { IconComponent } from '../icon/icon.component';
       font-size: 0.88rem;
       line-height: 1.65;
       color: #B5A89A;
-      max-width: 420px;
+      max-width: 360px;
+      margin-bottom: 1rem;
+    }
+
+    .agency-reg-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.78rem;
+      color: #A7F3D0;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 0.35rem 0.65rem;
+      border-radius: 9999px;
     }
 
     .footer-col-header {
@@ -105,22 +149,63 @@ import { IconComponent } from '../icon/icon.component';
       margin-bottom: 1.1rem;
     }
 
-    .footer-nav ul {
+    .footer-nav ul, .footer-legal ul {
       list-style: none;
       display: flex;
       flex-direction: column;
       gap: 0.65rem;
     }
 
-    .footer-nav a {
+    .footer-nav a, .footer-legal a {
       font-size: 0.88rem;
       color: #D6CEC3;
       transition: var(--transition);
     }
 
-    .footer-nav a:hover {
+    .footer-nav a:hover, .footer-legal a:hover {
       color: #FFFFFF;
       text-decoration: underline;
+    }
+
+    .reclamaciones-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding: 0.75rem 1rem;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 0.6rem;
+      text-decoration: none !important;
+      transition: all 0.2s ease;
+    }
+
+    .reclamaciones-badge:hover {
+      background: rgba(245, 158, 11, 0.18);
+      border-color: rgba(245, 158, 11, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .badge-icon {
+      flex-shrink: 0;
+    }
+
+    .badge-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .badge-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #FBBF24;
+      line-height: 1.2;
+    }
+
+    .badge-sub {
+      font-size: 0.72rem;
+      color: #D6D3D1;
+      margin-top: 0.15rem;
     }
 
     .admin-link {
@@ -177,10 +262,44 @@ import { IconComponent } from '../icon/icon.component';
       gap: 0.75rem;
     }
 
-    @media (max-width: 860px) {
+    .bottom-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .bottom-links a {
+      color: #A8A29E;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .bottom-links a:hover {
+      color: #FFFFFF;
+      text-decoration: underline;
+    }
+
+    .bottom-links span {
+      color: #57534E;
+    }
+
+    @media (max-width: 1024px) {
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+      }
+    }
+
+    @media (max-width: 640px) {
       .footer-grid {
         grid-template-columns: 1fr;
-        gap: 2.2rem;
+        gap: 2rem;
+      }
+      .bottom-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
       }
     }
   `]

@@ -20,6 +20,9 @@ export interface HotelRoom {
   amenities: string[];
   highlights: string[];
   bookingRoomUrl?: string;
+  isActive?: boolean;
+  totalUnits?: number;
+  floorOrZone?: string;
 }
 
 export interface HotelInfo {
@@ -36,4 +39,28 @@ export interface HotelInfo {
   checkInTime: string;
   checkOutTime: string;
   rooms: HotelRoom[];
+}
+
+export interface HotelBooking {
+  id: number;
+  voucherCode: string;
+  guestName: string;
+  guestEmail: string;
+  guestPhone: string;
+  guestDocumentType?: 'DNI' | 'Pasaporte' | 'Carnet Ext.';
+  guestDocumentNumber?: string;
+  roomId: number;
+  roomTitle: string;
+  checkInDate: string;
+  checkOutDate: string;
+  nights: number;
+  numberOfGuests: number;
+  totalPriceSoles: number;
+  paidAmountSoles?: number;
+  paymentMethod?: 'MercadoPago' | 'Yape' | 'Plin' | 'Transferencia BCP' | 'Banco de la Nación' | 'Efectivo' | 'Pendiente';
+  paymentStatus?: 'Pendiente' | 'Adelanto 50%' | 'Pagado 100%' | 'Reembolsado';
+  status: 'Pending' | 'Confirmed' | 'CheckedIn' | 'Completed' | 'Cancelled';
+  specialRequests?: string;
+  createdAt: string;
+  whatsAppDirectUrl?: string;
 }

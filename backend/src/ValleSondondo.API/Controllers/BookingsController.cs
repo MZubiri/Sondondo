@@ -1,5 +1,7 @@
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using ValleSondondo.API.DTOs;
 using ValleSondondo.Domain.Entities;
@@ -20,6 +22,7 @@ public class BookingsController : ControllerBase
         _configuration = configuration;
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BookingAdminDto>>> GetBookings(
         [FromQuery] string? status,
@@ -68,6 +71,7 @@ public class BookingsController : ControllerBase
         return Ok(result);
     }
 
+    [EnableRateLimiting("contact-policy")]
     [HttpPost]
     public async Task<ActionResult<BookingInquiryResponseDto>> CreateInquiry([FromBody] CreateBookingInquiryDto dto)
     {
@@ -127,6 +131,7 @@ public class BookingsController : ControllerBase
         return CreatedAtAction(nameof(GetInquiryById), new { id = inquiry.Id }, response);
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<ActionResult<BookingInquiryResponseDto>> GetInquiryById(int id)
     {
@@ -150,6 +155,7 @@ public class BookingsController : ControllerBase
         });
     }
 
+    [Authorize]
     [HttpPatch("{id}/status")]
     public async Task<IActionResult> UpdateBookingStatus(int id, [FromBody] UpdateBookingStatusDto dto)
     {
@@ -165,6 +171,7 @@ public class BookingsController : ControllerBase
         return Ok(new { success = true, id = inquiry.Id, status = inquiry.Status });
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBooking(int id)
     {

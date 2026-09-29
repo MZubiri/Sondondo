@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ValleSondondo.API.DTOs;
@@ -145,6 +146,7 @@ public class ToursController : ControllerBase
         return await GetTours(null, true, null, false);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<TourDetailDto>> CreateTour([FromBody] CreateTourDto dto)
     {
@@ -195,6 +197,7 @@ public class ToursController : ControllerBase
         return CreatedAtAction(nameof(GetTourBySlug), new { slug = tour.Slug }, new { id = tour.Id, slug = tour.Slug, title = tour.Title });
     }
 
+    [Authorize]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateTour(int id, [FromBody] UpdateTourDto dto)
     {
@@ -290,6 +293,7 @@ public class ToursController : ControllerBase
         return Ok(new { success = true, id = tour.Id, title = tour.Title, priceSoles = tour.PriceSoles, priceUsd = tour.PriceUsd });
     }
 
+    [Authorize]
     [HttpPatch("{id}/toggle-active")]
     public async Task<IActionResult> ToggleActive(int id)
     {
@@ -305,6 +309,7 @@ public class ToursController : ControllerBase
         return Ok(new { success = true, id = tour.Id, isActive = tour.IsActive });
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTour(int id)
     {

@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using ValleSondondo.API.DTOs;
 
@@ -19,6 +20,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("login-policy")]
     public ActionResult<LoginResponseDto> Login([FromBody] LoginRequestDto request)
     {
         if (!ModelState.IsValid)
@@ -44,7 +46,10 @@ public class AuthController : ControllerBase
 
         // Generate standard signed JWT token
         var jwtSettings = _configuration.GetSection("JwtSettings");
-        var secretKey = jwtSettings["SecretKey"] ?? "ValleDelSondondoExpeditions_SecretKey_AyacuchoPeru_2026_SecureKeyJwtToken!";
+        var secretKey = _configuration["JWT_SECRET_KEY"]
+            ?? Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
+            ?? jwtSettings["SecretKey"]
+            ?? "ValleDelSondondoExpeditions_SecretKey_AyacuchoPeru_2026_SecureKeyJwtToken!";
         var issuer = jwtSettings["Issuer"] ?? "ValleSondondoAPI";
         var audience = jwtSettings["Audience"] ?? "ValleSondondoClients";
         var expirationDays = int.TryParse(jwtSettings["ExpirationDays"], out var exp) ? exp : 7;

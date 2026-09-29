@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using ValleSondondo.API.DTOs;
 using ValleSondondo.Domain.Entities;
@@ -17,6 +19,7 @@ public class ContactController : ControllerBase
         _context = context;
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ContactMessageAdminDto>>> GetMessages()
     {
@@ -38,6 +41,7 @@ public class ContactController : ControllerBase
         return Ok(messages);
     }
 
+    [EnableRateLimiting("contact-policy")]
     [HttpPost]
     public async Task<IActionResult> SendContactMessage([FromBody] CreateContactMessageDto dto)
     {
@@ -63,6 +67,7 @@ public class ContactController : ControllerBase
         return Ok(new { success = true, message = "Tu mensaje ha sido recibido con éxito. Nos comunicaremos contigo a la brevedad." });
     }
 
+    [Authorize]
     [HttpPatch("{id}/read")]
     public async Task<IActionResult> ToggleRead(int id)
     {
@@ -78,6 +83,7 @@ public class ContactController : ControllerBase
         return Ok(new { success = true, id = message.Id, isRead = message.IsRead });
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteMessage(int id)
     {

@@ -34,10 +34,14 @@ services:
       - AgencySettings__Email=${AGENCY_EMAIL:-miskichaskaperu@hotmail.com}
       - AdminSettings__Username=${ADMIN_USERNAME:-admin@valledelsondondo.com}
       - AdminSettings__Password=${ADMIN_PASSWORD:-Sondondo2026!}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-ValleDelSondondo_SuperSecret_Jwt_SigningKey_2026_ProdKey_Secure_Min32Chars!}
+      - JwtSettings__SecretKey=${JWT_SECRET_KEY:-ValleDelSondondo_SuperSecret_Jwt_SigningKey_2026_ProdKey_Secure_Min32Chars!}
       - MercadoPago__AccessToken=${MERCADOPAGO_ACCESS_TOKEN:-}
       - MercadoPago__PublicKey=${MERCADOPAGO_PUBLIC_KEY:-TEST-SIMULATED-PUBLIC-KEY}
       - MERCADOPAGO_ACCESS_TOKEN=${MERCADOPAGO_ACCESS_TOKEN:-}
       - MERCADOPAGO_PUBLIC_KEY=${MERCADOPAGO_PUBLIC_KEY:-TEST-SIMULATED-PUBLIC-KEY}
+    volumes:
+      - hotel_data:/app/hotel_storage
     expose:
       - 5000
     depends_on:
@@ -57,4 +61,6 @@ services:
 
 volumes:
   mysql_data:
+    driver: local
+  hotel_data:
     driver: local
