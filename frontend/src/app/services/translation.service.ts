@@ -41,6 +41,14 @@ export class TranslationService {
       'hero.description': 'Un tesoro en los Andes conformado por seis distritos históricos. Contempla el vuelo del Cóndor Andino en Mayobamba, los colosales andenes agrícolas de Andamarca, el sitio arqueológico de Caniche y las aguas termales de Qollpa con guías originarios de la mancomunidad.',
       'hero.ctaWhatsApp': 'Consultar por WhatsApp',
       'hero.ctaTours': 'Ver Recorridos',
+      'hero.stat1Val': '35+',
+      'hero.stat1Label': 'Cóndores en Vuelo',
+      'hero.stat2Val': '3,400m',
+      'hero.stat2Label': 'Andenes Vivos',
+      'hero.stat3Val': '5,112m',
+      'hero.stat3Label': 'Apu Qarhuarazo',
+      'hero.stat4Val': '100%',
+      'hero.stat4Label': 'Guías Comunales',
 
       // Tour List
       'tours.badge': 'Circuitos & Rutas Guiadas',
@@ -360,6 +368,14 @@ export class TranslationService {
       'hero.description': 'An Andean treasure shaped by six historic districts. Witness the majestic flight of the Andean Condor in Mayobamba, colossal pre-Inca living agricultural terraces in Andamarca, ancient fortress of Caniche, and healing hot springs with native community guides.',
       'hero.ctaWhatsApp': 'Inquire on WhatsApp',
       'hero.ctaTours': 'Explore Tours',
+      'hero.stat1Val': '35+',
+      'hero.stat1Label': 'Condors in Flight',
+      'hero.stat2Val': '3,400m',
+      'hero.stat2Label': 'Living Terraces',
+      'hero.stat3Val': '5,112m',
+      'hero.stat3Label': 'Sacred Peak Apu',
+      'hero.stat4Val': '100%',
+      'hero.stat4Label': 'Native Local Guides',
 
       // Tour List
       'tours.badge': 'Circuits & Guided Routes',

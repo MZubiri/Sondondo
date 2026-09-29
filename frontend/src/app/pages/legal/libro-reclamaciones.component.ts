@@ -726,6 +726,48 @@ import { IconComponent } from '../../components/icon/icon.component';
         flex-direction: column;
       }
     }
+    @media print {
+      :host {
+        display: block;
+        background: #FFFFFF !important;
+        color: #000000 !important;
+      }
+      .legal-page {
+        background: #FFFFFF !important;
+        padding: 0 !important;
+      }
+      .legal-hero,
+      .back-link,
+      .supplier-card,
+      .diff-banner,
+      .receipt-actions,
+      .btn-new,
+      .legal-banner {
+        display: none !important;
+      }
+      .legal-body {
+        max-width: 100% !important;
+        margin-top: 0 !important;
+        padding: 0 !important;
+      }
+      .receipt-card {
+        border: 2px solid #000000 !important;
+        box-shadow: none !important;
+        padding: 1.5rem !important;
+        page-break-inside: avoid;
+      }
+      .receipt-badge {
+        background: #F0FDF4 !important;
+        border: 1px solid #16A34A !important;
+        color: #15803D !important;
+      }
+      .receipt-block {
+        border-color: #CBD5E1 !important;
+      }
+      .val {
+        color: #000000 !important;
+      }
+    }
   `]
 })
 export class LibroReclamacionesComponent {

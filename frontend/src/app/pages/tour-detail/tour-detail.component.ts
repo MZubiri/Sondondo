@@ -18,7 +18,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
         <section class="detail-hero" [style.background-image]="'linear-gradient(rgba(18, 35, 26, 0.72), rgba(27, 21, 16, 0.88)), url(' + tour()!.mainImageUrl + ')'">
           <div class="container">
             <a routerLink="/" fragment="tours" class="back-link">
-              <app-icon name="arrow-right" [size]="18" stroke="#FFFFFF" customClass="rotate-180"></app-icon>
+              <app-icon name="arrow-left" [size]="18" stroke="#FFFFFF"></app-icon>
               <span>{{ ts.t('detail.back') }}</span>
             </a>
 

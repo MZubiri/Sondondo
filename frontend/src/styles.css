@@ -289,6 +289,20 @@ button, input, textarea, select {
   white-space: nowrap;
 }
 
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent-clay);
+  outline-offset: 2px;
+}
+
 .btn-primary {
   background-color: var(--forest-900);
   color: #FFFFFF;

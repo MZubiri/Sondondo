@@ -18,6 +18,20 @@ import { IconComponent } from '../icon/icon.component';
           loading="lazy" 
           class="card-img"
           (error)="onImageError($event)" />
+
+        <div class="card-badges">
+          @if (tour.altitudeMax) {
+            <span class="badge-altitude">
+              <app-icon name="mountain" [size]="12" stroke="#FFFFFF"></app-icon>
+              {{ tour.altitudeMax }}
+            </span>
+          }
+          @if (tour.difficulty) {
+            <span class="badge-difficulty" [ngClass]="getDifficultyClass()">
+              {{ getTourDifficulty() }}
+            </span>
+          }
+        </div>
       </a>
 
       <div class="card-body">
@@ -76,13 +90,13 @@ import { IconComponent } from '../icon/icon.component';
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      transition: var(--transition);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     }
 
     .tour-card:hover {
       border-color: var(--earth-300);
       box-shadow: var(--shadow-card);
-      transform: translateY(-2px);
+      transform: translateY(-3px);
     }
 
     .card-media {
@@ -101,7 +115,55 @@ import { IconComponent } from '../icon/icon.component';
     }
 
     .tour-card:hover .card-img {
-      transform: scale(1.03);
+      transform: scale(1.04);
+    }
+
+    .card-badges {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      right: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .badge-altitude {
+      background: rgba(22, 36, 26, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #FFFFFF;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.25rem 0.55rem;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      letter-spacing: 0.02em;
+    }
+
+    .badge-difficulty {
+      background: rgba(22, 36, 26, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #E2CEB8;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(226, 206, 184, 0.35);
+      letter-spacing: 0.02em;
+    }
+
+    .badge-difficulty.diff-exigente {
+      background: rgba(184, 61, 39, 0.88);
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.35);
     }
 
     .card-body {
@@ -137,6 +199,12 @@ import { IconComponent } from '../icon/icon.component';
       line-height: 1.35;
       color: var(--earth-950);
       margin-bottom: 1.25rem;
+    }
+
+    .card-title a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.2s ease;
     }
 
     .card-title a:hover {
@@ -203,6 +271,12 @@ import { IconComponent } from '../icon/icon.component';
       color: var(--forest-900);
     }
 
+    .btn-outline-itinerary:focus-visible,
+    .btn:focus-visible {
+      outline: 2px solid var(--accent-clay);
+      outline-offset: 2px;
+    }
+
     .btn-sm {
       padding: 0.5rem 1.15rem;
       font-size: 0.88rem;
@@ -225,6 +299,20 @@ export class TourCardComponent {
     const key = `tour.${this.tour.id}.duration`;
     const trans = this.ts.t(key);
     return trans !== key ? trans : this.tour.duration;
+  }
+
+  getTourDifficulty(): string {
+    const key = `tour.${this.tour.id}.difficulty`;
+    const trans = this.ts.t(key);
+    return trans !== key ? trans : this.tour.difficulty;
+  }
+
+  getDifficultyClass(): string {
+    const diff = (this.tour.difficulty || '').toLowerCase();
+    if (diff.includes('exigente') || diff.includes('demanding')) {
+      return 'diff-exigente';
+    }
+    return '';
   }
 
   onImageError(e: Event): void {
