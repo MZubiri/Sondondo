@@ -238,6 +238,10 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
 }
 
+.legal-hero h1 {
+  color: #FFFFFF !important;
+}
+
 p {
   color: var(--earth-700);
   line-height: 1.7;

@@ -81,22 +81,22 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         component: AdminDashboardComponent,
-        title: 'Dashboard | Panel de Control'
+        title: 'Dashboard de Tours | Panel de Expediciones'
       },
       {
         path: 'reservas',
         component: AdminBookingsComponent,
-        title: 'Reservas & Cotizaciones | Panel de Control'
+        title: 'Reservas de Tours | Panel de Expediciones'
       },
       {
         path: 'tours',
         component: AdminToursComponent,
-        title: 'Gestión de Tours | Panel de Control'
+        title: 'Gestión de Tours | Panel de Expediciones'
       },
       {
         path: 'hospedaje',
         component: AdminHotelComponent,
-        title: 'Gestión de Hospedaje & Habitaciones | Panel de Control'
+        title: 'Panel de Hospedaje & Hotel | Sistema Hotelero'
       },
       {
         path: 'mensajes',

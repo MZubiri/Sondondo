@@ -1,13 +1,14 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
 import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem } from '../../models/admin.model';
 
 @Component({
   selector: 'app-admin-hotel',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   template: `
     <div class="hotel-admin-page">
       <!-- HEADER -->
@@ -19,11 +20,18 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem } from '.
               ★ {{ hotelInfo().stars || 3 }} Estrellas
             </span>
           </div>
-          <h1 class="page-title">{{ hotelInfo().name || 'Hotel Punto Clave' }} — Gestión de Hospedaje</h1>
-          <p class="page-desc">Administra habitaciones, tarifas por noche, amenidades y reservas de huéspedes del hotel y alojamientos del circuito</p>
+          <h1 class="page-title">{{ hotelInfo().name || 'Hotel Punto Clave' }} — Panel de Hospedaje</h1>
+          <p class="page-desc">Módulo independiente de administración hotelera: habitaciones, tarifas por noche, amenidades y reservas de huéspedes</p>
         </div>
 
         <div class="header-actions">
+          <a routerLink="/admin/tours" class="btn-return-tours" title="Volver al Panel de Tours">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            <span>Volver a Tours</span>
+          </a>
+
           <button type="button" class="btn-secondary" (click)="exportCsv()" title="Descargar reporte de reservas">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -159,7 +167,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem } from '.
           type="button" 
           class="tab-btn" 
           [class.active]="activeTab() === 'rooms'"
-          (click)="activeTab.set('rooms')"
+          (click)="selectTab('rooms')"
         >
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M2 4v16"></path>
@@ -174,7 +182,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem } from '.
           type="button" 
           class="tab-btn" 
           [class.active]="activeTab() === 'bookings'"
-          (click)="activeTab.set('bookings')"
+          (click)="selectTab('bookings')"
         >
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -190,7 +198,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem } from '.
           type="button" 
           class="tab-btn" 
           [class.active]="activeTab() === 'profile'"
-          (click)="activeTab.set('profile')"
+          (click)="selectTab('profile')"
         >
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -1123,6 +1131,27 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem } from '.
     .btn-secondary-sm:hover {
       background: rgba(255, 255, 255, 0.12);
       color: #ffffff;
+    }
+
+    .btn-return-tours {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      background: rgba(200, 90, 50, 0.15);
+      border: 1px solid rgba(200, 90, 50, 0.35);
+      color: #fdba74;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-return-tours:hover {
+      background: #c85a32;
+      color: #ffffff;
+      transform: translateY(-1px);
     }
 
     /* TOAST */
@@ -2336,9 +2365,20 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem } from '.
 })
 export class AdminHotelComponent implements OnInit {
   private adminService = inject(AdminService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   // Active tab: 'rooms' | 'bookings' | 'profile'
   activeTab = signal<'rooms' | 'bookings' | 'profile'>('rooms');
+
+  selectTab(tab: 'rooms' | 'bookings' | 'profile'): void {
+    this.activeTab.set(tab);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge'
+    });
+  }
 
   // Signals
   hotelInfo = this.adminService.hotelInfoSignal;
@@ -2462,6 +2502,12 @@ export class AdminHotelComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+    this.route.queryParamMap.subscribe(params => {
+      const tab = params.get('tab');
+      if (tab === 'rooms' || tab === 'bookings' || tab === 'profile') {
+        this.activeTab.set(tab);
+      }
+    });
   }
 
   loadData(): void {

@@ -344,13 +344,15 @@ import { IconComponent } from '../../components/icon/icon.component';
       font-weight: 700;
     }
     .legal-hero h1 {
+      color: #FFFFFF !important;
       font-family: var(--font-display, serif);
       font-size: 2.2rem;
       line-height: 1.25;
       margin-bottom: 0.5rem;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     }
     .hero-sub {
-      color: #A8A29E;
+      color: #E2E8F0;
       font-size: 1.05rem;
     }
     .legal-body {

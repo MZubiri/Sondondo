@@ -13,18 +13,18 @@ import { DashboardStats, AdminBooking } from '../../models/admin.model';
       <!-- HEADER -->
       <div class="page-header">
         <div>
-          <h1 class="page-title">Panel General</h1>
-          <p class="page-desc">Métricas y cotizaciones en tiempo real para Valle del Sondondo Expeditions</p>
+          <h1 class="page-title">Panel de Tours & Expediciones</h1>
+          <p class="page-desc">Métricas y cotizaciones en tiempo real para las expediciones y circuitos turísticos</p>
         </div>
         <div class="header-actions">
-          <a routerLink="/admin/hospedaje" class="btn-action btn-gold">
+          <a routerLink="/admin/hospedaje" class="btn-action btn-gold" title="Abrir el panel independiente de gestión hotelera">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M2 4v16"></path>
               <path d="M2 8h18a2 2 0 0 1 2 2v10"></path>
               <path d="M2 17h20"></path>
               <path d="M6 8v9"></path>
             </svg>
-            <span>Hospedaje & Hotel</span>
+            <span>Ir a Panel de Hospedaje →</span>
           </a>
           <a routerLink="/admin/tours" class="btn-action btn-primary">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
