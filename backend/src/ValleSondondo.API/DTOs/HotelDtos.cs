@@ -48,6 +48,31 @@ public class HotelRoomDto
     public int TotalUnits { get; set; } = 1;
 
     public string? FloorOrZone { get; set; }
+
+    public string HousekeepingStatus { get; set; } = "clean"; // clean, dirty, occupied, maintenance
+}
+
+public class HotelDateBlockDto
+{
+    public int Id { get; set; }
+    public int? RoomId { get; set; } // null or 0 = all rooms
+    public string? RoomTitle { get; set; }
+    [Required]
+    public string StartDate { get; set; } = string.Empty; // YYYY-MM-DD
+    [Required]
+    public string EndDate { get; set; } = string.Empty; // YYYY-MM-DD
+    [Required]
+    public string Reason { get; set; } = string.Empty;
+    public bool IsBlocked { get; set; } = true;
+    public decimal? PriceOverrideSoles { get; set; }
+    public decimal? PriceOverrideUsd { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+}
+
+public class UpdateHousekeepingDto
+{
+    [Required]
+    public string HousekeepingStatus { get; set; } = "clean";
 }
 
 public class HotelInfoDto
@@ -65,6 +90,7 @@ public class HotelInfoDto
     public string CheckOutTime { get; set; } = "Hasta las 12:00 hrs";
     public List<HotelAmenityDto> FeaturedAmenities { get; set; } = new();
     public List<HotelRoomDto> Rooms { get; set; } = new();
+    public List<HotelDateBlockDto> DateBlocks { get; set; } = new();
 }
 
 public class HotelBookingDto

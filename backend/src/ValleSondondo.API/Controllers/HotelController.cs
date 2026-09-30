@@ -48,7 +48,8 @@ public class HotelController : ControllerBase
                 FeaturedAmenities = new List<HotelAmenityDto>(_cachedHotelInfo.FeaturedAmenities),
                 Rooms = includeInactive 
                     ? new List<HotelRoomDto>(_cachedHotelInfo.Rooms)
-                    : _cachedHotelInfo.Rooms.Where(r => r.IsActive).ToList()
+                    : _cachedHotelInfo.Rooms.Where(r => r.IsActive).ToList(),
+                DateBlocks = new List<HotelDateBlockDto>(_cachedHotelInfo.DateBlocks ?? new())
             };
 
             return Ok(info);
@@ -74,6 +75,10 @@ public class HotelController : ControllerBase
             _cachedHotelInfo.CheckInTime = updatedInfo.CheckInTime;
             _cachedHotelInfo.CheckOutTime = updatedInfo.CheckOutTime;
             _cachedHotelInfo.FeaturedAmenities = updatedInfo.FeaturedAmenities ?? new List<HotelAmenityDto>();
+            if (updatedInfo.DateBlocks != null)
+            {
+                _cachedHotelInfo.DateBlocks = updatedInfo.DateBlocks;
+            }
 
             SaveHotelInfoToFile();
             return Ok(_cachedHotelInfo);
@@ -176,6 +181,77 @@ public class HotelController : ControllerBase
         {
             var count = _cachedHotelInfo!.Rooms.RemoveAll(r => r.Id == id);
             if (count == 0) return NotFound(new { message = "Habitación no encontrada" });
+
+            SaveHotelInfoToFile();
+            return NoContent();
+        }
+    }
+
+    [Authorize]
+    [HttpPatch("rooms/{id}/housekeeping")]
+    public IActionResult UpdateRoomHousekeeping(int id, [FromBody] UpdateHousekeepingDto dto)
+    {
+        EnsureDataLoaded();
+        lock (_lock)
+        {
+            var room = _cachedHotelInfo!.Rooms.FirstOrDefault(r => r.Id == id);
+            if (room == null) return NotFound(new { message = "Habitación no encontrada" });
+
+            room.HousekeepingStatus = dto.HousekeepingStatus;
+            SaveHotelInfoToFile();
+            return Ok(new { id = room.Id, housekeepingStatus = room.HousekeepingStatus });
+        }
+    }
+
+    // --- DATE BLOCKS & SEASON RATES ---
+
+    [HttpGet("date-blocks")]
+    public IActionResult GetDateBlocks()
+    {
+        EnsureDataLoaded();
+        lock (_lock)
+        {
+            return Ok(_cachedHotelInfo!.DateBlocks ?? new List<HotelDateBlockDto>());
+        }
+    }
+
+    [Authorize]
+    [HttpPost("date-blocks")]
+    public IActionResult CreateDateBlock([FromBody] HotelDateBlockDto block)
+    {
+        EnsureDataLoaded();
+        lock (_lock)
+        {
+            _cachedHotelInfo!.DateBlocks ??= new List<HotelDateBlockDto>();
+            var nextId = _cachedHotelInfo.DateBlocks.Count > 0 
+                ? _cachedHotelInfo.DateBlocks.Max(d => d.Id) + 1 
+                : 1;
+
+            block.Id = nextId;
+            block.CreatedAt = DateTime.UtcNow;
+
+            if (block.RoomId.HasValue && block.RoomId > 0 && string.IsNullOrWhiteSpace(block.RoomTitle))
+            {
+                var room = _cachedHotelInfo.Rooms.FirstOrDefault(r => r.Id == block.RoomId.Value);
+                if (room != null) block.RoomTitle = room.Title;
+            }
+
+            _cachedHotelInfo.DateBlocks.Add(block);
+            SaveHotelInfoToFile();
+            return Ok(block);
+        }
+    }
+
+    [Authorize]
+    [HttpDelete("date-blocks/{id}")]
+    public IActionResult DeleteDateBlock(int id)
+    {
+        EnsureDataLoaded();
+        lock (_lock)
+        {
+            if (_cachedHotelInfo!.DateBlocks == null) return NotFound(new { message = "Bloqueo no encontrado" });
+            var removed = _cachedHotelInfo.DateBlocks.RemoveAll(d => d.Id == id);
+            if (removed == 0) return NotFound(new { message = "Bloqueo no encontrado" });
 
             SaveHotelInfoToFile();
             return NoContent();
@@ -433,7 +509,8 @@ public class HotelController : ControllerBase
                     Highlights = new List<string> { "1 cama doble", "Balcón privado", "Baño privado", "WiFi gratis" },
                     IsActive = true,
                     TotalUnits = 3,
-                    FloorOrZone = "Piso 1 y 2"
+                    FloorOrZone = "Piso 1 y 2",
+                    HousekeepingStatus = "clean"
                 },
                 new()
                 {
@@ -470,7 +547,8 @@ public class HotelController : ControllerBase
                     Highlights = new List<string> { "2 individuales + 1 doble", "Capacidad 4 personas", "Balcón exterior", "Baño privado" },
                     IsActive = true,
                     TotalUnits = 2,
-                    FloorOrZone = "Piso 2"
+                    FloorOrZone = "Piso 2",
+                    HousekeepingStatus = "dirty"
                 },
                 new()
                 {
@@ -508,7 +586,35 @@ public class HotelController : ControllerBase
                     Highlights = new List<string> { "Cocina privada equipada", "Bañera de hidromasaje", "Terraza privada", "Diseño dúplex" },
                     IsActive = true,
                     TotalUnits = 1,
-                    FloorOrZone = "Piso 3 Ático"
+                    FloorOrZone = "Piso 3 Ático",
+                    HousekeepingStatus = "occupied"
+                }
+            },
+            DateBlocks = new List<HotelDateBlockDto>
+            {
+                new()
+                {
+                    Id = 1,
+                    RoomId = 0,
+                    RoomTitle = "Todas las habitaciones",
+                    StartDate = DateTime.UtcNow.AddDays(15).ToString("yyyy-MM-dd"),
+                    EndDate = DateTime.UtcNow.AddDays(18).ToString("yyyy-MM-dd"),
+                    Reason = "Fiesta del Agua Yaku Raymi - Temporada Festiva",
+                    IsBlocked = false,
+                    PriceOverrideSoles = 110,
+                    PriceOverrideUsd = 30,
+                    CreatedAt = DateTime.UtcNow.AddDays(-3)
+                },
+                new()
+                {
+                    Id = 2,
+                    RoomId = 2,
+                    RoomTitle = "Habitación Triple Estándar",
+                    StartDate = DateTime.UtcNow.AddDays(22).ToString("yyyy-MM-dd"),
+                    EndDate = DateTime.UtcNow.AddDays(24).ToString("yyyy-MM-dd"),
+                    Reason = "Mantenimiento Preventivo de Red Sanitaria",
+                    IsBlocked = true,
+                    CreatedAt = DateTime.UtcNow.AddDays(-1)
                 }
             }
         };
@@ -517,55 +623,84 @@ public class HotelController : ControllerBase
     private List<HotelBookingDto> GetDefaultBookings()
     {
         var agencyNumber = _configuration["AgencySettings:WhatsAppNumber"] ?? "51966380590";
+        var today = DateTime.UtcNow.ToString("yyyy-MM-dd");
+        var tomorrow = DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-dd");
+        var yesterday = DateTime.UtcNow.AddDays(-1).ToString("yyyy-MM-dd");
+        var inTwoDays = DateTime.UtcNow.AddDays(2).ToString("yyyy-MM-dd");
+
         return new List<HotelBookingDto>
         {
             new()
             {
                 Id = 1,
                 VoucherCode = "HPC-2026-001",
-                GuestName = "Eduardo Ramos Palomino",
-                GuestEmail = "eduardo.ramos@outlook.com",
+                GuestName = "Carlos Méndez Quispe",
+                GuestEmail = "carlos.mendez@gmail.com",
                 GuestPhone = "+51 984 567 890",
                 GuestDocumentType = "DNI",
                 GuestDocumentNumber = "43892019",
                 RoomId = 1,
                 RoomTitle = "Habitación Doble",
-                CheckInDate = "2026-10-14",
-                CheckOutDate = "2026-10-16",
+                CheckInDate = today,
+                CheckOutDate = inTwoDays,
                 Nights = 2,
                 NumberOfGuests = 2,
                 TotalPriceSoles = 170,
                 PaidAmountSoles = 170,
                 PaymentMethod = "MercadoPago",
                 PaymentStatus = "Pagado 100%",
-                Status = "Confirmed",
-                SpecialRequests = "Llegada estimada a las 15:00 hrs. Cama matrimonial requerida.",
+                Status = "Confirmed", // LLegada hoy para Check-In
+                SpecialRequests = "Llegada estimada a las 14:30 hrs. Cama matrimonial requerida.",
                 CreatedAt = DateTime.UtcNow.AddDays(-2),
-                WhatsAppDirectUrl = $"https://wa.me/51984567890?text={WebUtility.UrlEncode("Hola Eduardo, confirmamos tu estadía en Hotel Punto Clave")}"
+                WhatsAppDirectUrl = $"https://wa.me/51984567890?text={WebUtility.UrlEncode("Hola Carlos, confirmamos tu estadía en Hotel Punto Clave")}"
             },
             new()
             {
                 Id = 2,
                 VoucherCode = "HPC-2026-002",
+                GuestName = "Sofía Alarcón Dávila",
+                GuestEmail = "sofia.alarcon@turismo.pe",
+                GuestPhone = "+51 956 712 344",
+                GuestDocumentType = "DNI",
+                GuestDocumentNumber = "41098231",
+                RoomId = 3,
+                RoomTitle = "Apartamento Dúplex",
+                CheckInDate = yesterday,
+                CheckOutDate = today,
+                Nights = 1,
+                NumberOfGuests = 2,
+                TotalPriceSoles = 175,
+                PaidAmountSoles = 175,
+                PaymentMethod = "Transferencia BCP",
+                PaymentStatus = "Pagado 100%",
+                Status = "CheckedIn", // Salida hoy para Check-Out
+                SpecialRequests = "Check-out programado para las 11:30 hrs antes del tour.",
+                CreatedAt = DateTime.UtcNow.AddDays(-3),
+                WhatsAppDirectUrl = $"https://wa.me/51956712344?text={WebUtility.UrlEncode("Hola Sofía, gracias por tu visita a Hotel Punto Clave")}"
+            },
+            new()
+            {
+                Id = 3,
+                VoucherCode = "HPC-2026-003",
                 GuestName = "Martina Valenzuela Soto",
                 GuestEmail = "mvalenzuela@empresa.pe",
                 GuestPhone = "+51 966 234 111",
                 GuestDocumentType = "DNI",
                 GuestDocumentNumber = "71209382",
-                RoomId = 3,
-                RoomTitle = "Apartamento Dúplex",
-                CheckInDate = "2026-11-01",
-                CheckOutDate = "2026-11-04",
+                RoomId = 2,
+                RoomTitle = "Habitación Triple Estándar",
+                CheckInDate = tomorrow,
+                CheckOutDate = DateTime.UtcNow.AddDays(4).ToString("yyyy-MM-dd"),
                 Nights = 3,
-                NumberOfGuests = 4,
-                TotalPriceSoles = 525,
-                PaidAmountSoles = 262.50m,
+                NumberOfGuests = 3,
+                TotalPriceSoles = 390,
+                PaidAmountSoles = 195,
                 PaymentMethod = "Transferencia BCP",
                 PaymentStatus = "Adelanto 50%",
-                Status = "Pending",
-                SpecialRequests = "Solicitan preparación de jacuzzi y estacionamiento para camioneta 4x4.",
+                Status = "Confirmed",
+                SpecialRequests = "Solicitan estacionamiento seguro para camioneta 4x4.",
                 CreatedAt = DateTime.UtcNow.AddHours(-18),
-                WhatsAppDirectUrl = $"https://wa.me/51966234111?text={WebUtility.UrlEncode("Hola Martina, recibimos tu solicitud de reserva para Apartamento Dúplex")}"
+                WhatsAppDirectUrl = $"https://wa.me/51966234111?text={WebUtility.UrlEncode("Hola Martina, recibimos tu solicitud de reserva para Habitación Triple")}"
             }
         };
     }

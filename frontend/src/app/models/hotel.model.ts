@@ -23,6 +23,21 @@ export interface HotelRoom {
   isActive?: boolean;
   totalUnits?: number;
   floorOrZone?: string;
+  housekeepingStatus?: 'clean' | 'dirty' | 'occupied' | 'maintenance';
+}
+
+export interface HotelDateBlock {
+  id: number;
+  roomId?: number | null; // null, 0 or undefined = Todas las habitaciones
+  roomTitle?: string;
+  startDate: string; // YYYY-MM-DD
+  endDate: string; // YYYY-MM-DD
+  reason: string;
+  isBlocked: boolean; // true = Bloqueado para reservas, false = Tarifa especial
+  priceOverrideSoles?: number;
+  priceOverrideUsd?: number;
+  notes?: string;
+  createdAt?: string;
 }
 
 export interface HotelInfo {
@@ -39,6 +54,7 @@ export interface HotelInfo {
   checkInTime: string;
   checkOutTime: string;
   rooms: HotelRoom[];
+  dateBlocks?: HotelDateBlock[];
 }
 
 export interface HotelBooking {

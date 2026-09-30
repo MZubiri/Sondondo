@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output, signal, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { HotelInfo, HotelRoom } from '../../models/hotel.model';
 import { HotelRoomModalComponent } from './hotel-room-modal.component';
 import { TranslationService } from '../../services/translation.service';
@@ -8,7 +9,7 @@ import { IconComponent } from '../icon/icon.component';
 @Component({
   selector: 'app-hotel-rooms',
   standalone: true,
-  imports: [CommonModule, HotelRoomModalComponent, IconComponent],
+  imports: [CommonModule, FormsModule, HotelRoomModalComponent, IconComponent],
   template: `
     <section id="habitaciones" class="hotel-section">
       <div class="container">
@@ -26,6 +27,73 @@ import { IconComponent } from '../icon/icon.component';
 
           <h2 class="section-title">{{ ts.t('hotel.title') }}</h2>
           <p class="section-subtitle">{{ ts.t('hotel.subtitle') }}</p>
+        </div>
+
+        <!-- BARRA DE BÚSQUEDA INTERACTIVA (CHECK-IN / CHECK-OUT / HUÉSPEDES) -->
+        <div class="hotel-search-bar-wrap">
+          <div class="hotel-search-card">
+            <div class="search-field">
+              <label class="search-label">
+                <app-icon name="calendar" [size]="15" stroke="var(--terracotta-500)"></app-icon>
+                <span>Check-In (Llegada)</span>
+              </label>
+              <input 
+                type="date" 
+                class="search-input" 
+                [ngModel]="searchCheckIn()" 
+                (ngModelChange)="onCheckInChange($event)" 
+                [min]="minCheckInDate" 
+              />
+            </div>
+
+            <div class="search-divider"></div>
+
+            <div class="search-field">
+              <label class="search-label">
+                <app-icon name="calendar" [size]="15" stroke="var(--terracotta-500)"></app-icon>
+                <span>Check-Out (Salida)</span>
+              </label>
+              <input 
+                type="date" 
+                class="search-input" 
+                [ngModel]="searchCheckOut()" 
+                (ngModelChange)="onCheckOutChange($event)" 
+                [min]="minCheckOutDate" 
+              />
+            </div>
+
+            <div class="search-divider"></div>
+
+            <div class="search-field">
+              <label class="search-label">
+                <app-icon name="users" [size]="15" stroke="var(--terracotta-500)"></app-icon>
+                <span>Huéspedes</span>
+              </label>
+              <select class="search-select" [ngModel]="searchGuests()" (ngModelChange)="searchGuests.set(+$event)">
+                <option [value]="1">1 Huésped (Viajero Solo)</option>
+                <option [value]="2">2 Huéspedes (Pareja / Matrimonial)</option>
+                <option [value]="3">3 Huéspedes (Familiar Triple)</option>
+                <option [value]="4">4+ Huéspedes (Grupo / Dúplex)</option>
+              </select>
+            </div>
+
+            <div class="search-summary-action">
+              <div class="stay-nights-badge">
+                <span class="nights-val">{{ nightsCount() }}</span>
+                <span class="nights-lbl">{{ nightsCount() === 1 ? 'Noche' : 'Noches' }}</span>
+              </div>
+              <button *ngIf="isCustomSearch()" type="button" class="btn-clear-search" (click)="resetSearchDates()" title="Restablecer fechas predeterminadas">
+                ↺ Restablecer
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic search feedback pill -->
+          <div class="search-feedback-bar" *ngIf="isCustomSearch()">
+            <span class="feedback-text">
+              ✨ Mostrando disponibilidad y tarifas para <strong>{{ nightsCount() }} {{ nightsCount() === 1 ? 'noche' : 'noches' }}</strong> ({{ searchCheckIn() }} al {{ searchCheckOut() }}) para <strong>{{ searchGuests() }} {{ searchGuests() === 1 ? 'huésped' : 'huéspedes' }}</strong>:
+            </span>
+          </div>
         </div>
 
         <!-- Amenities Ribbon -->
@@ -84,8 +152,8 @@ import { IconComponent } from '../icon/icon.component';
 
         <!-- Room Cards Grid -->
         <div class="rooms-grid">
-          @for (room of hotelInfo.rooms; track room.id) {
-            <article class="room-card glass-card">
+          @for (room of filteredRooms(); track room.id) {
+            <article class="room-card glass-card" [class.room-unavailable]="isRoomBlockedForDates(room)">
               <!-- Room Image -->
               <div class="room-image-wrap" (click)="openRoomModal(room)">
                 <img [src]="room.mainImage" [alt]="getRoomTitle(room)" class="room-img" loading="lazy" />
@@ -93,6 +161,14 @@ import { IconComponent } from '../icon/icon.component';
                   <app-icon name="users" [size]="14" stroke="#FFFFFF"></app-icon>
                   <span>{{ room.capacityText }}</span>
                 </span>
+
+                <span *ngIf="isRoomBlockedForDates(room)" class="badge-dates-blocked">
+                  🔒 Fechas No Disponibles
+                </span>
+                <span *ngIf="!isRoomBlockedForDates(room) && getRoomStayDetails(room).hasSpecialRate" class="badge-seasonal-rate">
+                  ⭐ {{ getRoomStayDetails(room).seasonalReason }}
+                </span>
+
                 <button type="button" class="btn-zoom" aria-label="Ver fotos de la habitación">
                   <app-icon name="compass" [size]="16" stroke="#FFFFFF"></app-icon>
                   <span>{{ ts.t('hotel.viewPhotos') }}</span>
@@ -121,19 +197,34 @@ import { IconComponent } from '../icon/icon.component';
                     <span class="from-text">{{ ts.t('hotel.from') }}</span>
                     <div class="price-val">
                       <span class="currency">S/</span>
-                      <strong class="number">{{ room.pricePerNightSoles }}</strong>
+                      <strong class="number">{{ getRoomStayDetails(room).effectiveNightlyRate }}</strong>
                       <span class="period">{{ ts.t('hotel.perNight') }}</span>
                     </div>
-                    <span class="usd-hint">~ USD {{ room.pricePerNightUsd }}</span>
+                    <span class="usd-hint">~ USD {{ roundUsd(getRoomStayDetails(room).effectiveNightlyRate) }}</span>
+
+                    <!-- Dynamic total stay price display -->
+                    <div class="total-stay-calculated" *ngIf="nightsCount() > 1">
+                      <span class="total-stay-label">Total por {{ nightsCount() }} noches:</span>
+                      <strong class="total-stay-amount">S/ {{ getRoomStayDetails(room).totalSoles }}</strong>
+                    </div>
                   </div>
 
                   <div class="room-buttons">
                     <button 
+                      *ngIf="!isRoomBlockedForDates(room)"
                       type="button" 
                       class="btn btn-primary btn-sm w-100" 
                       (click)="onPayMercadoPago(room)">
                       <app-icon name="credit-card" [size]="15" stroke="#FFFFFF"></app-icon>
-                      <span>{{ ts.t('hotel.payMp') }}</span>
+                      <span>Reservar • S/ {{ getRoomStayDetails(room).totalSoles }}</span>
+                    </button>
+
+                    <button 
+                      *ngIf="isRoomBlockedForDates(room)"
+                      type="button" 
+                      disabled
+                      class="btn btn-disabled btn-sm w-100">
+                      <span>🔒 Fechas No Disponibles</span>
                     </button>
 
                     <div class="sub-buttons">
@@ -583,12 +674,209 @@ import { IconComponent } from '../icon/icon.component';
       gap: 0.6rem;
     }
 
+    /* BARRA DE BÚSQUEDA INTERACTIVA */
+    .hotel-search-bar-wrap {
+      max-width: 980px;
+      margin: 0 auto 2.5rem auto;
+    }
+
+    .hotel-search-card {
+      background: #FFFFFF;
+      border: 2px solid rgba(200, 90, 50, 0.25);
+      border-radius: var(--radius-md, 12px);
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 10px 30px rgba(38, 31, 24, 0.08);
+      flex-wrap: wrap;
+    }
+
+    .search-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      flex: 1;
+      min-width: 170px;
+    }
+
+    .search-label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--earth-700);
+    }
+
+    .search-input, .search-select {
+      border: 1px solid var(--border-light, #e2e8f0);
+      background: var(--cream-50, #faf8f5);
+      border-radius: 6px;
+      padding: 0.5rem 0.65rem;
+      font-size: 0.88rem;
+      color: var(--earth-950, #0f172a);
+      font-weight: 600;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus, .search-select:focus {
+      border-color: #c85a32;
+      background: #FFFFFF;
+    }
+
+    .search-divider {
+      width: 1px;
+      height: 40px;
+      background: var(--border-light, #e2e8f0);
+      align-self: center;
+    }
+
+    .search-summary-action {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .stay-nights-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(200, 90, 50, 0.1);
+      border: 1px solid rgba(200, 90, 50, 0.25);
+      padding: 0.35rem 0.85rem;
+      border-radius: 8px;
+    }
+
+    .nights-val {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #c85a32;
+      line-height: 1;
+    }
+
+    .nights-lbl {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--earth-800);
+    }
+
+    .btn-clear-search {
+      background: transparent;
+      border: 1px dashed var(--border-light);
+      color: var(--earth-600);
+      font-size: 0.75rem;
+      padding: 0.45rem 0.65rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-clear-search:hover {
+      background: rgba(0, 0, 0, 0.04);
+      color: var(--earth-900);
+    }
+
+    .search-feedback-bar {
+      margin-top: 0.75rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--earth-700);
+    }
+
+    .search-feedback-bar strong {
+      color: #c85a32;
+    }
+
+    /* Total Stay on room card */
+    .total-stay-calculated {
+      margin-top: 0.35rem;
+      padding: 0.25rem 0.5rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .total-stay-label {
+      font-size: 0.68rem;
+      color: #065f46;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .total-stay-amount {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #047857;
+    }
+
+    .badge-dates-blocked {
+      position: absolute;
+      bottom: 0.75rem;
+      left: 0.75rem;
+      background: rgba(220, 38, 38, 0.9);
+      color: #FFFFFF;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      z-index: 2;
+    }
+
+    .badge-seasonal-rate {
+      position: absolute;
+      bottom: 0.75rem;
+      left: 0.75rem;
+      background: rgba(224, 159, 62, 0.95);
+      color: #0b1216;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      z-index: 2;
+    }
+
+    .room-card.room-unavailable {
+      opacity: 0.75;
+      filter: grayscale(0.2);
+    }
+
+    .btn-disabled {
+      background: #e2e8f0 !important;
+      color: #94a3b8 !important;
+      cursor: not-allowed !important;
+      border: none !important;
+    }
+
     @media (max-width: 960px) {
       .rooms-grid {
         grid-template-columns: repeat(2, 1fr);
       }
       .amenities-ribbon {
         grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hotel-search-card {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-divider {
+        display: none;
+      }
+      .search-summary-action {
+        justify-content: space-between;
       }
     }
 
@@ -611,6 +899,125 @@ export class HotelRoomsComponent {
   @Output() bookWithMercadoPago = new EventEmitter<{ room: HotelRoom; amount: number }>();
 
   selectedRoom = signal<HotelRoom | null>(null);
+
+  // Search Bar Signals
+  searchCheckIn = signal<string>('');
+  searchCheckOut = signal<string>('');
+  searchGuests = signal<number>(2);
+  minCheckInDate: string = '';
+  minCheckOutDate: string = '';
+
+  constructor() {
+    const today = new Date();
+    const tomorrow = new Date(Date.now() + 24 * 3600000);
+    this.minCheckInDate = today.toISOString().split('T')[0];
+    this.minCheckOutDate = tomorrow.toISOString().split('T')[0];
+    this.searchCheckIn.set(this.minCheckInDate);
+    this.searchCheckOut.set(this.minCheckOutDate);
+  }
+
+  nightsCount = computed(() => {
+    const inDate = this.searchCheckIn();
+    const outDate = this.searchCheckOut();
+    if (!inDate || !outDate) return 1;
+    const d1 = new Date(inDate);
+    const d2 = new Date(outDate);
+    const diff = d2.getTime() - d1.getTime();
+    return Math.max(1, Math.round(diff / (1000 * 3600 * 24)));
+  });
+
+  isCustomSearch = computed(() => {
+    return this.nightsCount() > 1 || this.searchGuests() !== 2 || this.searchCheckIn() !== this.minCheckInDate;
+  });
+
+  onCheckInChange(val: string): void {
+    this.searchCheckIn.set(val);
+    if (this.searchCheckIn() && this.searchCheckOut()) {
+      if (this.searchCheckIn() >= this.searchCheckOut()) {
+        const nextDay = new Date(new Date(this.searchCheckIn()).getTime() + 24 * 3600000);
+        this.searchCheckOut.set(nextDay.toISOString().split('T')[0]);
+      }
+      const nextDayMin = new Date(new Date(this.searchCheckIn()).getTime() + 24 * 3600000);
+      this.minCheckOutDate = nextDayMin.toISOString().split('T')[0];
+    }
+  }
+
+  onCheckOutChange(val: string): void {
+    this.searchCheckOut.set(val);
+  }
+
+  resetSearchDates(): void {
+    this.searchCheckIn.set(this.minCheckInDate);
+    this.searchCheckOut.set(this.minCheckOutDate);
+    this.searchGuests.set(2);
+  }
+
+  isRoomBlockedForDates(room: HotelRoom): boolean {
+    const inDate = this.searchCheckIn();
+    const outDate = this.searchCheckOut();
+    if (!inDate || !outDate || !this.hotelInfo?.dateBlocks) return false;
+
+    return this.hotelInfo.dateBlocks.some(blk => {
+      if (!blk.isBlocked) return false;
+      if (blk.roomId && blk.roomId !== room.id) return false;
+      // Overlap: start < outDate && end > inDate
+      return blk.startDate < outDate && blk.endDate > inDate;
+    });
+  }
+
+  getRoomStayDetails(room: HotelRoom): { effectiveNightlyRate: number; totalSoles: number; hasSpecialRate: boolean; seasonalReason?: string } {
+    const inDate = this.searchCheckIn();
+    const outDate = this.searchCheckOut();
+    const nights = this.nightsCount();
+    const baseRate = room.pricePerNightSoles;
+
+    if (!inDate || !outDate || !this.hotelInfo?.dateBlocks || this.hotelInfo.dateBlocks.length === 0) {
+      return {
+        effectiveNightlyRate: baseRate,
+        totalSoles: baseRate * nights,
+        hasSpecialRate: false
+      };
+    }
+
+    // Check if there is a special seasonal rate block (isBlocked === false)
+    const specialBlock = this.hotelInfo.dateBlocks.find(blk => {
+      if (blk.isBlocked) return false;
+      if (blk.roomId && blk.roomId !== room.id) return false;
+      return blk.startDate < outDate && blk.endDate > inDate && blk.priceOverrideSoles;
+    });
+
+    if (specialBlock && specialBlock.priceOverrideSoles) {
+      const specialRate = specialBlock.priceOverrideSoles;
+      return {
+        effectiveNightlyRate: specialRate,
+        totalSoles: specialRate * nights,
+        hasSpecialRate: true,
+        seasonalReason: specialBlock.reason
+      };
+    }
+
+    return {
+      effectiveNightlyRate: baseRate,
+      totalSoles: baseRate * nights,
+      hasSpecialRate: false
+    };
+  }
+
+  filteredRooms = computed(() => {
+    const rooms = this.hotelInfo?.rooms || [];
+    const guests = this.searchGuests();
+    const active = rooms.filter(r => r.isActive !== false);
+
+    if (guests > 1) {
+      const matching = active.filter(r => (r.capacityAdults || 2) >= guests);
+      return matching.length > 0 ? matching : active;
+    }
+    return active;
+  });
+
+  roundUsd(soles: number): number {
+    return Math.round(soles / 3.75);
+  }
 
   getRoomTitle(room: HotelRoom): string {
     if (room.id === 1) return this.ts.t('hotel.roomDouble');
@@ -635,12 +1042,22 @@ export class HotelRoomsComponent {
   }
 
   onPayMercadoPago(room: HotelRoom): void {
-    this.bookWithMercadoPago.emit({ room, amount: room.pricePerNightSoles });
+    const details = this.getRoomStayDetails(room);
+    this.bookWithMercadoPago.emit({ room, amount: details.totalSoles });
   }
 
   getRoomWhatsAppUrl(room: HotelRoom): string {
+    const details = this.getRoomStayDetails(room);
+    const nights = this.nightsCount();
+    const inDate = this.searchCheckIn();
+    const outDate = this.searchCheckOut();
+    const guests = this.searchGuests();
     const text = encodeURIComponent(
-      `¡Hola! 👋 Deseo consultar disponibilidad para la *${this.getRoomTitle(room)}* en el *Hotel Punto Clave* (S/ ${room.pricePerNightSoles}/noche).`
+      `¡Hola! 👋 Deseo consultar disponibilidad para la *${this.getRoomTitle(room)}* en el *${this.hotelInfo?.name || 'Hotel Punto Clave'}*:\n` +
+      `📅 Fechas: del ${inDate} al ${outDate} (${nights} ${nights === 1 ? 'noche' : 'noches'})\n` +
+      `👥 Huéspedes: ${guests} persona(s)\n` +
+      `💰 Tarifa total calculada: S/ ${details.totalSoles} (S/ ${details.effectiveNightlyRate}/noche)\n` +
+      `¿Tienen disponibilidad para estas fechas?`
     );
     return `https://wa.me/${this.hotelInfo.whatsAppNumber}?text=${text}`;
   }

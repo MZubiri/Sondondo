@@ -11,7 +11,8 @@ import {
   PassengerManifestItem,
   HotelInfo,
   HotelRoom,
-  HotelBooking
+  HotelBooking,
+  HotelDateBlock
 } from '../models/admin.model';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
@@ -23,6 +24,7 @@ export const TESTIMONIALS_STORAGE_KEY = 'sondondo_admin_testimonials_cache';
 export const GALLERY_STORAGE_KEY = 'sondondo_admin_gallery_cache';
 export const HOTEL_STORAGE_KEY = 'sondondo_admin_hotel_cache';
 export const HOTEL_BOOKINGS_STORAGE_KEY = 'sondondo_admin_hotel_bookings_cache';
+export const HOTEL_DATE_BLOCKS_STORAGE_KEY = 'sondondo_admin_hotel_date_blocks_cache';
 
 @Injectable({
   providedIn: 'root'
@@ -293,6 +295,7 @@ export class AdminService {
   gallerySignal = signal<GalleryItem[]>(this.loadStoredGallery());
   hotelInfoSignal = signal<HotelInfo>(this.loadStoredHotelInfo());
   hotelBookingsSignal = signal<HotelBooking[]>(this.loadStoredHotelBookings());
+  hotelDateBlocksSignal = signal<HotelDateBlock[]>(this.loadStoredHotelDateBlocks());
 
   private initialHotelInfo: HotelInfo = {
     name: 'Hotel Punto Clave',
@@ -348,7 +351,8 @@ export class AdminService {
         highlights: ['1 cama doble', 'Balcón privado', 'Baño privado', 'WiFi gratis'],
         isActive: true,
         totalUnits: 3,
-        floorOrZone: 'Piso 1 y 2'
+        floorOrZone: 'Piso 1 y 2',
+        housekeepingStatus: 'clean'
       },
       {
         id: 2,
@@ -382,7 +386,8 @@ export class AdminService {
         highlights: ['2 individuales + 1 doble', 'Capacidad 4 personas', 'Balcón exterior', 'Baño privado'],
         isActive: true,
         totalUnits: 2,
-        floorOrZone: 'Piso 2'
+        floorOrZone: 'Piso 2',
+        housekeepingStatus: 'dirty'
       },
       {
         id: 3,
@@ -417,24 +422,74 @@ export class AdminService {
         highlights: ['Cocina privada equipada', 'Bañera de hidromasaje', 'Terraza privada', 'Diseño dúplex'],
         isActive: true,
         totalUnits: 1,
-        floorOrZone: 'Piso 3 Ático'
+        floorOrZone: 'Piso 3 Ático',
+        housekeepingStatus: 'occupied'
+      }
+    ],
+    dateBlocks: [
+      {
+        id: 1,
+        roomId: 0,
+        roomTitle: 'Todas las habitaciones',
+        startDate: new Date(Date.now() + 15 * 86400000).toISOString().split('T')[0],
+        endDate: new Date(Date.now() + 18 * 86400000).toISOString().split('T')[0],
+        reason: 'Fiesta Patronal Yaku Raymi - Temporada Festiva',
+        isBlocked: false,
+        priceOverrideSoles: 110,
+        priceOverrideUsd: 30,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 2,
+        roomId: 2,
+        roomTitle: 'Habitación Triple Estándar',
+        startDate: new Date(Date.now() + 22 * 86400000).toISOString().split('T')[0],
+        endDate: new Date(Date.now() + 24 * 86400000).toISOString().split('T')[0],
+        reason: 'Mantenimiento Preventivo Red Sanitaria',
+        isBlocked: true,
+        createdAt: new Date().toISOString()
       }
     ]
   };
+
+  private initialHotelDateBlocks: HotelDateBlock[] = [
+    {
+      id: 1,
+      roomId: 0,
+      roomTitle: 'Todas las habitaciones',
+      startDate: new Date(Date.now() + 15 * 86400000).toISOString().split('T')[0],
+      endDate: new Date(Date.now() + 18 * 86400000).toISOString().split('T')[0],
+      reason: 'Fiesta Patronal Yaku Raymi - Temporada Festiva',
+      isBlocked: false,
+      priceOverrideSoles: 110,
+      priceOverrideUsd: 30,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 2,
+      roomId: 2,
+      roomTitle: 'Habitación Triple Estándar',
+      startDate: new Date(Date.now() + 22 * 86400000).toISOString().split('T')[0],
+      endDate: new Date(Date.now() + 24 * 86400000).toISOString().split('T')[0],
+      reason: 'Mantenimiento Preventivo Red Sanitaria',
+      isBlocked: true,
+      createdAt: new Date().toISOString()
+    }
+  ];
 
   private initialHotelBookings: HotelBooking[] = [
     {
       id: 1,
       voucherCode: 'HPC-2026-001',
-      guestName: 'Eduardo Ramos Palomino',
-      guestEmail: 'eduardo.ramos@outlook.com',
+      guestName: 'Carlos Méndez Quispe',
+      guestEmail: 'carlos.mendez@gmail.com',
       guestPhone: '+51 984 567 890',
       guestDocumentType: 'DNI',
       guestDocumentNumber: '43892019',
       roomId: 1,
       roomTitle: 'Habitación Doble',
-      checkInDate: '2026-10-14',
-      checkOutDate: '2026-10-16',
+      checkInDate: new Date().toISOString().split('T')[0],
+      checkOutDate: new Date(Date.now() + 2 * 86400000).toISOString().split('T')[0],
       nights: 2,
       numberOfGuests: 2,
       totalPriceSoles: 170,
@@ -442,30 +497,53 @@ export class AdminService {
       paymentMethod: 'MercadoPago',
       paymentStatus: 'Pagado 100%',
       status: 'Confirmed',
-      specialRequests: 'Llegada estimada a las 15:00 hrs. Cama matrimonial requerida.',
+      specialRequests: 'Llegada estimada a las 14:30 hrs. Cama matrimonial requerida.',
       createdAt: new Date(Date.now() - 48 * 3600000).toISOString(),
-      whatsAppDirectUrl: 'https://wa.me/51984567890?text=Hola%20Eduardo,%20confirmamos%20tu%20estadia%20en%20Hotel%20Punto%20Clave.'
+      whatsAppDirectUrl: 'https://wa.me/51984567890?text=Hola%20Carlos,%20confirmamos%20tu%20estadia%20en%20Hotel%20Punto%20Clave.'
     },
     {
       id: 2,
       voucherCode: 'HPC-2026-002',
+      guestName: 'Sofía Alarcón Dávila',
+      guestEmail: 'sofia.alarcon@turismo.pe',
+      guestPhone: '+51 956 712 344',
+      guestDocumentType: 'DNI',
+      guestDocumentNumber: '41098231',
+      roomId: 3,
+      roomTitle: 'Apartamento Dúplex',
+      checkInDate: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+      checkOutDate: new Date().toISOString().split('T')[0],
+      nights: 1,
+      numberOfGuests: 2,
+      totalPriceSoles: 175,
+      paidAmountSoles: 175,
+      paymentMethod: 'Transferencia BCP',
+      paymentStatus: 'Pagado 100%',
+      status: 'CheckedIn',
+      specialRequests: 'Check-out programado para las 11:30 hrs antes del tour a Mayobamba.',
+      createdAt: new Date(Date.now() - 72 * 3600000).toISOString(),
+      whatsAppDirectUrl: 'https://wa.me/51956712344?text=Hola%20Sofia,%20esperamos%20que%20tu%20estadia%20sea%20placentera.'
+    },
+    {
+      id: 3,
+      voucherCode: 'HPC-2026-003',
       guestName: 'Martina Valenzuela Soto',
       guestEmail: 'mvalenzuela@empresa.pe',
       guestPhone: '+51 966 234 111',
       guestDocumentType: 'DNI',
       guestDocumentNumber: '71209382',
-      roomId: 3,
-      roomTitle: 'Apartamento Dúplex',
-      checkInDate: '2026-11-01',
-      checkOutDate: '2026-11-04',
+      roomId: 2,
+      roomTitle: 'Habitación Triple Estándar',
+      checkInDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+      checkOutDate: new Date(Date.now() + 4 * 86400000).toISOString().split('T')[0],
       nights: 3,
-      numberOfGuests: 4,
-      totalPriceSoles: 525,
-      paidAmountSoles: 262.5,
+      numberOfGuests: 3,
+      totalPriceSoles: 390,
+      paidAmountSoles: 195,
       paymentMethod: 'Transferencia BCP',
       paymentStatus: 'Adelanto 50%',
-      status: 'Pending',
-      specialRequests: 'Solicitan preparación de jacuzzi y estacionamiento para camioneta 4x4.',
+      status: 'Confirmed',
+      specialRequests: 'Solicitan estacionamiento seguro para camioneta 4x4.',
       createdAt: new Date(Date.now() - 18 * 3600000).toISOString(),
       whatsAppDirectUrl: 'https://wa.me/51966234111?text=Hola%20Martina,%20recibimos%20tu%20solicitud%20de%20reserva.'
     }
@@ -499,6 +577,21 @@ export class AdminService {
       localStorage.setItem(HOTEL_BOOKINGS_STORAGE_KEY, JSON.stringify(bookings));
     } catch {}
     this.hotelBookingsSignal.set(bookings);
+  }
+
+  private loadStoredHotelDateBlocks(): HotelDateBlock[] {
+    try {
+      const stored = localStorage.getItem(HOTEL_DATE_BLOCKS_STORAGE_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return this.initialHotelDateBlocks;
+  }
+
+  private saveHotelDateBlocksToStorage(blocks: HotelDateBlock[]): void {
+    try {
+      localStorage.setItem(HOTEL_DATE_BLOCKS_STORAGE_KEY, JSON.stringify(blocks));
+    } catch {}
+    this.hotelDateBlocksSignal.set(blocks);
   }
 
   private loadStoredBookings(): AdminBooking[] {
@@ -1309,6 +1402,58 @@ export class AdminService {
     this.saveHotelBookingsToStorage(filtered);
 
     return this.http.delete<any>(`${this.apiUrl}/hotel/bookings/${id}`, { headers: this.getAuthHeaders() }).pipe(
+      map(() => true),
+      catchError(() => of(true))
+    );
+  }
+
+  // --- HOUSEKEEPING & ROOM OPERATIONS ---
+
+  updateRoomHousekeeping(roomId: number, status: 'clean' | 'dirty' | 'occupied' | 'maintenance'): Observable<boolean> {
+    const current = this.loadStoredHotelInfo();
+    current.rooms = current.rooms.map(r => r.id === roomId ? { ...r, housekeepingStatus: status } : r);
+    this.saveHotelInfoToStorage(current);
+
+    return this.http.patch<any>(`${this.apiUrl}/hotel/rooms/${roomId}/housekeeping`, { housekeepingStatus: status }, { headers: this.getAuthHeaders() }).pipe(
+      map(() => true),
+      catchError(() => of(true))
+    );
+  }
+
+  // --- DATE BLOCKS & SEASON RATES ---
+
+  getHotelDateBlocks(): Observable<HotelDateBlock[]> {
+    return this.http.get<HotelDateBlock[]>(`${this.apiUrl}/hotel/date-blocks`, { headers: this.getAuthHeaders() }).pipe(
+      tap(blocks => this.saveHotelDateBlocksToStorage(blocks)),
+      catchError(() => of(this.loadStoredHotelDateBlocks()))
+    );
+  }
+
+  saveHotelDateBlock(block: HotelDateBlock): Observable<HotelDateBlock> {
+    const blocks = this.loadStoredHotelDateBlocks();
+    const isEdit = block.id > 0;
+    const finalBlock: HotelDateBlock = isEdit
+      ? { ...block }
+      : { ...block, id: Date.now(), createdAt: new Date().toISOString() };
+
+    let updated: HotelDateBlock[];
+    if (isEdit && blocks.some(b => b.id === block.id)) {
+      updated = blocks.map(b => b.id === block.id ? finalBlock : b);
+    } else {
+      updated = [finalBlock, ...blocks];
+    }
+    this.saveHotelDateBlocksToStorage(updated);
+
+    return this.http.post<HotelDateBlock>(`${this.apiUrl}/hotel/date-blocks`, finalBlock, { headers: this.getAuthHeaders() }).pipe(
+      catchError(() => of(finalBlock))
+    );
+  }
+
+  deleteHotelDateBlock(id: number): Observable<boolean> {
+    const filtered = this.loadStoredHotelDateBlocks().filter(b => b.id !== id);
+    this.saveHotelDateBlocksToStorage(filtered);
+
+    return this.http.delete<any>(`${this.apiUrl}/hotel/date-blocks/${id}`, { headers: this.getAuthHeaders() }).pipe(
       map(() => true),
       catchError(() => of(true))
     );

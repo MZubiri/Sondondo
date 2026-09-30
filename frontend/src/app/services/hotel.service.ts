@@ -126,7 +126,30 @@ export class HotelService {
           'Baño privado de lujo con artículos de aseo',
           'Ropa de cama y toallas de algodón'
         ],
-        highlights: ['Cocina privada equipada', 'Bañera de hidromasaje', 'Terraza privada', 'Diseño dúplex']
+        highlights: ['Cocina privada equipada', 'Bañera de hidromasaje', 'Terraza privada', 'Diseño dúplex'],
+        housekeepingStatus: 'occupied'
+      }
+    ],
+    dateBlocks: [
+      {
+        id: 1,
+        roomId: 0,
+        roomTitle: 'Todas las habitaciones',
+        startDate: new Date(Date.now() + 15 * 86400000).toISOString().split('T')[0],
+        endDate: new Date(Date.now() + 18 * 86400000).toISOString().split('T')[0],
+        reason: 'Fiesta Patronal Yaku Raymi - Temporada Festiva',
+        isBlocked: false,
+        priceOverrideSoles: 110,
+        priceOverrideUsd: 30
+      },
+      {
+        id: 2,
+        roomId: 2,
+        roomTitle: 'Habitación Triple Estándar',
+        startDate: new Date(Date.now() + 22 * 86400000).toISOString().split('T')[0],
+        endDate: new Date(Date.now() + 24 * 86400000).toISOString().split('T')[0],
+        reason: 'Mantenimiento Preventivo Red Sanitaria',
+        isBlocked: true
       }
     ]
   };
@@ -135,24 +158,33 @@ export class HotelService {
     return this.http.get<HotelInfo>(`${this.apiUrl}/hotel?includeInactive=false`).pipe(
       map(data => ({
         ...data,
-        rooms: (data.rooms || []).filter(r => r.isActive !== false)
+        rooms: (data.rooms || []).filter(r => r.isActive !== false),
+        dateBlocks: data.dateBlocks || []
       })),
       catchError(() => {
         try {
           const cached = localStorage.getItem(HOTEL_STORAGE_KEY);
+          let cachedBlocks: any[] = [];
+          try {
+            const b = localStorage.getItem('sondondo_admin_hotel_date_blocks_cache');
+            if (b) cachedBlocks = JSON.parse(b);
+          } catch {}
+
           if (cached) {
             const parsed = JSON.parse(cached) as HotelInfo;
             if (parsed && parsed.name) {
               return of({
                 ...parsed,
-                rooms: (parsed.rooms || []).filter(r => r.isActive !== false)
+                rooms: (parsed.rooms || []).filter(r => r.isActive !== false),
+                dateBlocks: cachedBlocks.length > 0 ? cachedBlocks : (parsed.dateBlocks || this.fallbackHotelInfo.dateBlocks)
               });
             }
           }
         } catch {}
         return of({
           ...this.fallbackHotelInfo,
-          rooms: this.fallbackHotelInfo.rooms.filter(r => r.isActive !== false)
+          rooms: this.fallbackHotelInfo.rooms.filter(r => r.isActive !== false),
+          dateBlocks: this.fallbackHotelInfo.dateBlocks
         });
       })
     );
