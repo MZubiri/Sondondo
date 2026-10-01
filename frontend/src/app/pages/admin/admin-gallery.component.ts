@@ -12,16 +12,24 @@ import { GalleryItem } from '../../models/admin.model';
     <div class="gallery-admin-page">
       <!-- HEADER -->
       <div class="page-header">
-        <div>
-          <h1 class="page-title">Galería Multimedia & Recursos Fotográficos</h1>
-          <p class="page-desc">Administra el banco de imágenes oficiales del Valle del Sondondo para usar en circuitos y portadas</p>
+        <div class="page-header-titles">
+          <div class="page-eyebrow">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <span>Recursos Multimedia</span>
+          </div>
+          <h1 class="page-title">Galería Multimedia Oficial</h1>
+          <p class="page-desc">Administra el banco fotográfico oficial del Valle del Sondondo para usar en circuitos y portadas</p>
         </div>
-        <button class="btn-primary" (click)="showUploadModal.set(true)">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="btn-adm btn-adm-primary" (click)="showUploadModal.set(true)">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
-          <span>Subir Nueva Fotografía</span>
+          <span>Subir Fotografía</span>
         </button>
       </div>
 
@@ -31,11 +39,11 @@ import { GalleryItem } from '../../models/admin.model';
       </div>
 
       <!-- FILTER CONTROLS -->
-      <div class="filter-bar">
-        <div class="category-pills">
+      <div class="filters-bar">
+        <div class="filter-pills">
           <button 
             type="button" 
-            class="cat-pill" 
+            class="pill-btn" 
             [class.active]="selectedCategory() === 'all'"
             (click)="selectedCategory.set('all')"
           >
@@ -43,27 +51,27 @@ import { GalleryItem } from '../../models/admin.model';
           </button>
           <button 
             type="button" 
-            class="cat-pill" 
+            class="pill-btn" 
             [class.active]="selectedCategory() === 'Fauna'"
             (click)="selectedCategory.set('Fauna')"
           >
-            🦅 Fauna & Cóndores
+            Fauna & Cóndores
           </button>
           <button 
             type="button" 
-            class="cat-pill" 
+            class="pill-btn" 
             [class.active]="selectedCategory() === 'Paisajes'"
             (click)="selectedCategory.set('Paisajes')"
           >
-            🌄 Paisajes & Volcanes
+            Paisajes & Volcanes
           </button>
           <button 
             type="button" 
-            class="cat-pill" 
+            class="pill-btn" 
             [class.active]="selectedCategory() === 'Cultura'"
             (click)="selectedCategory.set('Cultura')"
           >
-            🏛️ Cultura & Pueblos
+            Cultura & Pueblos
           </button>
         </div>
       </div>
@@ -75,13 +83,25 @@ import { GalleryItem } from '../../models/admin.model';
             <img [src]="photo.url" [alt]="photo.title" loading="lazy" />
             <span class="category-badge">{{ photo.category }}</span>
             <div class="hover-overlay">
-              <span>🔍 Clic para ampliar</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                <line x1="11" y1="8" x2="11" y2="14"></line>
+                <line x1="8" y1="11" x2="14" y2="11"></line>
+              </svg>
+              <span>Ampliar fotografía</span>
             </div>
           </div>
 
           <div class="photo-details">
             <h4 class="photo-title">{{ photo.title }}</h4>
-            <span class="photo-loc">📍 {{ photo.location }}</span>
+            <span class="photo-loc">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span>{{ photo.location }}</span>
+            </span>
             <code class="photo-path">{{ photo.url }}</code>
           </div>
 
@@ -178,7 +198,7 @@ import { GalleryItem } from '../../models/admin.model';
           <img [src]="activeLightboxPhoto()!.url" [alt]="activeLightboxPhoto()!.title" class="lightbox-img" />
           <div class="lightbox-caption">
             <h3>{{ activeLightboxPhoto()!.title }}</h3>
-            <p>📍 {{ activeLightboxPhoto()!.location }} • Categoría: {{ activeLightboxPhoto()!.category }}</p>
+            <p>{{ activeLightboxPhoto()!.location }} • Categoría: {{ activeLightboxPhoto()!.category }}</p>
             <button class="btn-copy-white" (click)="copyUrl(activeLightboxPhoto()!.url)">Copiar Ruta de Imagen</button>
           </div>
           <button class="btn-close-lightbox" (click)="activeLightboxPhoto.set(null)">×</button>

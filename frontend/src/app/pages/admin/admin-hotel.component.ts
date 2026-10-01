@@ -13,27 +13,23 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
     <div class="hotel-admin-page">
       <!-- HEADER -->
       <div class="page-header">
-        <div class="header-titles">
-          <div class="header-badges">
-            <span class="badge-gold">🏨 Hospedaje Oficial</span>
-            <span class="badge-stars">
-              ★ {{ hotelInfo().stars || 3 }} Estrellas
-            </span>
+        <div class="page-header-titles">
+          <div class="page-eyebrow eyebrow-hotel">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 4v16"></path>
+              <path d="M2 8h18a2 2 0 0 1 2 2v10"></path>
+              <path d="M2 17h20"></path>
+              <path d="M6 8v9"></path>
+            </svg>
+            <span>Hospedaje Oficial & Albergues</span>
           </div>
-          <h1 class="page-title">{{ hotelInfo().name || 'Hotel Punto Clave' }} — Panel de Hospedaje</h1>
-          <p class="page-desc">Módulo independiente de administración hotelera: habitaciones, tarifas por noche, amenidades y reservas de huéspedes</p>
+          <h1 class="page-title">{{ hotelInfo().name || 'Hotel Punto Clave' }}</h1>
+          <p class="page-desc">Gestión integral de habitaciones, tarifas por noche, ocupación y reservas de huéspedes</p>
         </div>
 
         <div class="header-actions">
-          <a routerLink="/admin/tours" class="btn-return-tours" title="Volver al Panel de Tours">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-            <span>Volver a Tours</span>
-          </a>
-
-          <button type="button" class="btn-secondary" (click)="exportCsv()" title="Descargar reporte de reservas">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <button type="button" class="btn-adm btn-adm-secondary" (click)="exportCsv()" title="Descargar reporte de reservas">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
               <polyline points="7 10 12 15 17 10"></polyline>
               <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -41,16 +37,16 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
             <span>Exportar CSV</span>
           </button>
 
-          <button type="button" class="btn-primary" (click)="openCreateRoomModal()">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <button type="button" class="btn-adm btn-adm-secondary" (click)="openCreateRoomModal()">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
             <span>Nueva Habitación</span>
           </button>
 
-          <button type="button" class="btn-gold" (click)="openCreateBookingModal()">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <button type="button" class="btn-adm btn-adm-gold" (click)="openCreateBookingModal()">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
               <line x1="16" y1="2" x2="16" y2="6"></line>
               <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -166,7 +162,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
         <div class="reception-header">
           <div class="reception-title-box">
             <div class="rec-badge-row">
-              <span class="reception-badge">🛎️ Centro de Operaciones del Día</span>
+              <span class="reception-badge">Operaciones del Día</span>
               <span class="live-pulse-badge">● En Vivo</span>
             </div>
             <h2 class="reception-heading">{{ todayFormatted() }}</h2>
@@ -199,7 +195,13 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
           <!-- KPI 1: Check-Ins de Hoy -->
           <div class="kpi-op-box" [class.highlight-active]="todayCheckIns().length > 0">
             <div class="kpi-op-header">
-              <span class="kpi-op-icon icon-in">📥</span>
+              <span class="kpi-op-icon icon-in">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                  <polyline points="10 17 15 12 10 7"></polyline>
+                  <line x1="15" y1="12" x2="3" y2="12"></line>
+                </svg>
+              </span>
               <div class="kpi-op-meta">
                 <span class="kpi-op-title">Llegadas de Hoy (Check-In)</span>
                 <strong class="kpi-op-count">{{ todayCheckIns().length }}</strong>
@@ -223,14 +225,19 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                     (click)="onQuickCheckIn(b)" 
                     title="Registrar ingreso y marcar habitación ocupada"
                   >
-                    ✓ Check-In
+                    Check-In
                   </button>
-                  <span *ngIf="b.status === 'CheckedIn'" class="pill-checked-in">🏨 Hospedado</span>
+                  <span *ngIf="b.status === 'CheckedIn'" class="status-pill active">En Estadía</span>
                   <button type="button" class="btn-op-voucher" (click)="openGuestVoucherModal(b)" title="Ver voucher y recibo">
-                    📄
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
                   </button>
                   <a [href]="b.whatsAppDirectUrl" target="_blank" rel="noopener" class="btn-op-wa" title="WhatsApp">
-                    💬
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                      <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2z"></path>
+                    </svg>
                   </a>
                 </div>
               </div>
@@ -243,7 +250,13 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
           <!-- KPI 2: Check-Outs de Hoy -->
           <div class="kpi-op-box" [class.highlight-active]="todayCheckOuts().length > 0">
             <div class="kpi-op-header">
-              <span class="kpi-op-icon icon-out">📤</span>
+              <span class="kpi-op-icon icon-out">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </span>
               <div class="kpi-op-meta">
                 <span class="kpi-op-title">Salidas de Hoy (Check-Out)</span>
                 <strong class="kpi-op-count">{{ todayCheckOuts().length }}</strong>
@@ -264,11 +277,14 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                     (click)="onQuickCheckOut(b)" 
                     title="Completar salida y marcar habitación como sucia para limpieza"
                   >
-                    🚪 Check-Out
+                    Check-Out
                   </button>
-                  <span *ngIf="b.status === 'Completed'" class="pill-completed">✓ Finalizado</span>
+                  <span *ngIf="b.status === 'Completed'" class="status-pill confirmed">Finalizado</span>
                   <button type="button" class="btn-op-voucher" (click)="openGuestVoucherModal(b)" title="Ver voucher">
-                    📄
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -281,7 +297,11 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
           <!-- KPI 3: Housekeeping (Limpieza) -->
           <div class="kpi-op-box">
             <div class="kpi-op-header">
-              <span class="kpi-op-icon icon-clean">🧹</span>
+              <span class="kpi-op-icon icon-clean">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                </svg>
+              </span>
               <div class="kpi-op-meta">
                 <span class="kpi-op-title">Housekeeping (Limpieza)</span>
                 <strong class="kpi-op-count">{{ cleanRoomsCount() }}/{{ totalRooms() }}</strong>
@@ -290,7 +310,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
             <div class="housekeeping-status-summary">
               <div class="hk-stat-item hk-clean">
                 <span class="hk-dot dot-clean"></span>
-                <span>{{ cleanRoomsCount() }} Limpias y listas</span>
+                <span>{{ cleanRoomsCount() }} Limpias</span>
               </div>
               <div class="hk-stat-item hk-occupied">
                 <span class="hk-dot dot-occupied"></span>
@@ -305,7 +325,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
               </div>
               <div class="hk-stat-item hk-maint" *ngIf="maintenanceRoomsCount() > 0">
                 <span class="hk-dot dot-maint"></span>
-                <span>{{ maintenanceRoomsCount() }} En Mantenimiento</span>
+                <span>{{ maintenanceRoomsCount() }} Mantenimiento</span>
               </div>
             </div>
           </div>
@@ -313,9 +333,16 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
           <!-- KPI 4: Ocupación en Vivo -->
           <div class="kpi-op-box">
             <div class="kpi-op-header">
-              <span class="kpi-op-icon icon-occ">🏨</span>
+              <span class="kpi-op-icon icon-occ">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M2 4v16"></path>
+                  <path d="M2 8h18a2 2 0 0 1 2 2v10"></path>
+                  <path d="M2 17h20"></path>
+                  <path d="M6 8v9"></path>
+                </svg>
+              </span>
               <div class="kpi-op-meta">
-                <span class="kpi-op-title">Ocupación en Vivo</span>
+                <span class="kpi-op-title">Ocupación Actual</span>
                 <strong class="kpi-op-count">{{ occupancyRatePercent() }}%</strong>
               </div>
             </div>
@@ -361,7 +388,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
             <line x1="8" y1="2" x2="8" y2="6"></line>
             <line x1="3" y1="10" x2="21" y2="10"></line>
           </svg>
-          <span>📅 Rack de Ocupación (Tape Chart)</span>
+          <span>Rack de Ocupación</span>
         </button>
 
         <button 
@@ -390,7 +417,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>
-          <span>🛡️ Bloqueos & Temporada ({{ hotelDateBlocks().length }})</span>
+          <span>Bloqueos & Tarifas ({{ hotelDateBlocks().length }})</span>
         </button>
 
         <button 
@@ -416,7 +443,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
           <div class="filter-pills">
             <button 
               type="button" 
-              class="pill" 
+              class="pill-btn" 
               [class.active]="roomsFilter() === 'all'"
               (click)="roomsFilter.set('all')"
             >
@@ -424,24 +451,31 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
             </button>
             <button 
               type="button" 
-              class="pill pill-green" 
+              class="pill-btn" 
               [class.active]="roomsFilter() === 'active'"
               (click)="roomsFilter.set('active')"
             >
-              🟢 Activas en Web ({{ activeRoomsCount() }})
+              <span class="pill-dot is-active"></span>
+              <span>Activas en Web ({{ activeRoomsCount() }})</span>
             </button>
             <button 
               type="button" 
-              class="pill pill-amber" 
+              class="pill-btn" 
               [class.active]="roomsFilter() === 'hidden'"
               (click)="roomsFilter.set('hidden')"
             >
-              ⏸️ En Mantenimiento / Pausadas ({{ hiddenRoomsCount() }})
+              <span class="pill-dot is-paused"></span>
+              <span>En Mantenimiento ({{ hiddenRoomsCount() }})</span>
             </button>
           </div>
 
           <div class="filter-hint">
-            <span>💡 Las habitaciones marcadas como <strong>Activas</strong> se sincronizan automáticamente con la sección de reserva y pasarela de pago del portal público.</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>Las habitaciones <strong>Activas</strong> se sincronizan automáticamente con el portal de reservas público.</span>
           </div>
         </div>
 
@@ -470,7 +504,10 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
               </div>
 
               <div class="hover-photo-hint">
-                <span>🔍 Ver galería ({{ room.gallery.length }} fotos)</span>
+                <span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px; margin-right: 4px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                  Galería ({{ room.gallery.length }} fotos)
+                </span>
               </div>
             </div>
 
@@ -492,7 +529,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
 
               <!-- Highlights chips -->
               <div class="room-highlights-row">
-                <span *ngFor="let h of room.highlights" class="hl-chip">✓ {{ h }}</span>
+                <span *ngFor="let h of room.highlights" class="hl-chip">{{ h }}</span>
               </div>
 
               <!-- Meta info footer -->
@@ -510,7 +547,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
 
               <!-- Housekeeping Quick Control -->
               <div class="room-housekeeping-box">
-                <span class="hk-label">Estado de Limpieza (Housekeeping):</span>
+                <span class="hk-label">Estado de Limpieza:</span>
                 <div class="hk-pills-row">
                   <button 
                     type="button" 
@@ -519,7 +556,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                     (click)="onUpdateHousekeeping(room.id, 'clean')"
                     title="Limpia y lista para asignar"
                   >
-                    🟢 Limpia
+                    <span class="hk-dot dot-clean"></span> Limpia
                   </button>
                   <button 
                     type="button" 
@@ -528,7 +565,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                     (click)="onUpdateHousekeeping(room.id, 'occupied')"
                     title="Huésped actualmente alojado"
                   >
-                    🟡 Ocupada
+                    <span class="hk-dot dot-occupied"></span> Ocupada
                   </button>
                   <button 
                     type="button" 
@@ -537,7 +574,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                     (click)="onUpdateHousekeeping(room.id, 'dirty')"
                     title="Desocupada pendiente de aseo"
                   >
-                    🟠 Por Limpiar
+                    <span class="hk-dot dot-dirty"></span> Por Limpiar
                   </button>
                   <button 
                     type="button" 
@@ -546,7 +583,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                     (click)="onUpdateHousekeeping(room.id, 'maintenance')"
                     title="En mantenimiento"
                   >
-                    🔴 Mantenimiento
+                    <span class="hk-dot dot-maint"></span> Mantenimiento
                   </button>
                 </div>
               </div>
@@ -609,7 +646,9 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
             </button>
 
             <div class="rack-current-month">
-              <span class="cal-icon">📅</span>
+              <span class="cal-icon">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px; margin-right: 4px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              </span>
               <strong class="month-title">{{ rackMonthName() }}</strong>
             </div>
 
@@ -721,8 +760,8 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                         [class.blk-special]="!blk.isBlocked"
                         [title]="blk.reason + (blk.priceOverrideSoles ? ' (Tarifa Especial S/ ' + blk.priceOverrideSoles + ')' : ' (Bloqueado)')"
                       >
-                        <span *ngIf="blk.isBlocked">🔒 {{ blk.reason }}</span>
-                        <span *ngIf="!blk.isBlocked">⭐ S/ {{ blk.priceOverrideSoles }}</span>
+                        <span *ngIf="blk.isBlocked">{{ blk.reason }}</span>
+                        <span *ngIf="!blk.isBlocked">S/ {{ blk.priceOverrideSoles }}</span>
                       </div>
                     </ng-container>
 
@@ -749,7 +788,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
               <span class="leg-item"><span class="leg-color leg-block"></span> Bloqueada / Mantenimiento</span>
               <span class="leg-item"><span class="leg-color leg-special"></span> Tarifa Especial Temporada</span>
             </div>
-            <span class="legend-hint">💡 Clic en cualquier bloque ocupado para abrir la Ficha de Huésped y enviar Voucher por WhatsApp. Clic en celda libre para crear una reserva.</span>
+            <span class="legend-hint">Clic en cualquier bloque ocupado para abrir la Ficha de Huésped y enviar Voucher por WhatsApp. Clic en celda libre para crear una reserva.</span>
           </div>
         </div>
       </section>
@@ -775,7 +814,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
               [class.active]="bookingStatusFilter() === 'Pending'"
               (click)="bookingStatusFilter.set('Pending')"
             >
-              🟡 Pendientes ({{ pendingBookingsCount() }})
+              <span class="pill-dot dot-pending"></span> Pendientes ({{ pendingBookingsCount() }})
             </button>
             <button 
               type="button" 
@@ -783,7 +822,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
               [class.active]="bookingStatusFilter() === 'Confirmed'"
               (click)="bookingStatusFilter.set('Confirmed')"
             >
-              🟢 Confirmadas
+              <span class="pill-dot dot-confirmed"></span> Confirmadas
             </button>
             <button 
               type="button" 
@@ -791,7 +830,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
               [class.active]="bookingStatusFilter() === 'CheckedIn'"
               (click)="bookingStatusFilter.set('CheckedIn')"
             >
-              🏨 En Estadía
+              <span class="pill-dot dot-checkin"></span> En Estadía
             </button>
             <button 
               type="button" 
@@ -799,7 +838,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
               [class.active]="bookingStatusFilter() === 'Completed'"
               (click)="bookingStatusFilter.set('Completed')"
             >
-              ✓ Finalizadas
+              <span class="pill-dot dot-completed"></span> Finalizadas
             </button>
             <button 
               type="button" 
@@ -807,7 +846,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
               [class.active]="bookingStatusFilter() === 'Cancelled'"
               (click)="bookingStatusFilter.set('Cancelled')"
             >
-              ❌ Canceladas
+              <span class="pill-dot dot-cancelled"></span> Canceladas
             </button>
           </div>
 
@@ -856,8 +895,8 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                     <div class="guest-info-box">
                       <strong class="guest-name">{{ b.guestName }}</strong>
                       <span class="guest-doc" *ngIf="b.guestDocumentNumber">{{ b.guestDocumentType || 'DNI' }}: {{ b.guestDocumentNumber }}</span>
-                      <span class="guest-contact">📞 {{ b.guestPhone }}</span>
-                      <span class="guest-contact" *ngIf="b.guestEmail">✉️ {{ b.guestEmail }}</span>
+                      <span class="guest-contact">{{ b.guestPhone }}</span>
+                      <span class="guest-contact" *ngIf="b.guestEmail">{{ b.guestEmail }}</span>
                     </div>
                   </td>
 
@@ -869,8 +908,8 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                   <!-- Checkin / Checkout -->
                   <td>
                     <div class="dates-box">
-                      <span class="date-in">📥 In: {{ b.checkInDate }}</span>
-                      <span class="date-out">📤 Out: {{ b.checkOutDate }}</span>
+                      <span class="date-in">In: {{ b.checkInDate }}</span>
+                      <span class="date-out">Out: {{ b.checkOutDate }}</span>
                     </div>
                   </td>
 
@@ -881,7 +920,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
 
                   <!-- Guests -->
                   <td>
-                    <span class="guest-count">👥 {{ b.numberOfGuests }}</span>
+                    <span class="guest-count">{{ b.numberOfGuests }} pers.</span>
                   </td>
 
                   <!-- Total & Payment -->
@@ -896,7 +935,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                       >
                         {{ b.paymentStatus || 'Pendiente' }}
                       </span>
-                      <span class="pay-method" *ngIf="b.paymentMethod">💳 {{ b.paymentMethod }}</span>
+                      <span class="pay-method" *ngIf="b.paymentMethod">{{ b.paymentMethod }}</span>
                     </div>
                   </td>
 
@@ -912,11 +951,11 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                       [class.st-completed]="b.status === 'Completed'"
                       [class.st-cancelled]="b.status === 'Cancelled'"
                     >
-                      <option value="Pending">🟡 Pendiente</option>
-                      <option value="Confirmed">🟢 Confirmada</option>
-                      <option value="CheckedIn">🏨 En Estadía</option>
-                      <option value="Completed">✓ Finalizada</option>
-                      <option value="Cancelled">❌ Cancelada</option>
+                      <option value="Pending">Pendiente</option>
+                      <option value="Confirmed">Confirmada</option>
+                      <option value="CheckedIn">En Estadía</option>
+                      <option value="Completed">Finalizada</option>
+                      <option value="Cancelled">Cancelada</option>
                     </select>
                   </td>
 
@@ -924,7 +963,8 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                   <td>
                     <div class="row-actions">
                       <button type="button" class="btn-voucher-sm" (click)="openGuestVoucherModal(b)" title="Ver Ficha de Huésped y Voucher Digital">
-                        📄 Voucher
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px; margin-right: 3px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                        Voucher
                       </button>
 
                       <a 
@@ -959,7 +999,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                 <tr *ngIf="filteredBookings().length === 0">
                   <td colspan="9" class="empty-state">
                     <div class="empty-box">
-                      <span>📭 No se encontraron reservas con los filtros aplicados.</span>
+                      <span>No se encontraron reservas con los filtros aplicados.</span>
                       <button type="button" class="btn-secondary-sm" (click)="openCreateBookingModal()">
                         Registrar una nueva reserva manual
                       </button>
@@ -979,7 +1019,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
         <div class="blocks-page-card glass-panel">
           <div class="blocks-header">
             <div>
-              <h2 class="blocks-title">🛡️ Gestión de Bloqueos & Tarifas Especiales de Temporada</h2>
+              <h2 class="blocks-title">Gestión de Bloqueos & Tarifas Especiales</h2>
               <p class="blocks-sub">Cierra fechas de habitaciones por mantenimiento o festividades locales, o define tarifas especiales (Yaku Raymi, Semana Santa, etc.).</p>
             </div>
             <button type="button" class="btn-gold" (click)="openCreateBlockModal()">
@@ -1003,19 +1043,19 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                 <tr *ngFor="let blk of hotelDateBlocks()">
                   <td>
                     <div class="blk-room-cell">
-                      <strong *ngIf="!blk.roomId">🏨 Todo el Hotel</strong>
+                      <strong *ngIf="!blk.roomId">Todo el Hotel (General)</strong>
                       <strong *ngIf="blk.roomId">{{ blk.roomTitle || ('Habitación #' + blk.roomId) }}</strong>
                     </div>
                   </td>
                   <td>
                     <div class="dates-box">
-                      <span>📅 {{ blk.startDate }} al {{ blk.endDate }}</span>
+                      <span>{{ blk.startDate }} al {{ blk.endDate }}</span>
                     </div>
                   </td>
                   <td>
                     <div class="blk-reason-cell">
                       <span class="blk-tag" [class.blk-tag-closed]="blk.isBlocked" [class.blk-tag-rate]="!blk.isBlocked">
-                        {{ blk.isBlocked ? '🔒 Cierre / Bloqueo' : '⭐ Tarifa Especial' }}
+                        {{ blk.isBlocked ? 'Cierre / Bloqueo' : 'Tarifa Especial' }}
                       </span>
                       <span class="blk-reason-text">{{ blk.reason }}</span>
                     </div>
@@ -1093,11 +1133,11 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
               <div class="form-group">
                 <label>Categoría Estrellas (1 - 5)</label>
                 <select [(ngModel)]="profileStars" name="profileStars">
-                  <option [ngValue]="1">★ 1 Estrella</option>
-                  <option [ngValue]="2">★★ 2 Estrellas</option>
-                  <option [ngValue]="3">★★★ 3 Estrellas (Recomendado)</option>
-                  <option [ngValue]="4">★★★★ 4 Estrellas</option>
-                  <option [ngValue]="5">★★★★★ 5 Estrellas</option>
+                  <option [ngValue]="1">1 Estrella</option>
+                  <option [ngValue]="2">2 Estrellas</option>
+                  <option [ngValue]="3">3 Estrellas (Estándar)</option>
+                  <option [ngValue]="4">4 Estrellas</option>
+                  <option [ngValue]="5">5 Estrellas</option>
                 </select>
               </div>
             </div>
@@ -1444,11 +1484,11 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
               <div class="form-group">
                 <label>Estado de la Reserva</label>
                 <select [(ngModel)]="bookingForm.status" name="bookingStatus">
-                  <option value="Pending">🟡 Pendiente de Confirmación</option>
-                  <option value="Confirmed">🟢 Confirmada</option>
-                  <option value="CheckedIn">🏨 En Estadía (Check-in Realizado)</option>
-                  <option value="Completed">✓ Finalizada (Check-out)</option>
-                  <option value="Cancelled">❌ Cancelada</option>
+                  <option value="Pending">Pendiente de Confirmación</option>
+                  <option value="Confirmed">Confirmada</option>
+                  <option value="CheckedIn">En Estadía (Check-in Realizado)</option>
+                  <option value="Completed">Finalizada (Check-out)</option>
+                  <option value="Cancelled">Cancelada</option>
                 </select>
               </div>
             </div>
@@ -1513,7 +1553,8 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
             </div>
             <div class="v-top-actions">
               <button type="button" class="btn-v-print" (click)="onPrintVoucher()" title="Imprimir o guardar como PDF">
-                🖨️ Imprimir / PDF
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px; margin-right: 4px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                Imprimir / PDF
               </button>
               <button 
                 type="button" 
@@ -1521,7 +1562,8 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                 (click)="onSendVoucherWhatsApp(selectedVoucherBooking()!)" 
                 title="Enviar voucher oficial al WhatsApp del huésped"
               >
-                💬 Enviar por WhatsApp
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="vertical-align: -2px; margin-right: 4px;"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
+                Enviar por WhatsApp
               </button>
               <button class="btn-close" (click)="closeGuestVoucherModal()">×</button>
             </div>
@@ -1548,7 +1590,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
             <div class="v-grid-sections">
               <!-- Guest Info -->
               <div class="v-section-box">
-                <h4 class="v-sec-title">👤 Ficha de Huésped Titular</h4>
+                <h4 class="v-sec-title">Ficha de Huésped Titular</h4>
                 <div class="v-data-row">
                   <span class="v-lbl">Nombre:</span>
                   <strong class="v-val">{{ selectedVoucherBooking()?.guestName }}</strong>
@@ -1573,7 +1615,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
 
               <!-- Stay Info -->
               <div class="v-section-box">
-                <h4 class="v-sec-title">🏨 Detalles de Estadía</h4>
+                <h4 class="v-sec-title">Detalles de Estadía</h4>
                 <div class="v-data-row">
                   <span class="v-lbl">Habitación Asignada:</span>
                   <strong class="v-val highlight-room">{{ selectedVoucherBooking()?.roomTitle }}</strong>
@@ -1599,7 +1641,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
 
             <!-- PAYMENT SUMMARY TABLE -->
             <div class="v-finance-box">
-              <h4 class="v-sec-title">💳 Liquidación Financiera</h4>
+              <h4 class="v-sec-title">Liquidación Financiera</h4>
               <div class="v-finance-grid">
                 <div class="v-fin-item">
                   <span class="v-fin-lbl">Tarifa Total Estadía:</span>
@@ -1624,16 +1666,16 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
 
             <!-- SPECIAL REQUESTS & POLICIES -->
             <div class="v-footer-notes" *ngIf="selectedVoucherBooking()?.specialRequests">
-              <strong>📝 Observaciones / Peticiones Especiales:</strong>
+              <strong>Observaciones / Peticiones Especiales:</strong>
               <p>{{ selectedVoucherBooking()?.specialRequests }}</p>
             </div>
 
             <div class="v-policy-box">
               <div class="v-policy-col">
-                <strong>📍 Ubicación:</strong> {{ hotelInfo().address || 'Plaza Principal s/n' }}, {{ hotelInfo().city || 'Cabana Sur, Ayacucho' }}.
+                <strong>Ubicación:</strong> {{ hotelInfo().address || 'Plaza Principal s/n' }}, {{ hotelInfo().city || 'Cabana Sur, Ayacucho' }}.
               </div>
               <div class="v-policy-col">
-                <strong>🛎️ Recepción:</strong> Presentar documento original de identidad. Desayuno tradicional andino incluido.
+                <strong>Recepción:</strong> Presentar documento original de identidad. Desayuno tradicional andino incluido.
               </div>
             </div>
           </div>
@@ -1646,7 +1688,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
               class="btn-mark-paid"
               (click)="onMarkBookingPaid(selectedVoucherBooking()!)"
             >
-              💰 Marcar Pagado 100% (S/ {{ selectedVoucherBooking()?.totalPriceSoles }})
+              Marcar Pagado 100% (S/ {{ selectedVoucherBooking()?.totalPriceSoles }})
             </button>
             <button type="button" class="btn-secondary" (click)="closeGuestVoucherModal()">Cerrar Ficha</button>
           </div>
@@ -1670,7 +1712,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
             <div class="form-group">
               <label>Alcance / Habitación *</label>
               <select [(ngModel)]="blockForm.roomId" name="blockRoomId">
-                <option [ngValue]="null">🏨 Todo el Hotel (Bloqueo General)</option>
+                <option [ngValue]="null">Todo el Hotel (Bloqueo General)</option>
                 <option *ngFor="let r of allRooms()" [ngValue]="r.id">
                   Habitación: {{ r.title }} ({{ r.bedConfiguration }})
                 </option>
@@ -1694,7 +1736,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                 <label class="radio-card" [class.selected]="blockForm.isBlocked">
                   <input type="radio" [(ngModel)]="blockForm.isBlocked" [value]="true" name="isBlockedChoice" />
                   <div class="radio-info">
-                    <strong>🔒 Cerrar Fechas / Mantenimiento</strong>
+                    <strong>Cerrar Fechas / Mantenimiento</strong>
                     <span>No permite reservas en el rango seleccionado.</span>
                   </div>
                 </label>
@@ -1702,7 +1744,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
                 <label class="radio-card" [class.selected]="!blockForm.isBlocked">
                   <input type="radio" [(ngModel)]="blockForm.isBlocked" [value]="false" name="isBlockedChoice" />
                   <div class="radio-info">
-                    <strong>⭐ Tarifa Especial de Temporada</strong>
+                    <strong>Tarifa Especial de Temporada</strong>
                     <span>Mantiene abierta la habitación pero aplica una tarifa personalizada.</span>
                   </div>
                 </label>
@@ -1747,16 +1789,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
       margin: 0 auto;
     }
 
-    /* HEADER */
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 2rem;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-    }
-
+    /* HEADER BADGES & CUSTOM BUTTONS */
     .header-badges {
       display: flex;
       align-items: center;
@@ -1765,11 +1798,11 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
     }
 
     .badge-gold {
-      background: rgba(224, 159, 62, 0.15);
-      border: 1px solid rgba(224, 159, 62, 0.35);
-      color: #e09f3e;
+      background: var(--adm-gold-surface);
+      border: 1px solid var(--adm-gold-border);
+      color: var(--adm-gold);
       padding: 0.2rem 0.65rem;
-      border-radius: 999px;
+      border-radius: var(--adm-r-full);
       font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
@@ -1777,191 +1810,71 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
     }
 
     .badge-stars {
-      background: rgba(241, 196, 15, 0.15);
-      border: 1px solid rgba(241, 196, 15, 0.35);
-      color: #f1c40f;
+      background: rgba(207, 161, 90, 0.12);
+      border: 1px solid var(--adm-gold-border);
+      color: var(--adm-gold);
       padding: 0.2rem 0.65rem;
-      border-radius: 999px;
+      border-radius: var(--adm-r-full);
       font-size: 0.72rem;
       font-weight: 700;
-    }
-
-    .page-title {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: #f8fafc;
-      letter-spacing: -0.02em;
-      margin: 0 0 0.4rem;
-    }
-
-    .page-desc {
-      font-size: 0.9rem;
-      color: #94a3b8;
-      margin: 0;
-      max-width: 700px;
-      line-height: 1.5;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    /* BUTTONS */
-    .btn-primary, .btn-secondary, .btn-gold {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.65rem 1.15rem;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-decoration: none;
-      border: none;
-    }
-
-    .btn-primary {
-      background: #c85a32;
-      color: #ffffff;
-      box-shadow: 0 4px 14px rgba(200, 90, 50, 0.3);
-    }
-
-    .btn-primary:hover {
-      background: #b54e28;
-      transform: translateY(-1px);
-    }
-
-    .btn-gold {
-      background: #e09f3e;
-      color: #0b1216;
-      font-weight: 700;
-      box-shadow: 0 4px 14px rgba(224, 159, 62, 0.25);
-    }
-
-    .btn-gold:hover {
-      background: #cf8e30;
-      transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #cbd5e1;
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.09);
-      color: #ffffff;
-    }
-
-    .btn-secondary-sm {
-      padding: 0.35rem 0.75rem;
-      font-size: 0.8rem;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #cbd5e1;
-      cursor: pointer;
-    }
-
-    .btn-secondary-sm:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: #ffffff;
     }
 
     .btn-return-tours {
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
-      padding: 0.65rem 1rem;
-      border-radius: 8px;
-      background: rgba(200, 90, 50, 0.15);
-      border: 1px solid rgba(200, 90, 50, 0.35);
-      color: #fdba74;
-      font-size: 0.85rem;
-      font-weight: 700;
+      padding: 0.6rem 0.95rem;
+      border-radius: var(--adm-r-sm);
+      background: var(--adm-clay-surface);
+      border: 1px solid var(--adm-clay-border);
+      color: var(--adm-clay);
+      font-size: 0.82rem;
+      font-weight: 600;
       text-decoration: none;
       transition: all 0.2s ease;
     }
 
     .btn-return-tours:hover {
-      background: #c85a32;
+      background: var(--adm-clay);
       color: #ffffff;
       transform: translateY(-1px);
     }
 
-    /* TOAST */
-    .admin-toast {
-      background: #064e3b;
-      border: 1px solid #10b981;
-      color: #ecfdf5;
-      padding: 0.75rem 1.25rem;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      font-size: 0.88rem;
-      font-weight: 500;
-      margin-bottom: 1.5rem;
-      animation: fadeIn 0.3s ease;
+    .btn-secondary-sm {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      border-radius: var(--adm-r-sm);
+      background: var(--adm-card-elevated);
+      border: 1px solid var(--adm-border);
+      color: var(--adm-text-title);
+      cursor: pointer;
+    }
+
+    .btn-secondary-sm:hover {
+      background: var(--adm-card-hover);
     }
 
     /* KPIS STATS RIBBON */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .stat-card {
-      background: #0e171e;
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 12px;
-      padding: 1.15rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-
-    .stat-card:hover {
-      border-color: rgba(224, 159, 62, 0.3);
-      transform: translateY(-2px);
-    }
-
     .stat-icon-wrap {
-      width: 48px;
-      height: 48px;
-      border-radius: 10px;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--adm-r-sm);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
 
-    .icon-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-    .icon-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-    .icon-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-    .icon-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
-    .icon-gold { background: rgba(224, 159, 62, 0.15); color: #e09f3e; }
+    .icon-blue { background: var(--adm-blue-surface); color: var(--adm-blue); }
+    .icon-emerald { background: var(--adm-green-surface); color: var(--adm-green); }
+    .icon-amber { background: var(--adm-amber-surface); color: var(--adm-amber); }
+    .icon-purple { background: var(--adm-purple-surface); color: var(--adm-purple); }
+    .icon-gold { background: var(--adm-gold-surface); color: var(--adm-gold); }
 
     .stat-data {
       display: flex;
       flex-direction: column;
       gap: 0.2rem;
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #94a3b8;
-      font-weight: 600;
     }
 
     .stat-value-row {
@@ -1972,23 +1885,24 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
     }
 
     .stat-val {
-      font-size: 1.35rem;
+      font-size: 1.4rem;
       font-weight: 800;
-      color: #f8fafc;
-      letter-spacing: -0.01em;
+      color: var(--adm-text-title);
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
     }
 
     .stat-subval {
       font-size: 0.72rem;
-      color: #64748b;
+      color: var(--adm-text-muted);
     }
 
     .stat-pill-pending {
       font-size: 0.7rem;
-      background: rgba(245, 158, 11, 0.2);
-      color: #fbbf24;
+      background: var(--adm-amber-surface);
+      color: var(--adm-amber);
       padding: 0.15rem 0.45rem;
-      border-radius: 6px;
+      border-radius: 4px;
       font-weight: 600;
     }
 
@@ -2387,47 +2301,7 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
     }
 
     .search-wrap input:focus {
-      border-color: #e09f3e;
-    }
-
-    .table-card {
-      background: #0e171e;
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .table-responsive {
-      overflow-x: auto;
-    }
-
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-      text-align: left;
-    }
-
-    .data-table th {
-      background: rgba(255, 255, 255, 0.02);
-      color: #94a3b8;
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: 0.72rem;
-      letter-spacing: 0.05em;
-      padding: 0.85rem 1rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      white-space: nowrap;
-    }
-
-    .data-table td {
-      padding: 0.9rem 1rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      vertical-align: middle;
-    }
-
-    .data-table tr:hover td {
-      background: rgba(255, 255, 255, 0.02);
+      border-color: var(--adm-gold);
     }
 
     .voucher-box {
@@ -2648,49 +2522,6 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
       gap: 1.25rem;
     }
 
-    .form-row-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-    }
-
-    .form-row-3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 1.25rem;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    .form-group label {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #cbd5e1;
-    }
-
-    .form-group input, 
-    .form-group select, 
-    .form-group textarea {
-      background: #090f13;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #f1f5f9;
-      padding: 0.65rem 0.85rem;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      outline: none;
-      font-family: inherit;
-    }
-
-    .form-group input:focus, 
-    .form-group select:focus, 
-    .form-group textarea:focus {
-      border-color: #e09f3e;
-    }
-
     .amenities-management-section {
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.06);
@@ -2757,88 +2588,15 @@ import { HotelInfo, HotelRoom, HotelBooking, HotelAmenity, GalleryItem, HotelDat
     }
 
     /* MODALS */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(5, 9, 12, 0.85);
-      backdrop-filter: blur(8px);
-      z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      overflow-y: auto;
-    }
-
-    .modal-card {
-      background: #0e171e;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-      width: 100%;
-      max-width: 780px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .modal-header {
-      padding: 1.5rem 1.75rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      position: sticky;
-      top: 0;
-      background: #0e171e;
-      z-index: 10;
-    }
-
-    .modal-kicker {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #e09f3e;
-      font-weight: 700;
-    }
-
-    .modal-heading {
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: #f8fafc;
-      margin: 0.2rem 0 0;
-    }
-
-    .btn-close {
-      background: transparent;
-      border: none;
-      color: #94a3b8;
-      font-size: 1.5rem;
-      cursor: pointer;
-      line-height: 1;
-    }
-
-    .btn-close:hover {
-      color: #ffffff;
-    }
-
-    .modal-form-body {
-      padding: 1.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-
     .form-section-title {
       font-size: 0.85rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: #e09f3e;
+      color: var(--adm-gold);
       margin-top: 0.5rem;
       padding-bottom: 0.35rem;
-      border-bottom: 1px solid rgba(224, 159, 62, 0.2);
+      border-bottom: 1px solid var(--adm-gold-border);
     }
 
     .toggle-group {
@@ -5062,13 +4820,13 @@ export class AdminHotelComponent implements OnInit {
 
     const text = encodeURIComponent(
       `¡Hola ${b.guestName}! Le confirmamos su reserva oficial en *${hotel?.name || 'Hotel Punto Clave'}* (Valle del Sondondo Expeditions).\n\n` +
-      `📋 *Código de Voucher:* ${b.voucherCode}\n` +
-      `🏨 *Habitación:* ${b.roomTitle}\n` +
-      `📥 *Check-In:* ${b.checkInDate} (${hotel?.checkInTime || '13:00 hrs'})\n` +
-      `📤 *Check-Out:* ${b.checkOutDate} (${hotel?.checkOutTime || '12:00 hrs'})\n` +
-      `🌙 *Estadía:* ${b.nights} noche(s) - ${b.numberOfGuests} huésped(es)\n` +
-      `💰 *Total:* S/ ${b.totalPriceSoles} (${balanceMsg})\n` +
-      `📍 *Ubicación:* ${hotel?.address || 'Plaza Principal'}, ${hotel?.city || 'Cabana Sur'}\n\n` +
+      `*Código de Voucher:* ${b.voucherCode}\n` +
+      `*Habitación:* ${b.roomTitle}\n` +
+      `*Check-In:* ${b.checkInDate} (${hotel?.checkInTime || '13:00 hrs'})\n` +
+      `*Check-Out:* ${b.checkOutDate} (${hotel?.checkOutTime || '12:00 hrs'})\n` +
+      `*Estadía:* ${b.nights} noche(s) - ${b.numberOfGuests} huésped(es)\n` +
+      `*Total:* S/ ${b.totalPriceSoles} (${balanceMsg})\n` +
+      `*Ubicación:* ${hotel?.address || 'Plaza Principal'}, ${hotel?.city || 'Cabana Sur'}\n\n` +
       `¡Los esperamos con los brazos abiertos en el hermoso Valle del Sondondo!`
     );
 

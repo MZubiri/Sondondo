@@ -12,12 +12,18 @@ import { AdminTestimonial } from '../../models/admin.model';
     <div class="testimonials-page">
       <!-- HEADER -->
       <div class="page-header">
-        <div>
+        <div class="page-header-titles">
+          <div class="page-eyebrow">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            <span>Reputación & Experiencias</span>
+          </div>
           <h1 class="page-title">Gestión de Testimonios & Reseñas</h1>
-          <p class="page-desc">Modera, aprueba y publica experiencias reales de viajeros en la página principal</p>
+          <p class="page-desc">Modera, aprueba y publica experiencias reales de viajeros en el portal principal</p>
         </div>
-        <button class="btn-primary" (click)="openCreateModal()">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="btn-adm btn-adm-primary" (click)="openCreateModal()">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
@@ -48,7 +54,11 @@ import { AdminTestimonial } from '../../models/admin.model';
           </div>
 
           <div class="tour-tag">
-            <span>📍 {{ item.tourName }}</span>
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>{{ item.tourName }}</span>
             <small>{{ item.date }}</small>
           </div>
 
@@ -107,11 +117,11 @@ import { AdminTestimonial } from '../../models/admin.model';
               <div class="form-field">
                 <label>Puntuación (1 a 5 Estrellas)</label>
                 <select [(ngModel)]="formData.rating" name="rating">
-                  <option [ngValue]="5">★★★★★ (5 Estrellas - Excelente)</option>
-                  <option [ngValue]="4">★★★★☆ (4 Estrellas - Muy Bueno)</option>
-                  <option [ngValue]="3">★★★☆☆ (3 Estrellas - Bueno)</option>
-                  <option [ngValue]="2">★★☆☆☆ (2 Estrellas - Regular)</option>
-                  <option [ngValue]="1">★☆☆☆☆ (1 Estrella - Deficiente)</option>
+                  <option [ngValue]="5">5 Estrellas (Excelente)</option>
+                  <option [ngValue]="4">4 Estrellas (Muy Bueno)</option>
+                  <option [ngValue]="3">3 Estrellas (Bueno)</option>
+                  <option [ngValue]="2">2 Estrellas (Regular)</option>
+                  <option [ngValue]="1">1 Estrella (Deficiente)</option>
                 </select>
               </div>
 

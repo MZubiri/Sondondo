@@ -12,12 +12,20 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
     <div class="tours-admin-page">
       <!-- HEADER -->
       <div class="page-header">
-        <div>
+        <div class="page-header-titles">
+          <div class="page-eyebrow">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            <span>Catálogo Turístico</span>
+          </div>
           <h1 class="page-title">Gestión de Tours & Circuitos</h1>
-          <p class="page-desc">Administra los circuitos turísticos del Valle del Sondondo visibles en la web</p>
+          <p class="page-desc">Administra los circuitos turísticos del Valle del Sondondo visibles en el portal web</p>
         </div>
-        <button class="btn-create" (click)="openCreateModal()">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="btn-adm btn-adm-primary" (click)="openCreateModal()">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
@@ -40,39 +48,46 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
         <div class="filter-pills">
           <button 
             type="button" 
-            class="pill" 
+            class="pill-btn" 
             [class.active]="activeFilter() === 'all'"
             (click)="activeFilter.set('all')"
           >
-            Todos los Tours ({{ allCount() }})
+            Todos ({{ allCount() }})
           </button>
           <button 
             type="button" 
-            class="pill pill-green" 
+            class="pill-btn" 
             [class.active]="activeFilter() === 'active'"
             (click)="activeFilter.set('active')"
           >
-            🟢 Publicados en Web ({{ activeCount() }})
+            <span class="pill-dot is-active"></span>
+            <span>Publicados ({{ activeCount() }})</span>
           </button>
           <button 
             type="button" 
-            class="pill pill-amber" 
+            class="pill-btn" 
             [class.active]="activeFilter() === 'hidden'"
             (click)="activeFilter.set('hidden')"
           >
-            ⏸️ Ocultos / Pausados ({{ hiddenCount() }})
+            <span class="pill-dot is-paused"></span>
+            <span>Pausados ({{ hiddenCount() }})</span>
           </button>
         </div>
 
         <div class="filter-hint">
-          <span>💡 Puedes <strong>ocultar</strong> un tour temporalmente (ej. por lluvias o mantenimiento) sin perder sus datos.</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <span>Puedes pausar un tour temporalmente (ej. por lluvias) sin perder su información.</span>
         </div>
       </div>
 
       <!-- TOURS TABLE -->
       <div class="table-card">
         <div class="table-responsive">
-          <table class="data-table">
+          <table class="adm-table">
             <thead>
               <tr>
                 <th>Imagen</th>
@@ -96,8 +111,13 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
                     <strong class="tour-title">{{ tour.title }}</strong>
                     <span class="tour-sub">{{ tour.subtitle }}</span>
                     <div class="badge-row">
-                      <span *ngIf="tour.featured" class="featured-badge">★ Destacado</span>
-                      <span *ngIf="tour.isActive === false" class="paused-badge">Pausado / Oculto</span>
+                      <span *ngIf="tour.featured" class="featured-badge">
+                        <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        <span>Destacado</span>
+                      </span>
+                      <span *ngIf="tour.isActive === false" class="paused-badge">Oculto</span>
                     </div>
                   </div>
                 </td>
@@ -110,12 +130,10 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
                 <td>{{ tour.altitudeMax }}</td>
                 <td>
                   <span 
-                    class="badge-status-web" 
-                    [class.is-active]="tour.isActive !== false" 
-                    [class.is-paused]="tour.isActive === false"
+                    class="status-pill" 
+                    [ngClass]="tour.isActive !== false ? 'active' : 'hidden'"
                   >
-                    <span class="status-dot">●</span>
-                    <span>{{ tour.isActive !== false ? 'Visible en Web' : 'Oculto (Pausado)' }}</span>
+                    {{ tour.isActive !== false ? 'Visible' : 'Oculto' }}
                   </span>
                 </td>
                 <td>
@@ -376,7 +394,7 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
                           (click)="activeLightboxPhoto.set(img)" 
                           title="Ver imagen ampliada"
                         >
-                          🔍
+                          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         </button>
                         <button 
                           type="button" 
@@ -384,7 +402,7 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
                           (click)="removeDetailImage(i)" 
                           title="Quitar de este tour"
                         >
-                          🗑️
+                          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                         </button>
                       </div>
                     </div>
@@ -400,7 +418,9 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
                   </div>
 
                   <div *ngIf="!formData.galleryImages || formData.galleryImages.length === 0" class="empty-gallery-state">
-                    <div class="empty-icon">📷</div>
+                    <div class="empty-icon">
+                      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    </div>
                     <p class="empty-text">No has agregado fotos al detalle de este tour todavía.</p>
                     <label for="detailImagesUploadInput" class="btn-empty-upload">
                       Subir fotos desde mi computadora o celular
@@ -461,7 +481,7 @@ import { AdminTour, GalleryItem } from '../../models/admin.model';
                   <span class="photo-cat">{{ photo.category }}</span>
                 </div>
                 <div class="picker-photo-select-badge">
-                  ✓ Seleccionar
+                  Seleccionar
                 </div>
               </div>
             </div>
@@ -1571,8 +1591,8 @@ export class AdminToursComponent implements OnInit {
     this.adminService.toggleTourActive(tour.id).subscribe(() => {
       this.tours.update(list => list.map(t => t.id === tour.id ? { ...t, isActive: nextActiveState } : t));
       this.showToast(nextActiveState 
-        ? `✅ El tour "${tour.title}" ahora está VISIBLE en el catálogo web público.` 
-        : `⏸️ El tour "${tour.title}" ahora está OCULTO / PAUSADO de la web pública (no se borró).`);
+        ? `El tour "${tour.title}" ahora está visible en el catálogo web público.` 
+        : `El tour "${tour.title}" ahora está oculto / pausado de la web pública.`);
     });
   }
 
@@ -1670,7 +1690,7 @@ export class AdminToursComponent implements OnInit {
       if (!this.formData.galleryImages.includes(base64)) {
         this.formData.galleryImages.unshift(base64);
       }
-      this.showToast('📸 Foto de portada cargada y optimizada con éxito.');
+      this.showToast('Foto de portada cargada y optimizada con éxito.');
     } catch (err) {
       console.error('Error al procesar la foto:', err);
       alert('Hubo un error al procesar la imagen seleccionada.');
@@ -1702,7 +1722,7 @@ export class AdminToursComponent implements OnInit {
       if (!this.formData.mainImageUrl && this.formData.galleryImages.length > 0) {
         this.formData.mainImageUrl = this.formData.galleryImages[0];
       }
-      this.showToast(`✨ Se añadieron ${files.length} foto(s) al detalle del tour.`);
+      this.showToast(`Se añadieron ${files.length} foto(s) al detalle del tour.`);
     } catch (err) {
       console.error('Error al procesar las fotos del detalle:', err);
       alert('Hubo un error al procesar las imágenes seleccionadas.');
@@ -1717,12 +1737,12 @@ export class AdminToursComponent implements OnInit {
     if (this.formData.mainImageUrl === removed) {
       this.formData.mainImageUrl = this.formData.galleryImages[0] || '';
     }
-    this.showToast('🗑️ Foto eliminada del detalle del tour.');
+    this.showToast('Foto eliminada del detalle del tour.');
   }
 
   setAsMainImage(imgUrl: string): void {
     this.formData.mainImageUrl = imgUrl;
-    this.showToast('⭐ Imagen fijada como Portada Principal del tour.');
+    this.showToast('Imagen fijada como Portada Principal del tour.');
   }
 
   // --- PICKER MODAL DE GALERÍA (ELEGIR FOTOS EXISTENTES EN 1 CLIC) ---
@@ -1738,14 +1758,14 @@ export class AdminToursComponent implements OnInit {
       if (!this.formData.galleryImages.includes(photoUrl)) {
         this.formData.galleryImages.unshift(photoUrl);
       }
-      this.showToast('⭐ Foto asignada como Portada Principal.');
+      this.showToast('Foto asignada como Portada Principal.');
     } else {
       if (!this.formData.galleryImages) this.formData.galleryImages = [];
       if (!this.formData.galleryImages.includes(photoUrl)) {
         this.formData.galleryImages.push(photoUrl);
-        this.showToast('📷 Foto agregada al detalle de este tour.');
+        this.showToast('Foto agregada al detalle de este tour.');
       } else {
-        this.showToast('ℹ️ Esta foto ya estaba incluida en el detalle del tour.');
+        this.showToast('Esta foto ya estaba incluida en el detalle del tour.');
       }
     }
     this.showGalleryPicker.set(false);
@@ -1789,13 +1809,13 @@ export class AdminToursComponent implements OnInit {
       next: (savedTour) => {
         this.closeModal();
         this.loadTours();
-        this.showToast(`✅ Tour "${savedTour.title}" guardado exitosamente (Precio: S/ ${savedTour.priceSoles}).`);
+        this.showToast(`Tour "${savedTour.title}" guardado exitosamente (Precio: S/ ${savedTour.priceSoles}).`);
       },
       error: (err) => {
         console.error('Error al guardar el tour:', err);
         this.closeModal();
         this.loadTours();
-        this.showToast(`⚠️ Guardado localmente. Error al sincronizar con servidor: ${err.message || 'Error de red'}`);
+        this.showToast(`Guardado localmente. Error al sincronizar con servidor: ${err.message || 'Error de red'}`);
       }
     });
   }
@@ -1804,7 +1824,7 @@ export class AdminToursComponent implements OnInit {
     if (confirm(`¿Estás seguro de eliminar el tour "${tour.title}"?`)) {
       this.adminService.deleteTour(tour.id).subscribe(() => {
         this.loadTours();
-        this.showToast(`🗑️ Tour "${tour.title}" eliminado.`);
+        this.showToast(`Tour "${tour.title}" eliminado.`);
       });
     }
   }

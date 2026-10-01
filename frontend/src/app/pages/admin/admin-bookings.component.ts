@@ -12,18 +12,25 @@ import { AdminBooking, PassengerManifestItem } from '../../models/admin.model';
     <div class="bookings-page">
       <!-- HEADER -->
       <div class="page-header">
-        <div>
+        <div class="page-header-titles">
+          <div class="page-eyebrow">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <span>Gestión Comercial</span>
+          </div>
           <h1 class="page-title">Reservas & Cotizaciones</h1>
           <p class="page-desc">Control integral de reservas, manifiesto de pasajeros, vouchers y comprobantes de pago</p>
         </div>
         <div class="header-actions">
-          <button type="button" class="btn-export" (click)="onExportCsv()" title="Descargar archivo compatible con Excel">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <button type="button" class="btn-adm btn-adm-secondary" (click)="onExportCsv()" title="Descargar archivo compatible con Excel">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
               <polyline points="7 10 12 15 17 10"></polyline>
               <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
-            <span>Exportar a Excel (CSV)</span>
+            <span>Exportar CSV</span>
           </button>
         </div>
       </div>
@@ -32,39 +39,46 @@ import { AdminBooking, PassengerManifestItem } from '../../models/admin.model';
       <div class="controls-bar">
         <div class="filter-pills">
           <button 
-            class="pill" 
+            type="button"
+            class="pill-btn" 
             [class.active]="selectedStatus() === 'all'" 
             (click)="setStatusFilter('all')"
           >
             Todas ({{ allCount() }})
           </button>
           <button 
-            class="pill pill-pending" 
+            type="button"
+            class="pill-btn" 
             [class.active]="selectedStatus() === 'Pending'" 
             (click)="setStatusFilter('Pending')"
           >
-            Pendientes ({{ pendingCount() }})
+            <span class="pill-dot is-paused"></span>
+            <span>Pendientes ({{ pendingCount() }})</span>
           </button>
           <button 
-            class="pill pill-contacted" 
+            type="button"
+            class="pill-btn" 
             [class.active]="selectedStatus() === 'Contacted'" 
             (click)="setStatusFilter('Contacted')"
           >
-            Contactadas
+            <span>Contactadas</span>
           </button>
           <button 
-            class="pill pill-confirmed" 
+            type="button"
+            class="pill-btn" 
             [class.active]="selectedStatus() === 'Confirmed'" 
             (click)="setStatusFilter('Confirmed')"
           >
-            Confirmadas ({{ confirmedCount() }})
+            <span class="pill-dot is-active"></span>
+            <span>Confirmadas ({{ confirmedCount() }})</span>
           </button>
           <button 
-            class="pill pill-cancelled" 
+            type="button"
+            class="pill-btn" 
             [class.active]="selectedStatus() === 'Cancelled'" 
             (click)="setStatusFilter('Cancelled')"
           >
-            Canceladas
+            <span>Canceladas</span>
           </button>
         </div>
 
@@ -84,7 +98,7 @@ import { AdminBooking, PassengerManifestItem } from '../../models/admin.model';
       <!-- TABLE -->
       <div class="table-card">
         <div class="table-responsive">
-          <table class="data-table">
+          <table class="adm-table">
             <thead>
               <tr>
                 <th>Voucher / ID</th>
@@ -136,7 +150,7 @@ import { AdminBooking, PassengerManifestItem } from '../../models/admin.model';
                       <small class="pay-method" *ngIf="booking.paymentMethod">{{ booking.paymentMethod }}</small>
                     </div>
                     <button class="btn-manage-pay" (click)="openPaymentModal(booking)" title="Editar pago o comprobante">
-                      💳 Gestionar Pago
+                      Gestionar Pago
                     </button>
                   </div>
                 </td>
@@ -147,10 +161,10 @@ import { AdminBooking, PassengerManifestItem } from '../../models/admin.model';
                     class="status-dropdown"
                     [ngClass]="booking.status.toLowerCase()"
                   >
-                    <option value="Pending">⏳ Pendiente</option>
-                    <option value="Contacted">💬 Contactado</option>
-                    <option value="Confirmed">✅ Confirmado</option>
-                    <option value="Cancelled">❌ Cancelado</option>
+                    <option value="Pending">Pendiente</option>
+                    <option value="Contacted">Contactado</option>
+                    <option value="Confirmed">Confirmado</option>
+                    <option value="Cancelled">Cancelado</option>
                   </select>
                 </td>
                 <td>
@@ -641,10 +655,10 @@ import { AdminBooking, PassengerManifestItem } from '../../models/admin.model';
 
           <div class="modal-footer" *ngIf="selectedBooking() as b">
             <button class="btn-doc btn-voucher" (click)="openVoucher(b); closeDetail()">
-              🎫 Ver Voucher
+              Ver Voucher
             </button>
             <button class="btn-doc btn-manifest" (click)="openManifest(b); closeDetail()">
-              📋 Ver Manifiesto
+              Ver Manifiesto
             </button>
             <a [href]="b.whatsAppDirectUrl" target="_blank" class="btn-modal-wa">
               <span>Contactar por WhatsApp</span>
