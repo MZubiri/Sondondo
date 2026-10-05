@@ -343,6 +343,7 @@ import { TouristCalendarComponent } from '../tourist-calendar/tourist-calendar.c
     .preview-price strong {
       font-size: 1.1rem;
       color: var(--forest-900);
+      white-space: nowrap;
     }
 
     .deposit-notice-card {

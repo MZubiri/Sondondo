@@ -89,13 +89,17 @@ import { IconComponent } from '../icon/icon.component';
               <div class="spotlight-footer">
                 <div class="spotlight-price">
                   <span class="price-label">{{ ts.t('tours.from') }}</span>
-                  <span class="price-amount">
+                  <div class="price-val">
                     @if (spotlightTour()!.priceSoles > 0) {
-                      S/ {{ spotlightTour()!.priceSoles }}
+                      <span class="currency">S/</span>
+                      <strong class="number">{{ spotlightTour()!.priceSoles }}</strong>
+                      @if (spotlightTour()!.priceUsd) {
+                        <span class="usd-hint">~ USD {{ spotlightTour()!.priceUsd }}</span>
+                      }
                     } @else {
-                      {{ ts.t('tours.book') }}
+                      <strong class="number">{{ ts.t('tours.book') }}</strong>
                     }
-                  </span>
+                  </div>
                 </div>
 
                 <div class="spotlight-actions">
@@ -303,6 +307,7 @@ import { IconComponent } from '../icon/icon.component';
     .spotlight-price {
       display: flex;
       flex-direction: column;
+      flex-shrink: 0;
     }
 
     .spotlight-price .price-label {
@@ -311,13 +316,38 @@ import { IconComponent } from '../icon/icon.component';
       letter-spacing: 0.06em;
       color: var(--earth-500);
       font-weight: 600;
+      margin-bottom: 0.15rem;
     }
 
-    .spotlight-price .price-amount {
+    .spotlight-price .price-val {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.25rem;
+      white-space: nowrap;
+    }
+
+    .spotlight-price .currency {
       font-family: var(--font-display);
-      font-size: 1.35rem;
+      font-size: 1rem;
       font-weight: 700;
+      color: var(--forest-800);
+      white-space: nowrap;
+    }
+
+    .spotlight-price .number {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
       color: var(--forest-900);
+      white-space: nowrap;
+    }
+
+    .spotlight-price .usd-hint {
+      font-size: 0.78rem;
+      color: var(--earth-500);
+      font-weight: 500;
+      margin-left: 0.35rem;
+      white-space: nowrap;
     }
 
     .spotlight-actions {

@@ -54,13 +54,17 @@ import { IconComponent } from '../icon/icon.component';
         <div class="card-footer">
           <div class="price-box">
             <span class="price-label">{{ ts.t('tours.from') }}</span>
-            <span class="price-val">
+            <div class="price-val">
               @if (tour.priceSoles > 0) {
-                S/ {{ tour.priceSoles }}
+                <span class="currency">S/</span>
+                <span class="amount">{{ tour.priceSoles }}</span>
               } @else {
-                {{ ts.t('tours.book') }}
+                <span class="amount inquire">{{ ts.t('tours.book') }}</span>
               }
-            </span>
+            </div>
+            @if (tour.priceUsd && tour.priceUsd > 0) {
+              <span class="price-usd-sub">~ USD {{ tour.priceUsd }}</span>
+            }
           </div>
 
           <div class="card-actions">
@@ -224,34 +228,70 @@ import { IconComponent } from '../icon/icon.component';
     .price-box {
       display: flex;
       flex-direction: column;
+      flex-shrink: 0;
+      min-width: 0;
     }
 
     .price-label {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--earth-500);
       font-weight: 600;
+      line-height: 1.2;
     }
 
     .price-val {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.2rem;
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+
+    .price-val .currency {
       font-family: var(--font-display);
-      font-size: 1.15rem;
+      font-size: 0.95rem;
       font-weight: 700;
+      color: var(--forest-800);
+      white-space: nowrap;
+    }
+
+    .price-val .amount {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
       color: var(--forest-900);
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+
+    .price-val .amount.inquire {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .price-usd-sub {
+      font-size: 0.72rem;
+      color: var(--earth-500);
+      font-weight: 500;
+      margin-top: 0.15rem;
+      white-space: nowrap;
     }
 
     .card-actions {
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.4rem;
+      flex-shrink: 0;
+      min-width: 145px;
     }
 
     .btn-outline-itinerary {
-      padding: 0.45rem 0.85rem;
-      font-size: 0.82rem;
-      min-height: 40px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+      min-height: 36px;
       border: 1px solid var(--earth-300);
       background: transparent;
       color: var(--forest-900);
@@ -263,6 +303,9 @@ import { IconComponent } from '../icon/icon.component';
       text-decoration: none;
       transition: all 0.2s ease;
       cursor: pointer;
+      white-space: nowrap;
+      text-align: center;
+      width: 100%;
     }
 
     .btn-outline-itinerary:hover {
@@ -278,9 +321,12 @@ import { IconComponent } from '../icon/icon.component';
     }
 
     .btn-sm {
-      padding: 0.5rem 1.15rem;
-      font-size: 0.88rem;
-      min-height: 40px;
+      padding: 0.45rem 1rem;
+      font-size: 0.84rem;
+      min-height: 36px;
+      white-space: nowrap;
+      justify-content: center;
+      width: 100%;
     }
   `]
 })
