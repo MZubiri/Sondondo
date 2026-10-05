@@ -39,9 +39,11 @@ services:
       - MercadoPago__AccessToken=${MERCADOPAGO_ACCESS_TOKEN:-}
       - MercadoPago__PublicKey=${MERCADOPAGO_PUBLIC_KEY:-TEST-SIMULATED-PUBLIC-KEY}
       - MercadoPago__IsSandbox=${MERCADOPAGO_SANDBOX:-false}
+      - MercadoPago__WebhookSecret=${MERCADOPAGO_WEBHOOK_SECRET:-}
       - MERCADOPAGO_ACCESS_TOKEN=${MERCADOPAGO_ACCESS_TOKEN:-}
       - MERCADOPAGO_PUBLIC_KEY=${MERCADOPAGO_PUBLIC_KEY:-TEST-SIMULATED-PUBLIC-KEY}
       - MERCADOPAGO_SANDBOX=${MERCADOPAGO_SANDBOX:-false}
+      - MERCADOPAGO_WEBHOOK_SECRET=${MERCADOPAGO_WEBHOOK_SECRET:-}
     volumes:
       - hotel_data:/app/hotel_storage
     expose:
