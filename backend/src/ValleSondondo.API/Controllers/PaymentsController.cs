@@ -73,9 +73,9 @@ public class PaymentsController : ControllerBase
                 var client = _httpClientFactory.CreateClient();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                var preferencePayload = new
+                var preferencePayload = new Dictionary<string, object>
                 {
-                    items = new[]
+                    ["items"] = new[]
                     {
                         new
                         {
@@ -86,7 +86,7 @@ public class PaymentsController : ControllerBase
                             currency_id = "PEN"
                         }
                     },
-                    payer = new
+                    ["payer"] = new
                     {
                         name = dto.PayerName,
                         email = dto.PayerEmail,
@@ -95,17 +95,27 @@ public class PaymentsController : ControllerBase
                             number = dto.PayerPhone ?? string.Empty
                         }
                     },
-                    back_urls = new
+                    ["back_urls"] = new
                     {
                         success = successUrl,
                         failure = failureUrl,
                         pending = pendingUrl
                     },
-                    auto_return = "approved",
-                    external_reference = externalRef,
-                    statement_descriptor = "SONDONDO EXP",
-                    notification_url = webhookUrl
+                    ["external_reference"] = externalRef,
+                    ["statement_descriptor"] = "SONDONDO EXP"
                 };
+
+                // Mercado Pago solo permite auto_return si la URL de retorno es HTTPS
+                if (successUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                {
+                    preferencePayload["auto_return"] = "approved";
+                }
+
+                // Notificaciones Webhook solo en URLs públicas seguras
+                if (!string.IsNullOrWhiteSpace(webhookUrl) && webhookUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                {
+                    preferencePayload["notification_url"] = webhookUrl;
+                }
 
                 var jsonContent = new StringContent(
                     JsonSerializer.Serialize(preferencePayload),
@@ -124,7 +134,12 @@ public class PaymentsController : ControllerBase
                     var initPoint = root.GetProperty("init_point").GetString() ?? string.Empty;
                     var sandboxInitPoint = root.TryGetProperty("sandbox_init_point", out var sProp) ? sProp.GetString() ?? initPoint : initPoint;
 
-                    _logger.LogInformation("Mercado Pago Preference creada con éxito: {PreferenceId} (Ref: {Ref})", prefId, externalRef);
+                    var isSandbox = (_configuration.GetValue<bool?>("MercadoPago:IsSandbox") ?? false)
+                        || (Environment.GetEnvironmentVariable("MERCADOPAGO_SANDBOX")?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false)
+                        || accessToken.StartsWith("TEST-");
+
+                    _logger.LogInformation("Mercado Pago Preference creada con éxito: {PreferenceId} (Ref: {Ref}, Modo: {Mode})", 
+                        prefId, externalRef, isSandbox ? "sandbox" : "live");
 
                     return Ok(new PaymentPreferenceResponseDto
                     {
@@ -132,7 +147,7 @@ public class PaymentsController : ControllerBase
                         InitPoint = initPoint,
                         SandboxInitPoint = sandboxInitPoint,
                         PublicKey = publicKey,
-                        Mode = accessToken.StartsWith("TEST-") ? "sandbox" : "live",
+                        Mode = isSandbox ? "sandbox" : "live",
                         ExternalReference = externalRef
                     });
                 }

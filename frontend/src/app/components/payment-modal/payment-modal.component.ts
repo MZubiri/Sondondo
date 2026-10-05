@@ -568,7 +568,9 @@ export class PaymentModalComponent {
     this.paymentService.createPreference(req).subscribe({
       next: (res) => {
         this.isLoading.set(false);
-        const targetUrl = res.initPoint || res.sandboxInitPoint;
+        const targetUrl = res.mode === 'sandbox'
+          ? (res.sandboxInitPoint || res.initPoint)
+          : (res.initPoint || res.sandboxInitPoint);
         if (targetUrl) {
           window.location.href = targetUrl;
         }

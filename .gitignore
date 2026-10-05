@@ -18,6 +18,7 @@ obj/
 # IDE
 .vs/
 .vscode/
+.agents/
 *.user
 *.suo
 

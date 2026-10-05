@@ -38,8 +38,10 @@ services:
       - JwtSettings__SecretKey=${JWT_SECRET_KEY:-ValleDelSondondo_SuperSecret_Jwt_SigningKey_2026_ProdKey_Secure_Min32Chars!}
       - MercadoPago__AccessToken=${MERCADOPAGO_ACCESS_TOKEN:-}
       - MercadoPago__PublicKey=${MERCADOPAGO_PUBLIC_KEY:-TEST-SIMULATED-PUBLIC-KEY}
+      - MercadoPago__IsSandbox=${MERCADOPAGO_SANDBOX:-false}
       - MERCADOPAGO_ACCESS_TOKEN=${MERCADOPAGO_ACCESS_TOKEN:-}
       - MERCADOPAGO_PUBLIC_KEY=${MERCADOPAGO_PUBLIC_KEY:-TEST-SIMULATED-PUBLIC-KEY}
+      - MERCADOPAGO_SANDBOX=${MERCADOPAGO_SANDBOX:-false}
     volumes:
       - hotel_data:/app/hotel_storage
     expose:
