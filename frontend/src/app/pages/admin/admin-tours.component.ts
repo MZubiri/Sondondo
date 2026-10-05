@@ -1637,8 +1637,8 @@ export class AdminToursComponent implements OnInit {
     this.showModal.set(false);
   }
 
-  // --- COMPRESIÓN DE FOTOS DIRECTA PARA LOCALSTORAGE EFICIENTE ---
-  private compressImageFile(file: File, maxDim = 1400, quality = 0.82): Promise<string> {
+  // --- COMPRESIÓN DE FOTOS DIRECTA PARA LOCALSTORAGE Y API EFICIENTE ---
+  private compressImageFile(file: File, maxDim = 1200, quality = 0.75): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e: any) => {

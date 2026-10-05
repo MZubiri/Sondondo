@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -9,12 +9,12 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
-    <div class="admin-shell" [class.hotel-mode]="currentPanel() === 'hotel'">
+    <div class="admin-shell" [class.hotel-mode]="currentPanel() === 'hotel'" [class.sidebar-collapsed]="isSidebarCollapsed()">
       <!-- SIDEBAR -->
-      <aside class="admin-sidebar">
+      <aside class="admin-sidebar" [attr.aria-expanded]="!isSidebarCollapsed()">
         <!-- BRAND HEADER -->
         <div class="sidebar-brand">
-          <a routerLink="/" class="brand-link" title="Ir a la web pública">
+          <a routerLink="/" class="brand-link" title="Ir a la web pública de Valle del Sondondo">
             <div class="brand-emblem">VS</div>
             <div class="brand-info">
               <span class="brand-name">Valle del Sondondo</span>
@@ -23,6 +23,17 @@ import { AuthService } from '../../services/auth.service';
               </span>
             </div>
           </a>
+          <button 
+            type="button" 
+            class="btn-sidebar-collapse-brand" 
+            (click)="toggleSidebar()" 
+            title="Colapsar menú (Ctrl+B)"
+            aria-label="Colapsar menú lateral"
+          >
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+            </svg>
+          </button>
         </div>
 
         <!-- WORKSPACE MODULE SELECTOR -->
@@ -36,7 +47,7 @@ import { AuthService } from '../../services/auth.service';
               (click)="switchPanel('tours')"
               title="Panel de Expediciones y Circuitos"
             >
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                 <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                 <polyline points="2 17 12 22 22 17"></polyline>
                 <polyline points="2 12 12 17 22 12"></polyline>
@@ -51,7 +62,7 @@ import { AuthService } from '../../services/auth.service';
               (click)="switchPanel('hotel')"
               title="Panel de Gestión de Hospedaje"
             >
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M2 4v16"></path>
                 <path d="M2 8h18a2 2 0 0 1 2 2v10"></path>
                 <path d="M2 17h20"></path>
@@ -67,7 +78,7 @@ import { AuthService } from '../../services/auth.service';
           <nav class="sidebar-nav">
             <div class="nav-section-title">Expediciones</div>
 
-            <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-item">
+            <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-item" title="Dashboard General">
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
                 <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
@@ -77,7 +88,7 @@ import { AuthService } from '../../services/auth.service';
               <span>Dashboard General</span>
             </a>
 
-            <a routerLink="/admin/tours" routerLinkActive="active" class="nav-item">
+            <a routerLink="/admin/tours" routerLinkActive="active" class="nav-item" title="Circuitos & Tours">
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
                 <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                 <polyline points="2 17 12 22 22 17"></polyline>
@@ -86,7 +97,7 @@ import { AuthService } from '../../services/auth.service';
               <span>Circuitos & Tours</span>
             </a>
 
-            <a routerLink="/admin/reservas" routerLinkActive="active" class="nav-item">
+            <a routerLink="/admin/reservas" routerLinkActive="active" class="nav-item" title="Reservas & Cotizaciones">
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
@@ -98,7 +109,7 @@ import { AuthService } from '../../services/auth.service';
 
             <div class="nav-section-title">Comunicación & Marca</div>
 
-            <a routerLink="/admin/mensajes" routerLinkActive="active" class="nav-item">
+            <a routerLink="/admin/mensajes" routerLinkActive="active" class="nav-item" title="Bandeja de Contacto">
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                 <polyline points="22,6 12,13 2,6"></polyline>
@@ -106,14 +117,14 @@ import { AuthService } from '../../services/auth.service';
               <span>Bandeja de Contacto</span>
             </a>
 
-            <a routerLink="/admin/testimonios" routerLinkActive="active" class="nav-item">
+            <a routerLink="/admin/testimonios" routerLinkActive="active" class="nav-item" title="Reseñas de Clientes">
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
               </svg>
               <span>Reseñas de Clientes</span>
             </a>
 
-            <a routerLink="/admin/galeria" routerLinkActive="active" class="nav-item">
+            <a routerLink="/admin/galeria" routerLinkActive="active" class="nav-item" title="Banco Multimedia">
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                 <circle cx="8.5" cy="8.5" r="1.5"></circle>
@@ -135,6 +146,7 @@ import { AuthService } from '../../services/auth.service';
               class="nav-item"
               [class.active]="hotelSubTab() === 'rooms'"
               (click)="setHotelTab('rooms')"
+              title="Habitaciones & Tarifas"
             >
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M2 4v16"></path>
@@ -151,6 +163,7 @@ import { AuthService } from '../../services/auth.service';
               class="nav-item"
               [class.active]="hotelSubTab() === 'bookings'"
               (click)="setHotelTab('bookings')"
+              title="Reservas de Huéspedes"
             >
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -167,6 +180,7 @@ import { AuthService } from '../../services/auth.service';
               class="nav-item"
               [class.active]="hotelSubTab() === 'profile'"
               (click)="setHotelTab('profile')"
+              title="Perfil & Políticas"
             >
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -179,7 +193,7 @@ import { AuthService } from '../../services/auth.service';
 
         <!-- SIDEBAR FOOTER -->
         <div class="sidebar-footer">
-          <div class="footer-user-row">
+          <div class="footer-user-row" [title]="(currentUser()?.fullName || 'Administrador') + ' (' + (currentUser()?.username || 'admin@valledelsondondo.com') + ')'">
             <div class="footer-user-avatar">
               {{ currentPanel() === 'hotel' ? 'HP' : 'VS' }}
             </div>
@@ -197,6 +211,18 @@ import { AuthService } from '../../services/auth.service';
             </svg>
             <span>Ver Sitio Web</span>
           </a>
+
+          <button 
+            type="button" 
+            class="btn-sidebar-bottom-toggle" 
+            (click)="toggleSidebar()" 
+            [title]="isSidebarCollapsed() ? 'Expandir menú lateral (Ctrl+B)' : 'Colapsar menú lateral para dejar más espacio (Ctrl+B)'"
+          >
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline [attr.points]="isSidebarCollapsed() ? '9 18 15 12 9 6' : '15 18 9 12 15 6'"></polyline>
+            </svg>
+            <span>{{ isSidebarCollapsed() ? 'Expandir' : 'Colapsar menú' }}</span>
+          </button>
         </div>
       </aside>
 
@@ -205,6 +231,20 @@ import { AuthService } from '../../services/auth.service';
         <!-- TOPBAR -->
         <header class="admin-topbar">
           <div class="topbar-left">
+            <button 
+              type="button" 
+              class="btn-sidebar-toggle" 
+              (click)="toggleSidebar()" 
+              [attr.aria-label]="isSidebarCollapsed() ? 'Expandir menú lateral' : 'Colapsar menú lateral'"
+              [title]="isSidebarCollapsed() ? 'Expandir menú lateral (Ctrl+B)' : 'Colapsar menú lateral para dejar más espacio (Ctrl+B)'"
+            >
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+                <polyline [attr.points]="isSidebarCollapsed() ? '13 9 16 12 13 15' : '16 9 13 12 16 15'"></polyline>
+              </svg>
+            </button>
+
             <div class="topbar-breadcrumb">
               <span class="breadcrumb-root">Valle del Sondondo</span>
               <span class="breadcrumb-sep">/</span>
@@ -270,6 +310,7 @@ import { AuthService } from '../../services/auth.service';
       </div>
     </div>
   `
+
 })
 export class AdminLayoutComponent {
   private router = inject(Router);
@@ -277,6 +318,30 @@ export class AdminLayoutComponent {
   currentUser = this.authService.currentUser;
 
   currentUrl = signal<string>(this.router.url);
+
+  // Estado de colapso del menú lateral con persistencia en localStorage
+  isSidebarCollapsed = signal<boolean>(
+    typeof window !== 'undefined' && localStorage.getItem('admin_sidebar_collapsed') === 'true'
+  );
+
+  toggleSidebar(): void {
+    const next = !this.isSidebarCollapsed();
+    this.isSidebarCollapsed.set(next);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('admin_sidebar_collapsed', String(next));
+    }
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent): void {
+    // Atajo de teclado: Ctrl + B o Cmd + B para colapsar/expandir
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'b') {
+      const target = event.target as HTMLElement;
+      if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
+      event.preventDefault();
+      this.toggleSidebar();
+    }
+  }
 
   constructor() {
     this.router.events.pipe(

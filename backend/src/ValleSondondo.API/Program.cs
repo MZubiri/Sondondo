@@ -11,6 +11,18 @@ using ValleSondondo.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Kestrel and Form limits (50 MB) for base64 tour images, gallery uploads, and hotel photos
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.MaxRequestBodySize = 52_428_800; // 50 MB
+});
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 52_428_800; // 50 MB
+    options.ValueLengthLimit = 52_428_800;
+    options.MemoryBufferThreshold = 52_428_800;
+});
+
 // 1. Controllers & JSON Options
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
