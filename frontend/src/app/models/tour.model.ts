@@ -29,13 +29,13 @@ export interface TourSummary {
 }
 
 export interface ItineraryDay {
-  id: number;
+  id?: number;
   dayNumber: number;
   title: string;
   description: string;
-  activities: string;
-  meals: string;
-  accommodation: string;
+  activities?: string;
+  meals?: string;
+  accommodation?: string;
 }
 
 export interface TourDetail extends TourSummary {

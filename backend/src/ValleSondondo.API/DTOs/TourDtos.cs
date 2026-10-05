@@ -31,15 +31,15 @@ public class TourSummaryDto
     public bool Featured { get; set; }
     public string MainImageUrl { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
+    public List<string> GalleryImages { get; set; } = new();
+    public List<ItineraryDayDto> Itineraries { get; set; } = new();
 }
 
 public class TourDetailDto : TourSummaryDto
 {
-    public List<string> GalleryImages { get; set; } = new();
     public List<string> Included { get; set; } = new();
     public List<string> NotIncluded { get; set; } = new();
     public List<string> Recommendations { get; set; } = new();
-    public List<ItineraryDayDto> Itineraries { get; set; } = new();
 }
 
 public class ItineraryDayDto

@@ -76,6 +76,7 @@ public class CreateTourDto
     public List<string> Included { get; set; } = new();
     public List<string> NotIncluded { get; set; } = new();
     public List<string> Recommendations { get; set; } = new();
+    public List<ItineraryDayDto> Itineraries { get; set; } = new();
 }
 
 public class UpdateTourDto
@@ -113,6 +114,7 @@ public class UpdateTourDto
     public List<string>? Included { get; set; }
     public List<string>? NotIncluded { get; set; }
     public List<string>? Recommendations { get; set; }
+    public List<ItineraryDayDto>? Itineraries { get; set; }
 }
 
 public class DashboardStatsDto

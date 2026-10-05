@@ -1445,6 +1445,255 @@
 }
 
 /* ==========================================================================
+   ADMIN TOUR ITINERARY EDITOR
+   ========================================================================== */
+
+.itinerary-config-section {
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-r-lg);
+  padding: 1.25rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.itinerary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--adm-border);
+  margin-bottom: 1.25rem;
+}
+
+.itinerary-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.btn-add-day {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.95rem;
+  background: var(--adm-clay-surface);
+  border: 1px solid var(--adm-clay-border);
+  color: var(--adm-clay);
+  border-radius: var(--adm-r-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-add-day:hover {
+  background: var(--adm-clay);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(214, 100, 60, 0.35);
+}
+
+.itinerary-days-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.itinerary-day-card {
+  background: #121815;
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-r-md);
+  padding: 1.15rem;
+  transition: border-color 0.2s ease;
+}
+
+.itinerary-day-card:hover {
+  border-color: var(--adm-border-hover);
+}
+
+.day-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.85rem;
+}
+
+.day-badge-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 40px;
+  background: linear-gradient(135deg, #24342b, #151d18);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-r-sm);
+  color: var(--adm-clay);
+  flex-shrink: 0;
+  line-height: 1.1;
+}
+
+.day-chip-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--adm-text-muted);
+}
+
+.day-chip-number {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--adm-text-title);
+}
+
+.day-title-input-wrapper {
+  flex: 1;
+}
+
+.input-day-title {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  background: var(--adm-input-bg);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-r-sm);
+  color: var(--adm-text-title);
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.input-day-title:focus {
+  outline: none;
+  border-color: var(--adm-clay);
+  background: var(--adm-input-bg-focus);
+}
+
+.btn-delete-day {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--adm-r-sm);
+  background: rgba(217, 88, 78, 0.1);
+  border: 1px solid rgba(217, 88, 78, 0.2);
+  color: var(--adm-red);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-delete-day:hover {
+  background: var(--adm-red);
+  color: #ffffff;
+}
+
+.day-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.day-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.day-field-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--adm-text-muted);
+}
+
+.textarea-day-desc {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  background: var(--adm-input-bg);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-r-sm);
+  color: var(--adm-text-body);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.textarea-day-desc:focus {
+  outline: none;
+  border-color: var(--adm-clay);
+  background: var(--adm-input-bg-focus);
+  color: var(--adm-text-title);
+}
+
+.day-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.day-meta-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.meta-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--adm-text-muted);
+}
+
+.day-meta-field input {
+  padding: 0.5rem 0.75rem;
+  background: var(--adm-input-bg);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-r-sm);
+  color: var(--adm-text-title);
+  font-size: 0.8rem;
+  font-family: inherit;
+}
+
+.day-meta-field input:focus {
+  outline: none;
+  border-color: var(--adm-clay);
+}
+
+.empty-itinerary-box {
+  padding: 2rem 1rem;
+  text-align: center;
+  border: 1px dashed var(--adm-border);
+  border-radius: var(--adm-r-md);
+  color: var(--adm-text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-create-first-day {
+  padding: 0.55rem 1.15rem;
+  background: var(--adm-clay);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--adm-r-sm);
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.btn-create-first-day:hover {
+  opacity: 0.9;
+}
+
+/* ==========================================================================
    RESPONSIVENESS
    ========================================================================== */
 

@@ -572,23 +572,48 @@ export class TourService {
         } : detail;
 
         const sanitized = this.sanitizeTour(mergedDetail);
-        const detailedInfo = this.detailedCatalogById[sanitized.id] || this.detailedCatalogById[1];
+        const detailedInfo = this.detailedCatalogById[sanitized.id];
         
         let gallery = (sanitized.galleryImages && sanitized.galleryImages.length > 0)
           ? sanitized.galleryImages
-          : detailedInfo.galleryImages;
+          : (detailedInfo?.galleryImages || [sanitized.mainImageUrl || '/assets/images/hero_sondondo.jpg']);
 
         let itineraries = (sanitized.itineraries && sanitized.itineraries.length > 0)
           ? sanitized.itineraries
-          : detailedInfo.itineraries;
+          : (detailedInfo?.itineraries && detailedInfo.itineraries.length > 0)
+            ? detailedInfo.itineraries
+            : [
+                {
+                  id: 1,
+                  dayNumber: 1,
+                  title: `Día 1: Expedición ${sanitized.title}`,
+                  description: sanitized.description || 'Recorrido guiado por los principales atractivos y miradores del Valle del Sondondo.',
+                  activities: 'Trekking guiado, interpretación cultural y fotografía',
+                  meals: 'Desayuno campestre, Almuerzo andino',
+                  accommodation: `Retorno a ${sanitized.startingPoint || 'Aucará / Puquio'}`
+                }
+              ];
 
         return {
           ...sanitized,
-          description: sanitized.description || detailedInfo.description,
+          description: sanitized.description || (detailedInfo?.description || 'Expedición auténtica por el Valle del Sondondo.'),
           galleryImages: gallery,
-          included: (sanitized.included && sanitized.included.length > 0) ? sanitized.included : detailedInfo.included,
-          notIncluded: (sanitized.notIncluded && sanitized.notIncluded.length > 0) ? sanitized.notIncluded : detailedInfo.notIncluded,
-          recommendations: (sanitized.recommendations && sanitized.recommendations.length > 0) ? sanitized.recommendations : detailedInfo.recommendations,
+          included: (sanitized.included && sanitized.included.length > 0) ? sanitized.included : (detailedInfo?.included || [
+            'Transporte turístico privado ida y vuelta',
+            'Guía local oficial acreditado',
+            'Almuerzo andino tradicional',
+            'Asistencia permanente y botiquín de primeros auxilios'
+          ]),
+          notIncluded: (sanitized.notIncluded && sanitized.notIncluded.length > 0) ? sanitized.notIncluded : (detailedInfo?.notIncluded || [
+            'Propinas voluntarias',
+            'Gastos personales y compras de artesanías'
+          ]),
+          recommendations: (sanitized.recommendations && sanitized.recommendations.length > 0) ? sanitized.recommendations : (detailedInfo?.recommendations || [
+            'Ropa abrigadora en capas (polar y cortaviento)',
+            'Calzado de trekking con buen agarre',
+            'Lentes de sol con filtro UV y bloqueador solar',
+            'Agua y snacks ligeros para la caminata'
+          ]),
           itineraries: itineraries
         };
       }),
@@ -603,17 +628,46 @@ export class TourService {
         }
 
         const item = this.resolveTourItemBySlug(allTours, slug);
-        const detailedInfo = this.detailedCatalogById[item.id] || this.detailedCatalogById[1];
+        const detailedInfo = this.detailedCatalogById[item.id];
+
+        let itineraries = (item.itineraries && item.itineraries.length > 0)
+          ? item.itineraries
+          : (detailedInfo?.itineraries && detailedInfo.itineraries.length > 0)
+            ? detailedInfo.itineraries
+            : [
+                {
+                  id: 1,
+                  dayNumber: 1,
+                  title: `Día 1: Expedición ${item.title}`,
+                  description: item.description || 'Recorrido guiado por los principales atractivos y miradores del Valle del Sondondo.',
+                  activities: 'Trekking guiado, interpretación cultural y fotografía',
+                  meals: 'Desayuno campestre, Almuerzo andino',
+                  accommodation: `Retorno a ${item.startingPoint || 'Aucará / Puquio'}`
+                }
+              ];
 
         const detail: TourDetail = {
           ...item,
           isActive: item.isActive !== false,
-          description: item.description || detailedInfo.description,
-          galleryImages: (item.galleryImages && item.galleryImages.length > 0) ? item.galleryImages : detailedInfo.galleryImages,
-          included: (item.included && item.included.length > 0) ? item.included : detailedInfo.included,
-          notIncluded: (item.notIncluded && item.notIncluded.length > 0) ? item.notIncluded : detailedInfo.notIncluded,
-          recommendations: (item.recommendations && item.recommendations.length > 0) ? item.recommendations : detailedInfo.recommendations,
-          itineraries: (item.itineraries && item.itineraries.length > 0) ? item.itineraries : detailedInfo.itineraries
+          description: item.description || (detailedInfo?.description || 'Expedición auténtica por el Valle del Sondondo.'),
+          galleryImages: (item.galleryImages && item.galleryImages.length > 0) ? item.galleryImages : (detailedInfo?.galleryImages || [item.mainImageUrl || '/assets/images/hero_sondondo.jpg']),
+          included: (item.included && item.included.length > 0) ? item.included : (detailedInfo?.included || [
+            'Transporte turístico privado ida y vuelta',
+            'Guía local oficial acreditado',
+            'Almuerzo andino tradicional',
+            'Asistencia permanente y botiquín de primeros auxilios'
+          ]),
+          notIncluded: (item.notIncluded && item.notIncluded.length > 0) ? item.notIncluded : (detailedInfo?.notIncluded || [
+            'Propinas voluntarias',
+            'Gastos personales y compras de artesanías'
+          ]),
+          recommendations: (item.recommendations && item.recommendations.length > 0) ? item.recommendations : (detailedInfo?.recommendations || [
+            'Ropa abrigadora en capas (polar y cortaviento)',
+            'Calzado de trekking con buen agarre',
+            'Lentes de sol con filtro UV y bloqueador solar',
+            'Agua y snacks ligeros para la caminata'
+          ]),
+          itineraries: itineraries
         };
         return of(detail);
       })

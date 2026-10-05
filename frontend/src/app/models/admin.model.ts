@@ -1,3 +1,5 @@
+import { ItineraryDay } from './tour.model';
+
 export interface AdminUser {
   username: string;
   fullName: string;
@@ -69,6 +71,7 @@ export interface AdminTour {
   included?: string[];
   notIncluded?: string[];
   recommendations?: string[];
+  itineraries?: ItineraryDay[];
 }
 
 export interface DashboardStats {

@@ -56,30 +56,44 @@ public class ToursController : ControllerBase
 
         var tours = await query
             .OrderBy(t => t.DisplayOrder)
-            .Select(t => new TourSummaryDto
-            {
-                Id = t.Id,
-                Title = t.Title,
-                Slug = t.Slug,
-                Subtitle = t.Subtitle,
-                Description = t.Description,
-                CategoryId = t.CategoryId,
-                CategoryName = t.Category != null ? t.Category.Name : string.Empty,
-                CategorySlug = t.Category != null ? t.Category.Slug : string.Empty,
-                Duration = t.Duration,
-                DurationDays = t.DurationDays,
-                PriceSoles = t.PriceSoles,
-                PriceUsd = t.PriceUsd,
-                Difficulty = t.Difficulty,
-                AltitudeMax = t.AltitudeMax,
-                StartingPoint = t.StartingPoint,
-                Featured = t.Featured,
-                MainImageUrl = t.MainImageUrl,
-                IsActive = t.IsActive
-            })
+            .Include(t => t.Category)
+            .Include(t => t.Itineraries.OrderBy(i => i.DayNumber))
             .ToListAsync();
 
-        return Ok(tours);
+        var tourDtos = tours.Select(t => new TourSummaryDto
+        {
+            Id = t.Id,
+            Title = t.Title,
+            Slug = t.Slug,
+            Subtitle = t.Subtitle,
+            Description = t.Description,
+            CategoryId = t.CategoryId,
+            CategoryName = t.Category != null ? t.Category.Name : string.Empty,
+            CategorySlug = t.Category != null ? t.Category.Slug : string.Empty,
+            Duration = t.Duration,
+            DurationDays = t.DurationDays,
+            PriceSoles = t.PriceSoles,
+            PriceUsd = t.PriceUsd,
+            Difficulty = t.Difficulty,
+            AltitudeMax = t.AltitudeMax,
+            StartingPoint = t.StartingPoint,
+            Featured = t.Featured,
+            MainImageUrl = t.MainImageUrl,
+            IsActive = t.IsActive,
+            GalleryImages = DeserializeList(t.GalleryImagesJson),
+            Itineraries = t.Itineraries.OrderBy(i => i.DayNumber).Select(i => new ItineraryDayDto
+            {
+                Id = i.Id,
+                DayNumber = i.DayNumber,
+                Title = i.Title,
+                Description = i.Description,
+                Activities = i.Activities,
+                Meals = i.Meals,
+                Accommodation = i.Accommodation
+            }).ToList()
+        }).ToList();
+
+        return Ok(tourDtos);
     }
 
     [HttpGet("{slug}")]
@@ -191,6 +205,22 @@ public class ToursController : ControllerBase
             RecommendationsJson = JsonSerializer.Serialize(dto.Recommendations ?? new List<string>())
         };
 
+        if (dto.Itineraries != null && dto.Itineraries.Count > 0)
+        {
+            foreach (var itDto in dto.Itineraries)
+            {
+                tour.Itineraries.Add(new ItineraryDay
+                {
+                    DayNumber = itDto.DayNumber > 0 ? itDto.DayNumber : 1,
+                    Title = itDto.Title?.Trim() ?? string.Empty,
+                    Description = itDto.Description?.Trim() ?? string.Empty,
+                    Activities = itDto.Activities?.Trim() ?? string.Empty,
+                    Meals = itDto.Meals?.Trim() ?? string.Empty,
+                    Accommodation = itDto.Accommodation?.Trim() ?? string.Empty
+                });
+            }
+        }
+
         await _context.Tours.AddAsync(tour);
         await _context.SaveChangesAsync();
 
@@ -286,6 +316,26 @@ public class ToursController : ControllerBase
         if (dto.Recommendations != null && dto.Recommendations.Count > 0)
         {
             tour.RecommendationsJson = JsonSerializer.Serialize(dto.Recommendations);
+        }
+
+        if (dto.Itineraries != null)
+        {
+            await _context.Entry(tour).Collection(t => t.Itineraries).LoadAsync();
+            _context.ItineraryDays.RemoveRange(tour.Itineraries);
+
+            foreach (var itDto in dto.Itineraries)
+            {
+                tour.Itineraries.Add(new ItineraryDay
+                {
+                    TourId = tour.Id,
+                    DayNumber = itDto.DayNumber > 0 ? itDto.DayNumber : 1,
+                    Title = itDto.Title?.Trim() ?? string.Empty,
+                    Description = itDto.Description?.Trim() ?? string.Empty,
+                    Activities = itDto.Activities?.Trim() ?? string.Empty,
+                    Meals = itDto.Meals?.Trim() ?? string.Empty,
+                    Accommodation = itDto.Accommodation?.Trim() ?? string.Empty
+                });
+            }
         }
 
         await _context.SaveChangesAsync();
