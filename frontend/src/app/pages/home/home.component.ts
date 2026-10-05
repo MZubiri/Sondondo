@@ -80,7 +80,6 @@ import { PaymentModalComponent, PaymentTarget } from '../../components/payment-m
         <app-booking-modal 
           [tour]="selectedTourForBooking()" 
           [whatsAppNumber]="agency()?.whatsappNumber || '51966380590'"
-          (payMercadoPago)="openTourPayment($event)"
           (close)="closeBooking()">
         </app-booking-modal>
       }
@@ -125,14 +124,16 @@ export class HomeComponent implements OnInit {
     this.selectedTourForBooking.set(null);
   }
 
-  openRoomPayment(event: { room: HotelRoom; amount: number }): void {
+  openRoomPayment(event: { room: HotelRoom; amount: number; guests?: number; checkInDate?: string }): void {
     this.selectedPaymentTarget.set({
       type: 'HotelRoom',
       id: event.room.id,
       title: `${event.room.title} (Hotel Punto Clave)`,
       unitPriceSoles: event.amount,
       subtitle: event.room.bedConfiguration,
-      image: event.room.mainImage
+      image: event.room.mainImage,
+      initialQuantity: event.guests || 1,
+      initialDate: event.checkInDate || ''
     });
   }
 

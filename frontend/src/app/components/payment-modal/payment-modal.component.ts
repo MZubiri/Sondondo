@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaymentService } from '../../services/payment.service';
@@ -13,6 +13,11 @@ export interface PaymentTarget {
   unitPriceSoles: number;
   subtitle?: string;
   image?: string;
+  initialQuantity?: number;
+  initialDate?: string;
+  initialName?: string;
+  initialEmail?: string;
+  initialPhone?: string;
 }
 
 @Component({
@@ -506,7 +511,7 @@ export interface PaymentTarget {
     }
   `]
 })
-export class PaymentModalComponent {
+export class PaymentModalComponent implements OnInit {
   private fb = inject(FormBuilder);
   private paymentService = inject(PaymentService);
   public ts = inject(TranslationService);
@@ -524,6 +529,26 @@ export class PaymentModalComponent {
     quantity: [1, [Validators.required, Validators.min(1)]],
     travelDate: ['']
   });
+
+  ngOnInit(): void {
+    if (this.target) {
+      if (this.target.initialQuantity) {
+        this.payerForm.patchValue({ quantity: this.target.initialQuantity });
+      }
+      if (this.target.initialDate) {
+        this.payerForm.patchValue({ travelDate: this.target.initialDate });
+      }
+      if (this.target.initialName) {
+        this.payerForm.patchValue({ name: this.target.initialName });
+      }
+      if (this.target.initialEmail) {
+        this.payerForm.patchValue({ email: this.target.initialEmail });
+      }
+      if (this.target.initialPhone) {
+        this.payerForm.patchValue({ phone: this.target.initialPhone });
+      }
+    }
+  }
 
   calculateTotal(): number {
     const qty = this.payerForm.get('quantity')?.value || 1;

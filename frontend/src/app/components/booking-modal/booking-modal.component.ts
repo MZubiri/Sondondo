@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TourSummary, BookingInquiryResponse } from '../../models/tour.model';
 import { TourService } from '../../services/tour.service';
+import { PaymentService } from '../../services/payment.service';
+import { CreatePreferenceRequest } from '../../models/payment.model';
 import { TranslationService } from '../../services/translation.service';
 import { IconComponent } from '../icon/icon.component';
 import { TouristCalendarComponent } from '../tourist-calendar/tourist-calendar.component';
@@ -50,7 +52,7 @@ import { TouristCalendarComponent } from '../tourist-calendar/tourist-calendar.c
           </div>
         }
 
-        <!-- Success State -->
+        <!-- Success State (para cotizaciones sin pago inmediato) -->
         @if (successResponse()) {
           <div class="success-box">
             <div class="success-icon">
@@ -72,7 +74,7 @@ import { TouristCalendarComponent } from '../tourist-calendar/tourist-calendar.c
             </div>
           </div>
         } @else {
-          <!-- Form -->
+          <!-- Formulario Único de Reserva y Pago -->
           <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form">
             <div class="form-row">
               <div class="form-group">
@@ -146,36 +148,86 @@ import { TouristCalendarComponent } from '../tourist-calendar/tourist-calendar.c
               <label for="message">{{ ts.t('bookModal.messageLabel') }}</label>
               <textarea 
                 id="message" 
-                rows="3" 
+                rows="2" 
                 formControlName="message" 
                 [placeholder]="ts.t('bookModal.messagePlaceholder')" 
                 class="form-control"></textarea>
             </div>
 
+            <!-- Desglose de Seña 50% calculado en vivo -->
+            @if (tour && tour.priceSoles > 0) {
+              <div class="deposit-notice-card">
+                <div class="deposit-badge-row">
+                  <span class="badge-deposit">
+                    <app-icon name="shield-check" [size]="15" stroke="#FFFFFF"></app-icon>
+                    {{ ts.t('pay.depositBadge') }}
+                  </span>
+                  <span class="deposit-percent-pill">50% Anticipo</span>
+                </div>
+                <div class="summary-line">
+                  <span>{{ ts.t('pay.totalCalculated') }} ({{ bookingForm.get('numberOfPeople')?.value || 1 }} {{ (bookingForm.get('numberOfPeople')?.value || 1) === 1 ? 'persona' : 'personas' }}):</span>
+                  <span>S/ {{ getTotalPrice() }} PEN</span>
+                </div>
+                <div class="summary-line total-highlight">
+                  <span><strong>{{ ts.t('pay.toPayToday') }}</strong></span>
+                  <strong class="deposit-amount-highlight">S/ {{ getDepositAmount() }} PEN</strong>
+                </div>
+                <div class="saldo-notice-row">
+                  <app-icon name="info" [size]="15" stroke="var(--accent-clay)"></app-icon>
+                  <span>{{ ts.t('pay.saldoHint') }} {{ getDepositAmount() }} PEN</span>
+                </div>
+              </div>
+            }
+
             <div class="form-actions">
-              <button 
-                type="submit" 
-                [disabled]="bookingForm.invalid || isSubmitting()" 
-                class="btn btn-primary w-100">
-                @if (isSubmitting()) {
-                  <span>{{ ts.t('bookModal.sending') }}</span>
-                } @else {
-                  <app-icon name="calendar" [size]="18" stroke="#FFFFFF"></app-icon>
-                  <span>{{ ts.t('bookModal.sendBtn') }}</span>
-                }
-              </button>
+              @if (tour && tour.priceSoles > 0) {
+                <!-- Botón Principal: Pagar Seña Directo con Mercado Pago -->
+                <button 
+                  type="button" 
+                  (click)="onPayMercadoPago()" 
+                  [disabled]="isPayingWithMP() || isSubmitting()" 
+                  class="btn btn-mercadopago w-100">
+                  @if (isPayingWithMP()) {
+                    <span class="spinner-inline"></span>
+                    <span>{{ ts.t('pay.btnConnecting') }}</span>
+                  } @else {
+                    <app-icon name="credit-card" [size]="19" stroke="#FFFFFF"></app-icon>
+                    <span>{{ ts.t('pay.btnMp') }} S/ {{ getDepositAmount() }} {{ ts.t('pay.btnMpSuffix') }}</span>
+                  }
+                </button>
 
-              <button 
-                type="button" 
-                (click)="onPayMercadoPago()" 
-                class="btn btn-mercadopago w-100 mt-2">
-                <app-icon name="credit-card" [size]="18" stroke="#FFFFFF"></app-icon>
-                <span>{{ ts.t('tours.payMercadoPago') }}</span>
-              </button>
+                <!-- Botón Secundario: Cotizar sin pago inmediato -->
+                <button 
+                  type="submit" 
+                  [disabled]="bookingForm.invalid || isSubmitting() || isPayingWithMP()" 
+                  class="btn btn-outline-quote w-100 mt-2">
+                  @if (isSubmitting()) {
+                    <span>{{ ts.t('bookModal.sending') }}</span>
+                  } @else {
+                    <app-icon name="calendar" [size]="17"></app-icon>
+                    <span>{{ ts.t('bookModal.sendBtn') }} (Sin pago inmediato)</span>
+                  }
+                </button>
+              } @else {
+                <!-- Tour a cotizar -->
+                <button 
+                  type="submit" 
+                  [disabled]="bookingForm.invalid || isSubmitting()" 
+                  class="btn btn-primary w-100">
+                  @if (isSubmitting()) {
+                    <span>{{ ts.t('bookModal.sending') }}</span>
+                  } @else {
+                    <app-icon name="calendar" [size]="18" stroke="#FFFFFF"></app-icon>
+                    <span>{{ ts.t('bookModal.sendBtn') }}</span>
+                  }
+                </button>
+              }
 
+              <!-- Botón WhatsApp Directo -->
               <button 
                 type="button" 
                 (click)="openDirectWhatsApp()" 
+                [disabled]="isPayingWithMP() || isSubmitting()"
                 class="btn btn-whatsapp w-100 mt-2">
                 <app-icon name="whatsapp" [size]="18" stroke="#FFFFFF"></app-icon>
                 <span>{{ ts.t('bookModal.quoteWa') }}</span>
@@ -264,7 +316,7 @@ import { TouristCalendarComponent } from '../tourist-calendar/tourist-calendar.c
       background: var(--cream-50);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
     }
 
     .preview-img {
@@ -293,6 +345,82 @@ import { TouristCalendarComponent } from '../tourist-calendar/tourist-calendar.c
       color: var(--forest-900);
     }
 
+    .deposit-notice-card {
+      background: linear-gradient(135deg, var(--forest-50), var(--cream-100));
+      border: 1px solid var(--border-light);
+      border-left: 4px solid var(--forest-900);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      margin: 1rem 0 1rem 0;
+    }
+
+    .deposit-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+    }
+
+    .badge-deposit {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--forest-900);
+      color: #FFFFFF;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-xs);
+      letter-spacing: 0.03em;
+    }
+
+    .deposit-percent-pill {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: var(--accent-clay);
+      background: var(--surface-card);
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-light);
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      color: var(--earth-700);
+      margin-bottom: 0.35rem;
+    }
+
+    .total-highlight {
+      font-size: 1.05rem;
+      color: var(--forest-900);
+      border-top: 1px solid var(--border-light);
+      padding-top: 0.5rem;
+      margin-top: 0.5rem;
+      align-items: center;
+    }
+
+    .deposit-amount-highlight {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--forest-900);
+    }
+
+    .saldo-notice-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--accent-clay);
+      font-weight: 600;
+      margin-top: 0.45rem;
+      background: var(--surface-card);
+      padding: 0.4rem 0.65rem;
+      border-radius: var(--radius-xs);
+      border: 1px dashed var(--border-light);
+    }
+
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -300,7 +428,7 @@ import { TouristCalendarComponent } from '../tourist-calendar/tourist-calendar.c
     }
 
     .form-group {
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
       display: flex;
       flex-direction: column;
     }
@@ -359,7 +487,7 @@ import { TouristCalendarComponent } from '../tourist-calendar/tourist-calendar.c
     }
 
     .form-actions {
-      margin-top: 1.5rem;
+      margin-top: 1.25rem;
     }
 
     .btn-mercadopago {
@@ -372,11 +500,59 @@ import { TouristCalendarComponent } from '../tourist-calendar/tourist-calendar.c
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
+      min-height: 46px;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 12px rgba(0, 158, 227, 0.25);
     }
 
     .btn-mercadopago:hover {
       background: #0087C4;
       color: #FFFFFF;
+    }
+
+    .btn-mercadopago:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .btn-outline-quote {
+      background: #FFFFFF;
+      border: 1.5px solid var(--forest-900);
+      color: var(--forest-900);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+      cursor: pointer;
+      padding: 0.65rem 1rem;
+      border-radius: var(--radius-sm);
+      min-height: 44px;
+    }
+
+    .btn-outline-quote:hover {
+      background: var(--forest-50);
+      color: var(--forest-900);
+    }
+
+    .btn-outline-quote:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .spinner-inline {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #FFFFFF;
+      border-radius: 50%;
+      display: inline-block;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     .w-100 {
@@ -428,6 +604,7 @@ import { TouristCalendarComponent } from '../tourist-calendar/tourist-calendar.c
 export class BookingModalComponent {
   private fb = inject(FormBuilder);
   private tourService = inject(TourService);
+  private paymentService = inject(PaymentService);
   public ts = inject(TranslationService);
 
   @Input() tour: TourSummary | null = null;
@@ -445,7 +622,18 @@ export class BookingModalComponent {
   });
 
   isSubmitting = signal(false);
+  isPayingWithMP = signal(false);
   successResponse = signal<BookingInquiryResponse | null>(null);
+
+  getTotalPrice(): number {
+    const base = this.tour?.priceSoles || 0;
+    const people = this.bookingForm.get('numberOfPeople')?.value || 1;
+    return base * Math.max(1, people);
+  }
+
+  getDepositAmount(): number {
+    return Math.round(this.getTotalPrice() / 2);
+  }
 
   isFieldInvalid(field: string): boolean {
     const control = this.bookingForm.get(field);
@@ -489,9 +677,92 @@ export class BookingModalComponent {
   }
 
   onPayMercadoPago(): void {
-    if (this.tour) {
-      this.payMercadoPago.emit(this.tour);
+    if (this.bookingForm.invalid) {
+      this.bookingForm.markAllAsTouched();
+      return;
     }
+
+    if (!this.tour) return;
+
+    this.isPayingWithMP.set(true);
+    const formVal = this.bookingForm.value;
+    const depositAmount = this.getDepositAmount();
+
+    const bookingReq = {
+      tourId: this.tour.id,
+      fullName: formVal.fullName,
+      email: formVal.email,
+      phone: formVal.phone,
+      numberOfPeople: formVal.numberOfPeople,
+      travelDate: formVal.travelDate,
+      message: formVal.message
+    };
+
+    // Primero registramos la reserva en el sistema/panel admin
+    this.tourService.createBooking(bookingReq).subscribe({
+      next: (bookingRes) => {
+        const ref = bookingRes?.id ? `VSE-${bookingRes.id}` : `VS-${Date.now()}`;
+        this.executeMercadoPagoCheckout(ref, depositAmount);
+      },
+      error: () => {
+        // En caso de incidencia en el backend, continúa al checkout de pago seguro
+        this.executeMercadoPagoCheckout(`VS-${Date.now()}`, depositAmount);
+      }
+    });
+  }
+
+  private executeMercadoPagoCheckout(voucherCode: string, depositAmount: number): void {
+    const formVal = this.bookingForm.value;
+    const prefReq: CreatePreferenceRequest = {
+      title: `${this.tour!.title} (Seña de Reserva 50%)`,
+      description: `Seña 50% para ${formVal.numberOfPeople} persona(s) - Fecha: ${formVal.travelDate || 'Por coordinar'} (Saldo restante: S/ ${depositAmount} PEN al llegar)`,
+      unitPrice: depositAmount,
+      quantity: 1,
+      payerName: formVal.fullName,
+      payerEmail: formVal.email,
+      payerPhone: formVal.phone,
+      isDepositOnly: true,
+      paymentCategory: 'Tour',
+      tourId: this.tour!.id,
+      bookingReference: voucherCode
+    };
+
+    this.paymentService.createPreference(prefReq).subscribe({
+      next: (res) => {
+        this.isPayingWithMP.set(false);
+        const targetUrl = res.mode === 'sandbox'
+          ? (res.sandboxInitPoint || res.initPoint)
+          : (res.initPoint || res.sandboxInitPoint);
+        if (targetUrl) {
+          window.location.href = targetUrl;
+        }
+      },
+      error: (err) => {
+        this.isPayingWithMP.set(false);
+        console.warn('Mercado Pago preference error, falling back to WhatsApp:', err);
+        this.openWhatsAppPaymentFallback(depositAmount);
+      }
+    });
+  }
+
+  private openWhatsAppPaymentFallback(depositAmount: number): void {
+    const val = this.bookingForm.value;
+    const total = this.getTotalPrice();
+    const tourTitle = this.tour?.title || 'Tour en Valle del Sondondo';
+    const text = encodeURIComponent(
+      `¡Hola Valle del Sondondo Expeditions! 👋\n` +
+      `Deseo pagar la *Seña de Reserva (50%)* para el tour: *${tourTitle}*\n` +
+      `👤 Pasajero: ${val.fullName || 'Viajero'}\n` +
+      `📱 Teléfono: ${val.phone || ''}\n` +
+      `📧 Email: ${val.email || ''}\n` +
+      `👥 Personas: ${val.numberOfPeople || 1}\n` +
+      `📅 Fecha: ${val.travelDate || 'Por coordinar'}\n` +
+      `💰 Total: S/ ${total} PEN\n` +
+      `💳 Seña 50%: S/ ${depositAmount} PEN\n` +
+      `💵 Saldo restante al llegar: S/ ${depositAmount} PEN\n\n` +
+      `Por favor indíquenme las cuentas bancarias o enlace de pago para abonar la seña y confirmar mi cupo.`
+    );
+    window.open(`https://wa.me/${this.whatsAppNumber}?text=${text}`, '_blank');
   }
 
   openDirectWhatsApp(): void {

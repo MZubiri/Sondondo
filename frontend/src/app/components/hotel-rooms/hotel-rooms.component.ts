@@ -896,7 +896,7 @@ import { IconComponent } from '../icon/icon.component';
 export class HotelRoomsComponent {
   public ts = inject(TranslationService);
   @Input({ required: true }) hotelInfo!: HotelInfo;
-  @Output() bookWithMercadoPago = new EventEmitter<{ room: HotelRoom; amount: number }>();
+  @Output() bookWithMercadoPago = new EventEmitter<{ room: HotelRoom; amount: number; guests?: number; checkInDate?: string }>();
 
   selectedRoom = signal<HotelRoom | null>(null);
 
@@ -1043,7 +1043,12 @@ export class HotelRoomsComponent {
 
   onPayMercadoPago(room: HotelRoom): void {
     const details = this.getRoomStayDetails(room);
-    this.bookWithMercadoPago.emit({ room, amount: details.totalSoles });
+    this.bookWithMercadoPago.emit({
+      room,
+      amount: details.totalSoles,
+      guests: this.searchGuests(),
+      checkInDate: this.searchCheckIn()
+    });
   }
 
   getRoomWhatsAppUrl(room: HotelRoom): string {
