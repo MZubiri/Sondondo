@@ -1099,10 +1099,10 @@
 }
 
 /* ==========================================================================
-   SHARED ADMIN MODALS & FORMS
+   SHARED ADMIN MODALS & FORMS (Scoped to .admin-shell)
    ========================================================================== */
 
-.modal-backdrop {
+.admin-shell .modal-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(5, 9, 7, 0.85);
@@ -1116,7 +1116,7 @@
   overflow-y: auto;
 }
 
-.modal-card {
+.admin-shell .modal-card {
   background: var(--adm-card);
   border: 1px solid var(--adm-border);
   border-radius: var(--adm-r-lg);
@@ -1129,7 +1129,7 @@
   flex-direction: column;
 }
 
-.modal-header {
+.admin-shell .modal-header {
   padding: 1.35rem 1.75rem;
   border-bottom: 1px solid var(--adm-border);
   display: flex;
@@ -1141,7 +1141,7 @@
   z-index: 10;
 }
 
-.modal-kicker {
+.admin-shell .modal-kicker {
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -1149,7 +1149,7 @@
   font-weight: 700;
 }
 
-.modal-heading {
+.admin-shell .modal-heading {
   font-family: var(--adm-font-display);
   font-size: 1.35rem;
   font-weight: 800;
@@ -1158,7 +1158,7 @@
   letter-spacing: -0.02em;
 }
 
-.btn-close {
+.admin-shell .btn-close {
   background: transparent;
   border: none;
   color: var(--adm-text-muted);
@@ -1169,24 +1169,24 @@
   transition: color 0.15s ease;
 }
 
-.btn-close:hover {
+.admin-shell .btn-close:hover {
   color: var(--adm-text-title);
 }
 
-.modal-form-body {
+.admin-shell .modal-form-body {
   padding: 1.75rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
-.form-group {
+.admin-shell .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
 }
 
-.form-group label {
+.admin-shell .form-group label {
   font-size: 0.78rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -1194,9 +1194,9 @@
   color: var(--adm-text-muted);
 }
 
-.form-group input, 
-.form-group select, 
-.form-group textarea {
+.admin-shell .form-group input, 
+.admin-shell .form-group select, 
+.admin-shell .form-group textarea {
   width: 100%;
   background: var(--adm-input-bg);
   border: 1px solid var(--adm-border);
@@ -1209,41 +1209,41 @@
   transition: all 0.2s ease;
 }
 
-.form-group input:focus, 
-.form-group select:focus, 
-.form-group textarea:focus {
+.admin-shell .form-group input:focus, 
+.admin-shell .form-group select:focus, 
+.admin-shell .form-group textarea:focus {
   background: var(--adm-input-bg-focus);
   border-color: var(--adm-clay);
   box-shadow: 0 0 0 3px var(--adm-clay-glow);
 }
 
-.hotel-mode .form-group input:focus, 
-.hotel-mode .form-group select:focus, 
-.hotel-mode .form-group textarea:focus {
+.admin-shell.hotel-mode .form-group input:focus, 
+.admin-shell.hotel-mode .form-group select:focus, 
+.admin-shell.hotel-mode .form-group textarea:focus {
   border-color: var(--adm-gold);
   box-shadow: 0 0 0 3px var(--adm-gold-glow);
 }
 
-.form-row-2 {
+.admin-shell .form-row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
 }
 
-.form-row-3 {
+.admin-shell .form-row-3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 1.25rem;
 }
 
-.modal-footer-actions {
+.admin-shell .modal-footer-actions {
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
   padding-top: 1rem;
 }
 
-.btn-primary {
+.admin-shell .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1260,12 +1260,12 @@
   box-shadow: 0 2px 8px rgba(214, 100, 60, 0.3);
 }
 
-.btn-primary:hover {
+.admin-shell .btn-primary:hover {
   background: var(--adm-clay-hover);
   box-shadow: 0 4px 14px rgba(214, 100, 60, 0.4);
 }
 
-.btn-gold {
+.admin-shell .btn-gold {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1282,12 +1282,12 @@
   box-shadow: 0 2px 8px rgba(207, 161, 90, 0.3);
 }
 
-.btn-gold:hover {
+.admin-shell .btn-gold:hover {
   background: linear-gradient(135deg, #dbae68 0%, #c4944d 100%);
   box-shadow: 0 4px 14px rgba(207, 161, 90, 0.4);
 }
 
-.btn-secondary {
+.admin-shell .btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1303,12 +1303,12 @@
   transition: all 0.2s ease;
 }
 
-.btn-secondary:hover {
+.admin-shell .btn-secondary:hover {
   background: var(--adm-card-hover);
   border-color: var(--adm-border-hover);
 }
 
-.admin-toast {
+.admin-shell .admin-toast {
   background: rgba(62, 168, 119, 0.15);
   border: 1px solid var(--adm-green-border);
   color: var(--adm-text-title);

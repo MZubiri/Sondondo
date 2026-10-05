@@ -273,6 +273,10 @@ import { TouristCalendarComponent } from '../tourist-calendar/tourist-calendar.c
       align-items: flex-start;
       justify-content: space-between;
       margin-bottom: 1.25rem;
+      background: transparent !important;
+      border-bottom: none;
+      position: static;
+      padding: 0;
     }
 
     .modal-subtitle {

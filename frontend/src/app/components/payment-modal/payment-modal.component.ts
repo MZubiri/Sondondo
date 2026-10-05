@@ -212,9 +212,11 @@ export interface PaymentTarget {
       max-height: 92vh;
       overflow-y: auto;
       background: #FFFFFF;
-      border-radius: var(--radius-md);
+      border: 1px solid var(--border-light, rgba(60, 49, 39, 0.14));
+      border-radius: var(--radius-md, 10px);
       padding: 2rem;
       position: relative;
+      box-shadow: 0 24px 60px rgba(18, 35, 26, 0.22), 0 2px 8px rgba(0, 0, 0, 0.06);
     }
 
     .modal-header {
@@ -222,13 +224,17 @@ export interface PaymentTarget {
       justify-content: space-between;
       align-items: flex-start;
       margin-bottom: 1.25rem;
+      padding: 0 0 1rem 0;
+      background: transparent !important;
+      border-bottom: 1px solid var(--border-light, rgba(60, 49, 39, 0.12));
+      position: static;
     }
 
     .mp-badge-header {
       display: flex;
       align-items: center;
       gap: 0.65rem;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.5rem;
     }
 
     .mp-logo-text {
@@ -236,56 +242,71 @@ export interface PaymentTarget {
       color: #FFFFFF;
       font-weight: 800;
       font-size: 0.8rem;
-      padding: 0.2rem 0.6rem;
+      padding: 0.25rem 0.65rem;
       border-radius: 4px;
       letter-spacing: -0.01em;
+      display: inline-flex;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 158, 227, 0.25);
     }
 
     .secure-tag {
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       font-weight: 700;
-      color: #27AE60;
-      letter-spacing: 0.04em;
+      color: #166534;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      letter-spacing: 0.02em;
+      display: inline-flex;
+      align-items: center;
     }
 
     .modal-title {
-      font-size: 1.35rem;
+      font-family: var(--font-display, inherit);
+      font-size: 1.45rem;
       font-weight: 800;
-      color: var(--earth-950);
-      line-height: 1.2;
+      color: var(--earth-950, #1B1510);
+      line-height: 1.25;
+      margin: 0.25rem 0;
+      letter-spacing: -0.02em;
     }
 
     .modal-subtitle {
-      font-size: 0.85rem;
-      color: var(--earth-700);
-      margin-top: 0.2rem;
+      font-size: 0.88rem;
+      color: var(--earth-700, #584A3D);
+      line-height: 1.45;
+      margin: 0;
     }
 
     .close-btn {
-      background: var(--cream-100);
-      border: none;
-      width: 34px;
-      height: 34px;
+      background: var(--cream-100, #F4EFE6);
+      border: 1px solid var(--border-light, rgba(60, 49, 39, 0.14));
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      color: var(--earth-800);
-      transition: var(--transition);
+      color: var(--earth-900, #261F18);
+      transition: var(--transition, all 0.2s ease);
       flex-shrink: 0;
     }
 
     .close-btn:hover {
-      background: var(--earth-200);
+      background: var(--earth-200, #DCD4C7);
+      color: var(--earth-950, #1B1510);
+      transform: scale(1.05);
     }
 
     .selected-item-box {
       display: flex;
       gap: 1rem;
-      background: var(--cream-50);
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius-sm);
+      background: var(--cream-50, #FAF8F5);
+      border: 1px solid var(--border-light, rgba(60, 49, 39, 0.14));
+      border-radius: var(--radius-sm, 6px);
       padding: 0.85rem 1rem;
       margin-bottom: 1rem;
     }
@@ -293,7 +314,7 @@ export interface PaymentTarget {
     .target-img {
       width: 64px;
       height: 64px;
-      border-radius: var(--radius-xs);
+      border-radius: var(--radius-xs, 3px);
       object-fit: cover;
     }
 
@@ -306,33 +327,34 @@ export interface PaymentTarget {
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--forest-900);
+      color: var(--forest-900, #1B3527);
     }
 
     .target-title {
       font-size: 1.05rem;
       font-weight: 700;
-      color: var(--earth-950);
+      color: var(--earth-950, #1B1510);
       margin: 0.15rem 0 0.35rem 0;
     }
 
     .target-price-row {
       font-size: 0.85rem;
-      color: var(--earth-700);
+      color: var(--earth-700, #584A3D);
       display: flex;
       gap: 0.4rem;
     }
 
     .target-price-row strong {
-      color: var(--forest-900);
+      color: var(--forest-900, #1B3527);
+      font-weight: 700;
     }
 
     /* Deposit Notice Card */
     .deposit-notice-card {
-      background: linear-gradient(135deg, var(--forest-50), var(--cream-100));
-      border: 1px solid var(--border-light);
-      border-left: 4px solid var(--forest-900);
-      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--forest-50, #F2F6F3), var(--cream-100, #F4EFE6));
+      border: 1px solid rgba(27, 53, 39, 0.15);
+      border-left: 4px solid var(--forest-900, #1B3527);
+      border-radius: var(--radius-sm, 6px);
       padding: 0.85rem 1rem;
       margin-bottom: 1.25rem;
     }
@@ -348,30 +370,31 @@ export interface PaymentTarget {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      background: var(--forest-900);
+      background: var(--forest-900, #1B3527);
       color: #FFFFFF;
       font-size: 0.75rem;
       font-weight: 700;
       padding: 0.25rem 0.65rem;
-      border-radius: var(--radius-xs);
+      border-radius: var(--radius-xs, 3px);
       letter-spacing: 0.03em;
     }
 
     .deposit-percent-pill {
       font-size: 0.76rem;
       font-weight: 800;
-      color: var(--accent-clay);
-      background: var(--surface-card);
+      color: #a33b12;
+      background: #FFFFFF;
       padding: 0.2rem 0.55rem;
-      border-radius: var(--radius-full);
-      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full, 9999px);
+      border: 1px solid rgba(163, 59, 18, 0.25);
     }
 
     .deposit-notice-text {
-      font-size: 0.82rem;
-      color: var(--earth-800);
+      font-size: 0.84rem;
+      color: var(--earth-900, #261F18);
       line-height: 1.45;
       margin: 0;
+      font-weight: 500;
     }
 
     .form-row {
@@ -386,29 +409,36 @@ export interface PaymentTarget {
       flex-direction: column;
     }
 
-    label {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--earth-950);
-      margin-bottom: 0.3rem;
+    .form-group label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--earth-900, #261F18);
+      margin-bottom: 0.35rem;
+      display: block;
     }
 
     .form-control {
       padding: 0.65rem 0.85rem;
       min-height: 42px;
-      border: 1px solid var(--earth-200);
-      border-radius: var(--radius-sm);
-      background: var(--cream-50);
-      color: var(--earth-950);
-      font-size: 0.9rem;
-      transition: var(--transition);
+      border: 1px solid var(--earth-300, #C2B7A8);
+      border-radius: var(--radius-sm, 6px);
+      background: #FFFFFF;
+      color: var(--earth-950, #1B1510);
+      font-size: 0.92rem;
+      transition: var(--transition, all 0.2s ease);
+    }
+
+    .form-control::placeholder {
+      color: #9ca3af;
     }
 
     .form-control:focus {
       outline: none;
       border-color: #009EE3;
       background: #FFFFFF;
-      box-shadow: 0 0 0 2px rgba(0, 158, 227, 0.15);
+      box-shadow: 0 0 0 3px rgba(0, 158, 227, 0.18);
     }
 
     .form-control.is-invalid {
@@ -422,9 +452,9 @@ export interface PaymentTarget {
     }
 
     .summary-box {
-      background: var(--cream-100);
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius-sm);
+      background: var(--cream-100, #F4EFE6);
+      border: 1px solid var(--border-light, rgba(60, 49, 39, 0.14));
+      border-radius: var(--radius-sm, 6px);
       padding: 1.1rem;
       margin: 1rem 0 1.25rem 0;
     }
@@ -433,59 +463,67 @@ export interface PaymentTarget {
       display: flex;
       justify-content: space-between;
       font-size: 0.88rem;
-      color: var(--earth-700);
+      color: var(--earth-800, #3C3127);
       margin-bottom: 0.35rem;
     }
 
     .total-highlight {
       font-size: 1.15rem;
-      color: var(--forest-900);
-      border-top: 1px solid var(--border-light);
+      color: var(--forest-900, #1B3527);
+      border-top: 1px solid var(--border-light, rgba(60, 49, 39, 0.14));
       padding-top: 0.6rem;
       margin-top: 0.6rem;
       align-items: center;
+      font-weight: 700;
     }
 
     .deposit-amount-highlight {
       font-size: 1.35rem;
       font-weight: 800;
-      color: var(--forest-900);
+      color: var(--forest-900, #1B3527);
     }
 
     .saldo-notice-row {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      font-size: 0.8rem;
-      color: var(--accent-clay);
+      gap: 0.45rem;
+      font-size: 0.82rem;
+      color: #a33b12;
       font-weight: 600;
-      margin-top: 0.5rem;
-      background: var(--surface-card);
-      padding: 0.45rem 0.75rem;
-      border-radius: var(--radius-xs);
-      border: 1px dashed var(--border-light);
+      margin-top: 0.6rem;
+      background: #FFFFFF;
+      padding: 0.5rem 0.85rem;
+      border-radius: var(--radius-xs, 3px);
+      border: 1px dashed rgba(163, 59, 18, 0.3);
     }
 
     .btn-mercadopago {
       background: #009EE3;
       color: #FFFFFF;
       font-weight: 700;
-      font-size: 0.95rem;
-      padding: 0.85rem 1.2rem;
+      font-size: 0.98rem;
+      padding: 0.9rem 1.4rem;
       border: none;
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-sm, 6px);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.6rem;
       cursor: pointer;
-      transition: var(--transition);
-      box-shadow: 0 4px 12px rgba(0, 158, 227, 0.25);
+      transition: var(--transition, all 0.2s ease);
+      box-shadow: 0 4px 14px rgba(0, 158, 227, 0.3);
     }
 
-    .btn-mercadopago:hover {
+    .btn-mercadopago:hover:not(:disabled) {
       background: #0087C4;
       color: #FFFFFF;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0, 158, 227, 0.4);
+    }
+
+    .btn-mercadopago:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
     }
 
     .security-footnote {
@@ -494,8 +532,8 @@ export interface PaymentTarget {
       justify-content: center;
       gap: 0.45rem;
       margin-top: 1rem;
-      font-size: 0.78rem;
-      color: var(--earth-700);
+      font-size: 0.8rem;
+      color: var(--earth-700, #584A3D);
     }
 
     .w-100 { width: 100%; }

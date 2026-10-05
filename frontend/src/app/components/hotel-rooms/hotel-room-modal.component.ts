@@ -156,6 +156,10 @@ import { IconComponent } from '../icon/icon.component';
       justify-content: space-between;
       align-items: flex-start;
       margin-bottom: 1.25rem;
+      background: transparent !important;
+      border-bottom: none;
+      position: static;
+      padding: 0;
     }
 
     .header-badges {
