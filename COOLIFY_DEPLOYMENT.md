@@ -55,9 +55,8 @@ Coolify es un PaaS autoalojado compatible con Docker Compose.
    - En la pestaña **Configuration**:
      - Verifica que la ruta apunte a `docker-compose.yml`.
 
-4. **Variables de Entorno (¡Ya Vienen Listas por Defecto!)**:
-   - El repositorio ya incluye el archivo `.env` configurado y `docker-compose.yml` tiene valores por defecto para cada variable, por lo que **no es necesario escribir nada manualmente para desplegar**.
-   - Si deseas personalizar credenciales, puedes modificarlas en la pestaña **Environment Variables** de Coolify:
+4. **Variables de Entorno**:
+   - En la pestaña **Environment Variables** de tu aplicación en Coolify, puedes configurar o personalizar las variables del proyecto:
      ```env
      DB_ROOT_PASSWORD=Sondondo_Root_Password_2026!
      DB_NAME=valle_sondondo_db
@@ -67,7 +66,13 @@ Coolify es un PaaS autoalojado compatible con Docker Compose.
      ADMIN_PASSWORD=Sondondo2026!
      WHATSAPP_NUMBER=51966380590
      AGENCY_EMAIL=miskichaskaperu@hotmail.com
+
+     # Pasarela Mercado Pago
+     MERCADOPAGO_ACCESS_TOKEN=APP_USR-tu-access-token-aqui
+     MERCADOPAGO_PUBLIC_KEY=APP_USR-tu-public-key-aqui
+     MERCADOPAGO_SANDBOX=true
      ```
+     *(Para pasar a producción real cuando esté lista la cuenta bancaria de la empresa, simplemente cambias `MERCADOPAGO_SANDBOX=false` y colocas las claves de producción directamente en Coolify).*
 
 5. **Configurar Dominios y SSL**:
    - En Coolify, para el servicio `frontend`:
