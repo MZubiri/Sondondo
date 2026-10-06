@@ -181,13 +181,19 @@ builder.Services.AddHealthChecks();
 var app = builder.Build();
 
 // Forwarded Headers for Reverse Proxy (Nginx / Traefik / Coolify HTTPS)
-app.UseForwardedHeaders(new ForwardedHeadersOptions
+var forwardedOptions = new ForwardedHeadersOptions
 {
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-});
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+};
+forwardedOptions.KnownNetworks.Clear();
+forwardedOptions.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardedOptions);
 
-// Configure the HTTP request pipeline
+// Configure the HTTP request pipeline in correct ASP.NET Core order
+app.UseRouting();
 app.UseCors("AllowAll");
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseRateLimiter();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
@@ -199,10 +205,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         c.RoutePrefix = "swagger";
     });
 }
-
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
 
 // Health check endpoint
 app.MapHealthChecks("/health");

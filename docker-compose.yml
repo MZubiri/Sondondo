@@ -44,6 +44,8 @@ services:
       - MERCADOPAGO_PUBLIC_KEY=${MERCADOPAGO_PUBLIC_KEY:-TEST-SIMULATED-PUBLIC-KEY}
       - MERCADOPAGO_SANDBOX=${MERCADOPAGO_SANDBOX:-false}
       - MERCADOPAGO_WEBHOOK_SECRET=${MERCADOPAGO_WEBHOOK_SECRET:-}
+      - APP_BASE_URL=${APP_BASE_URL:-https://valledelsondondoexpeditions.com}
+      - AppBaseUrl=${APP_BASE_URL:-https://valledelsondondoexpeditions.com}
     volumes:
       - hotel_data:/app/hotel_storage
     expose:

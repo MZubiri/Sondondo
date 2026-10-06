@@ -48,16 +48,47 @@ public class PaymentsController : ControllerBase
             ?? "TEST-SIMULATED-PUBLIC-KEY";
 
         var appBaseUrl = _configuration["AppBaseUrl"] 
-            ?? $"{Request.Scheme}://{Request.Host}";
+            ?? Environment.GetEnvironmentVariable("APP_BASE_URL")
+            ?? _configuration["APP_BASE_URL"];
 
-        var successUrl = _configuration["MercadoPago:SuccessUrl"] 
-            ?? $"{appBaseUrl}/pago/resultado?status=approved";
-        var failureUrl = _configuration["MercadoPago:FailureUrl"] 
-            ?? $"{appBaseUrl}/pago/resultado?status=failure";
-        var pendingUrl = _configuration["MercadoPago:PendingUrl"] 
-            ?? $"{appBaseUrl}/pago/resultado?status=pending";
-        var webhookUrl = _configuration["MercadoPago:WebhookUrl"] 
-            ?? $"{appBaseUrl}/api/payments/webhook";
+        if (string.IsNullOrWhiteSpace(appBaseUrl))
+        {
+            var scheme = Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto) && !string.IsNullOrWhiteSpace(proto)
+                ? proto.ToString()
+                : Request.Scheme;
+            var host = Request.Headers.TryGetValue("X-Forwarded-Host", out var fHost) && !string.IsNullOrWhiteSpace(fHost)
+                ? fHost.ToString()
+                : Request.Host.ToString();
+            appBaseUrl = $"{scheme}://{host}";
+        }
+
+        if (!appBaseUrl.StartsWith("http://localhost", StringComparison.OrdinalIgnoreCase) &&
+            !appBaseUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        {
+            appBaseUrl = "https://" + appBaseUrl.Replace("http://", "");
+        }
+
+        appBaseUrl = appBaseUrl.TrimEnd('/');
+
+        var successCfg = _configuration["MercadoPago:SuccessUrl"];
+        var successUrl = !string.IsNullOrWhiteSpace(successCfg) && (successCfg.StartsWith("http://") || successCfg.StartsWith("https://"))
+            ? successCfg
+            : $"{appBaseUrl}/pago/resultado?status=approved";
+
+        var failureCfg = _configuration["MercadoPago:FailureUrl"];
+        var failureUrl = !string.IsNullOrWhiteSpace(failureCfg) && (failureCfg.StartsWith("http://") || failureCfg.StartsWith("https://"))
+            ? failureCfg
+            : $"{appBaseUrl}/pago/resultado?status=failure";
+
+        var pendingCfg = _configuration["MercadoPago:PendingUrl"];
+        var pendingUrl = !string.IsNullOrWhiteSpace(pendingCfg) && (pendingCfg.StartsWith("http://") || pendingCfg.StartsWith("https://"))
+            ? pendingCfg
+            : $"{appBaseUrl}/pago/resultado?status=pending";
+
+        var webhookCfg = _configuration["MercadoPago:WebhookUrl"];
+        var webhookUrl = !string.IsNullOrWhiteSpace(webhookCfg) && (webhookCfg.StartsWith("http://") || webhookCfg.StartsWith("https://"))
+            ? webhookCfg
+            : $"{appBaseUrl}/api/payments/webhook";
 
         var externalRef = !string.IsNullOrWhiteSpace(dto.BookingReference) 
             ? dto.BookingReference 
@@ -300,18 +331,34 @@ public class PaymentsController : ControllerBase
         return Ok(new { success = false, message = "Status not approved" });
     }
 
+    [HttpGet("webhook")]
     [HttpPost("webhook")]
-    public async Task<IActionResult> Webhook([FromQuery] string? topic, [FromQuery] string? id, [FromBody] JsonElement? body)
+    public async Task<IActionResult> Webhook(
+        [FromQuery] string? topic, 
+        [FromQuery] string? id, 
+        [FromQuery(Name = "data.id")] string? dataId,
+        [FromBody] JsonElement? body)
     {
-        _logger.LogInformation("Webhook de Mercado Pago recibido. Topic: {Topic}, ID: {Id}", topic, id);
+        _logger.LogInformation("Webhook de Mercado Pago recibido. Topic: {Topic}, ID: {Id}, DataId: {DataId}", topic, id, dataId);
 
-        string? paymentId = id;
+        string? paymentId = id 
+            ?? dataId 
+            ?? Request.Query["data.id"].FirstOrDefault() 
+            ?? Request.Query["id"].FirstOrDefault();
 
-        if (string.IsNullOrWhiteSpace(paymentId) && body.HasValue)
+        if (string.IsNullOrWhiteSpace(paymentId) && body.HasValue && body.Value.ValueKind == JsonValueKind.Object)
         {
             if (body.Value.TryGetProperty("data", out var dataProp) && dataProp.TryGetProperty("id", out var idProp))
             {
-                paymentId = idProp.GetString() ?? idProp.GetInt64().ToString();
+                paymentId = idProp.ValueKind == JsonValueKind.Number 
+                    ? idProp.GetInt64().ToString() 
+                    : idProp.GetString();
+            }
+            else if (body.Value.TryGetProperty("id", out var directIdProp))
+            {
+                paymentId = directIdProp.ValueKind == JsonValueKind.Number 
+                    ? directIdProp.GetInt64().ToString() 
+                    : directIdProp.GetString();
             }
         }
 

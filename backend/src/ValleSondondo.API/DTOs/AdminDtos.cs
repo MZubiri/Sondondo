@@ -143,6 +143,7 @@ public class DashboardStatsDto
     public int ActiveTours { get; set; }
     public int TotalTours { get; set; }
     public int UnreadMessages { get; set; }
+    public decimal TotalRevenueSoles { get; set; }
     public List<BookingAdminDto> RecentBookings { get; set; } = new();
 }
 

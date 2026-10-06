@@ -28,6 +28,7 @@ public class DashboardController : ControllerBase
         var totalBookings = await _context.BookingInquiries.CountAsync();
         var pendingBookings = await _context.BookingInquiries.CountAsync(b => b.Status == "Pending");
         var confirmedBookings = await _context.BookingInquiries.CountAsync(b => b.Status == "Confirmed");
+        var totalRevenueSoles = await _context.BookingInquiries.SumAsync(b => b.PaidAmount ?? 0);
 
         var activeTours = await _context.Tours.CountAsync(t => t.IsActive);
         var totalTours = await _context.Tours.CountAsync();
@@ -45,8 +46,10 @@ public class DashboardController : ControllerBase
         var recentBookings = recentItems.Select(b => new BookingAdminDto
         {
             Id = b.Id,
+            VoucherCode = !string.IsNullOrWhiteSpace(b.VoucherCode) ? b.VoucherCode : $"VSE-2026-{b.Id}",
             TourId = b.TourId,
             TourTitle = b.Tour?.Title ?? "Consulta General",
+            TourPriceSoles = b.Tour?.PriceSoles ?? 0,
             FullName = b.FullName,
             Email = b.Email,
             Phone = b.Phone,
@@ -55,7 +58,16 @@ public class DashboardController : ControllerBase
             Message = b.Message,
             Status = b.Status,
             CreatedAt = b.CreatedAt,
-            WhatsAppDirectUrl = BuildWhatsAppReplyUrl(b, b.Tour?.Title, whatsappNumber)
+            WhatsAppDirectUrl = BuildWhatsAppReplyUrl(b, b.Tour?.Title, whatsappNumber),
+            TotalAmount = b.TotalAmount.HasValue && b.TotalAmount.Value > 0
+                ? b.TotalAmount.Value
+                : ((b.Tour?.PriceSoles ?? 0) * (b.NumberOfPeople > 0 ? b.NumberOfPeople : 1)),
+            PaidAmount = b.PaidAmount ?? 0,
+            PaymentStatus = !string.IsNullOrWhiteSpace(b.PaymentStatus)
+                ? b.PaymentStatus
+                : (b.Status == "Paid" || (b.Status == "Confirmed" && (b.PaidAmount ?? 0) > 0) ? "Pagado 100%" : "Pendiente"),
+            PaymentMethod = !string.IsNullOrWhiteSpace(b.PaymentMethod) ? b.PaymentMethod : "Pendiente",
+            PaymentReceiptUrl = b.PaymentReceiptUrl
         }).ToList();
 
         return Ok(new DashboardStatsDto
@@ -66,6 +78,7 @@ public class DashboardController : ControllerBase
             ActiveTours = activeTours,
             TotalTours = totalTours,
             UnreadMessages = unreadMessages,
+            TotalRevenueSoles = totalRevenueSoles,
             RecentBookings = recentBookings
         });
     }

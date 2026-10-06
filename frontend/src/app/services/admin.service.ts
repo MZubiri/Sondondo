@@ -599,7 +599,7 @@ export class AdminService {
       const stored = localStorage.getItem(BOOKINGS_STORAGE_KEY);
       if (stored) return JSON.parse(stored);
     } catch {}
-    return this.initialMockBookings;
+    return environment.production ? [] : this.initialMockBookings;
   }
 
   private saveBookings(bookings: AdminBooking[]): void {
@@ -689,26 +689,34 @@ export class AdminService {
     if (params.length > 0) url += `?${params.join('&')}`;
 
     return this.http.get<AdminBooking[]>(url, { headers: this.getAuthHeaders() }).pipe(
-      tap(items => {
-        // Merge with local enriched operational data (passengers, guide, vehicle)
+      map(items => {
+        // Enriquecer con datos operativos locales si existen (pasajeros, guía, vehículo)
         const local = this.bookingsSignal();
         const merged = items.map(apiItem => {
-          const found = local.find(l => l.id === apiItem.id || (l.voucherCode && l.voucherCode === apiItem.voucherCode));
-          if (!found) return apiItem;
+          const found = local.find(l => (l.voucherCode && l.voucherCode === apiItem.voucherCode) || l.id === apiItem.id);
+          // Solo fusionar si coincide el voucherCode o si es la misma reserva
+          if (!found || (found.voucherCode && apiItem.voucherCode && found.voucherCode !== apiItem.voucherCode)) {
+            return apiItem;
+          }
           return {
             ...found,
             ...apiItem,
-            passengers: found.passengers && found.passengers.length > 0 ? found.passengers : apiItem.passengers,
+            passengers: found.passengers && found.passengers.length > 0 ? found.passengers : (apiItem.passengers || []),
             guideName: found.guideName || apiItem.guideName,
             driverName: found.driverName || apiItem.driverName,
             vehiclePlate: found.vehiclePlate || apiItem.vehiclePlate
           };
         });
         const offlineBookings = local.filter(l => l.id > 1000000000000 && !items.some(i => i.voucherCode === l.voucherCode));
-        this.saveBookings([...merged, ...offlineBookings]);
+        const combined = [...merged, ...offlineBookings];
+        this.saveBookings(combined);
+        return combined;
       }),
       catchError(() => {
         let list = this.bookingsSignal();
+        if (list.length === 0 && !environment.production) {
+          list = this.initialMockBookings;
+        }
         if (status && status !== 'all') {
           list = list.filter(b => b.status.toLowerCase() === status.toLowerCase());
         }

@@ -101,6 +101,9 @@ public class BookingsController : ControllerBase
             ? dto.TotalAmount.Value
             : ((tour?.PriceSoles ?? 0) * (dto.NumberOfPeople > 0 ? dto.NumberOfPeople : 1));
 
+        var isPaid = (!string.IsNullOrWhiteSpace(dto.PaymentStatus) && dto.PaymentStatus.Contains("Pagado")) ||
+                     ((dto.PaidAmount ?? 0) >= totalAmount && totalAmount > 0);
+
         var inquiry = new BookingInquiry
         {
             TourId = dto.TourId,
@@ -111,11 +114,11 @@ public class BookingsController : ControllerBase
             TravelDate = dto.TravelDate,
             Message = dto.Message?.Trim() ?? string.Empty,
             PreferredLanguage = dto.PreferredLanguage ?? "es",
-            Status = "Pending",
+            Status = isPaid ? "Confirmed" : "Pending",
             CreatedAt = DateTime.UtcNow,
             TotalAmount = totalAmount,
             PaidAmount = dto.PaidAmount ?? 0,
-            PaymentStatus = !string.IsNullOrWhiteSpace(dto.PaymentStatus) ? dto.PaymentStatus : "Pendiente",
+            PaymentStatus = !string.IsNullOrWhiteSpace(dto.PaymentStatus) ? dto.PaymentStatus : (isPaid ? "Pagado 100%" : "Pendiente"),
             PaymentMethod = !string.IsNullOrWhiteSpace(dto.PaymentMethod) ? dto.PaymentMethod : "Pendiente",
             VoucherCode = !string.IsNullOrWhiteSpace(dto.VoucherCode) ? dto.VoucherCode : null
         };
