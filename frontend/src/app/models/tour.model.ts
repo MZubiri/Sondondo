@@ -56,6 +56,11 @@ export interface BookingInquiryRequest {
   travelDate?: string;
   message?: string;
   preferredLanguage?: string;
+  voucherCode?: string;
+  totalAmount?: number;
+  paidAmount?: number;
+  paymentStatus?: string;
+  paymentMethod?: string;
 }
 
 export interface BookingInquiryResponse {
@@ -65,6 +70,11 @@ export interface BookingInquiryResponse {
   status: string;
   createdAt: string;
   whatsAppDirectUrl: string;
+  voucherCode?: string;
+  totalAmount?: number;
+  paidAmount?: number;
+  paymentStatus?: string;
+  paymentMethod?: string;
 }
 
 export interface Testimonial {

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { CreatePreferenceRequest, CreatePreferenceResponse, ProcessPaymentRequest, ProcessPaymentResponse } from '../models/payment.model';
+import { CreatePreferenceRequest, CreatePreferenceResponse, ProcessPaymentRequest, ProcessPaymentResponse, ConfirmPaymentRequest } from '../models/payment.model';
 
 declare global {
   interface Window {
@@ -71,6 +71,15 @@ export class PaymentService {
         dateApproved: new Date().toISOString(),
         transactionAmount: data.transactionAmount
       }))
+    );
+  }
+
+  confirmPayment(data: ConfirmPaymentRequest): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/payments/confirm`, data).pipe(
+      catchError(err => {
+        console.warn('Aviso: no se pudo confirmar pago contra API:', err);
+        return of({ success: false });
+      })
     );
   }
 }

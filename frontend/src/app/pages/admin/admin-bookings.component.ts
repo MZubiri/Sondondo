@@ -146,7 +146,7 @@ import { AdminBooking, PassengerManifestItem } from '../../models/admin.model';
                       {{ booking.paymentStatus || 'Pendiente' }}
                     </span>
                     <div class="pay-figures">
-                      <span class="pay-amount">S/ {{ booking.paidAmount || 0 }} de S/ {{ booking.totalAmount || 0 }}</span>
+                      <span class="pay-amount">S/ {{ booking.paidAmount || 0 }} de S/ {{ getBookingTotal(booking) }}</span>
                       <small class="pay-method" *ngIf="booking.paymentMethod">{{ booking.paymentMethod }}</small>
                     </div>
                     <button class="btn-manage-pay" (click)="openPaymentModal(booking)" title="Editar pago o comprobante">
@@ -323,7 +323,7 @@ import { AdminBooking, PassengerManifestItem } from '../../models/admin.model';
             <div class="voucher-finances">
               <div class="vf-col">
                 <span class="vf-muted">Monto Total</span>
-                <strong class="vf-big">S/ {{ b.totalAmount || 0 }}</strong>
+                <strong class="vf-big">S/ {{ getBookingTotal(b) }}</strong>
               </div>
               <div class="vf-col">
                 <span class="vf-muted">Abonado ({{ b.paymentMethod || 'Yape/BCP' }})</span>
@@ -331,7 +331,7 @@ import { AdminBooking, PassengerManifestItem } from '../../models/admin.model';
               </div>
               <div class="vf-col">
                 <span class="vf-muted">Saldo Pendiente al Iniciar</span>
-                <strong class="vf-big text-amber">S/ {{ Math.max(0, (b.totalAmount || 0) - (b.paidAmount || 0)) }}</strong>
+                <strong class="vf-big text-amber">S/ {{ Math.max(0, getBookingTotal(b) - (b.paidAmount || 0)) }}</strong>
               </div>
               <div class="vf-col status-col">
                 <span class="vf-muted">Estado de la Reserva</span>
@@ -644,7 +644,7 @@ import { AdminBooking, PassengerManifestItem } from '../../models/admin.model';
             </div>
             <div class="detail-row">
               <span class="detail-label">Pago:</span>
-              <span class="detail-value">{{ b.paymentStatus || 'Pendiente' }} (S/ {{ b.paidAmount || 0 }} de S/ {{ b.totalAmount || 0 }})</span>
+              <span class="detail-value">{{ b.paymentStatus || 'Pendiente' }} (S/ {{ b.paidAmount || 0 }} de S/ {{ getBookingTotal(b) }})</span>
             </div>
 
             <div class="message-box">
@@ -1823,6 +1823,13 @@ export class AdminBookingsComponent implements OnInit {
   private adminService = inject(AdminService);
   Math = Math;
 
+  getBookingTotal(booking: AdminBooking | null): number {
+    if (!booking) return 0;
+    if (booking.totalAmount && booking.totalAmount > 0) return booking.totalAmount;
+    if (booking.tourPriceSoles && booking.tourPriceSoles > 0) return booking.tourPriceSoles * (booking.numberOfPeople || 1);
+    return 0;
+  }
+
   bookings = signal<AdminBooking[]>([]);
   selectedStatus = signal<string>('all');
   searchQuery = '';
@@ -1988,7 +1995,7 @@ export class AdminBookingsComponent implements OnInit {
     this.selectedBookingForPayment.set(booking);
     this.payFormMethod = booking.paymentMethod || 'Yape';
     this.payFormStatus = booking.paymentStatus || 'Pendiente';
-    this.payFormTotal = booking.totalAmount || 360;
+    this.payFormTotal = this.getBookingTotal(booking);
     this.payFormPaid = booking.paidAmount || 0;
     this.payFormReceiptUrl = booking.paymentReceiptUrl || '';
   }

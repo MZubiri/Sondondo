@@ -11,6 +11,39 @@ public static class DbInitializer
         // Ensure database is created and migrations applied
         await context.Database.MigrateAsync();
 
+        // Safely ensure newly added payment columns exist in MySQL table
+        try
+        {
+            var conn = context.Database.GetDbConnection();
+            if (conn.State != System.Data.ConnectionState.Open)
+            {
+                await conn.OpenAsync();
+            }
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = @"
+                SELECT COUNT(*) 
+                FROM INFORMATION_SCHEMA.COLUMNS 
+                WHERE TABLE_SCHEMA = DATABASE() 
+                  AND TABLE_NAME = 'BookingInquiries' 
+                  AND COLUMN_NAME = 'TotalAmount';";
+            var result = await cmd.ExecuteScalarAsync();
+            int count = Convert.ToInt32(result ?? 0);
+            if (count == 0)
+            {
+                using var alterCmd = conn.CreateCommand();
+                alterCmd.CommandText = @"
+                    ALTER TABLE `BookingInquiries`
+                    ADD COLUMN `VoucherCode` VARCHAR(50) NULL,
+                    ADD COLUMN `TotalAmount` DECIMAL(10,2) NULL,
+                    ADD COLUMN `PaidAmount` DECIMAL(10,2) NULL,
+                    ADD COLUMN `PaymentStatus` VARCHAR(50) NULL,
+                    ADD COLUMN `PaymentMethod` VARCHAR(50) NULL,
+                    ADD COLUMN `PaymentReceiptUrl` LONGTEXT NULL;";
+                await alterCmd.ExecuteNonQueryAsync();
+            }
+        }
+        catch { /* Handled gracefully */ }
+
         if (await context.Categories.AnyAsync())
         {
             // If DB was already seeded, synchronize existing tours with authentic verified assets
@@ -81,7 +114,7 @@ public static class DbInitializer
                     });
                     changed = true;
                 }
-                else
+                else if (slug.Contains("travesia") || slug.Contains("mancomunidad") || (slug.Contains("sondondo") && !slug.Contains("prueba")) || title.Contains("travesía") || title.Contains("mancomunidad"))
                 {
                     tour.Title = "Gran Travesía Valle del Sondondo: Ruta de la Mancomunidad";
                     tour.Subtitle = "La expedición definitiva por los seis distritos ancestrales de los Hurin Rukanas";

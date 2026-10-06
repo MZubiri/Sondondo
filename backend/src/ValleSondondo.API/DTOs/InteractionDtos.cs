@@ -27,6 +27,12 @@ public class CreateBookingInquiryDto
     public string Message { get; set; } = string.Empty;
 
     public string PreferredLanguage { get; set; } = "es";
+
+    public string? VoucherCode { get; set; }
+    public decimal? TotalAmount { get; set; }
+    public decimal? PaidAmount { get; set; }
+    public string? PaymentStatus { get; set; }
+    public string? PaymentMethod { get; set; }
 }
 
 public class BookingInquiryResponseDto
@@ -37,6 +43,11 @@ public class BookingInquiryResponseDto
     public string Status { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public string WhatsAppDirectUrl { get; set; } = string.Empty;
+    public string? VoucherCode { get; set; }
+    public decimal TotalAmount { get; set; }
+    public decimal PaidAmount { get; set; }
+    public string PaymentStatus { get; set; } = "Pendiente";
+    public string PaymentMethod { get; set; } = "Pendiente";
 }
 
 public class CreateContactMessageDto

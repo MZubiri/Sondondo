@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, catchError, map, of } from 'rxjs';
+import { Observable, catchError, map, of, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
   TourSummary,
@@ -751,7 +751,8 @@ export class TourService {
 
   createBooking(data: BookingInquiryRequest): Observable<BookingInquiryResponse> {
     const phone = environment.fallbackWhatsApp;
-    const bookingCode = 'VSE-2026-' + Math.floor(1000 + Math.random() * 9000);
+    const bookingCode = data.voucherCode || ('VSE-2026-' + Math.floor(1000 + Math.random() * 9000));
+    const numberOfPeople = data.numberOfPeople > 0 ? data.numberOfPeople : 1;
 
     // Resolve tour title and price
     let tourTitle = 'Consulta de Expedición';
@@ -766,10 +767,10 @@ export class TourService {
       }
     } catch {}
 
-    const totalAmount = tourPrice * (data.numberOfPeople || 1);
+    const totalAmount = data.totalAmount ?? (tourPrice * numberOfPeople);
 
     const msg = encodeURIComponent(
-      `¡Hola Valle del Sondondo Expeditions! 👋\nMi nombre es *${data.fullName}* y deseo reservar el tour: *${tourTitle}*.\n🎫 Código: ${bookingCode}\n👥 Personas: ${data.numberOfPeople}\n📅 Fecha: ${data.travelDate || 'Por coordinar'}\n📱 Teléfono: ${data.phone}\n${data.message ? '💬 Mensaje: ' + data.message : ''}`
+      `¡Hola Valle del Sondondo Expeditions! 👋\nMi nombre es *${data.fullName}* y deseo reservar el tour: *${tourTitle}*.\n🎫 Código: ${bookingCode}\n👥 Personas: ${numberOfPeople}\n📅 Fecha: ${data.travelDate || 'Por coordinar'}\n📱 Teléfono: ${data.phone}\n${data.message ? '💬 Mensaje: ' + data.message : ''}`
     );
 
     const newBooking: any = {
@@ -780,16 +781,16 @@ export class TourService {
       fullName: data.fullName,
       email: data.email,
       phone: data.phone,
-      numberOfPeople: data.numberOfPeople || 1,
+      numberOfPeople: numberOfPeople,
       travelDate: data.travelDate || new Date().toISOString().split('T')[0],
       message: data.message || '',
       status: 'Pending',
       createdAt: new Date().toISOString(),
       whatsAppDirectUrl: `https://wa.me/${phone}?text=${msg}`,
-      paymentMethod: 'Pendiente',
-      paymentStatus: 'Pendiente',
+      paymentMethod: data.paymentMethod || 'Pendiente',
+      paymentStatus: data.paymentStatus || 'Pendiente',
       totalAmount: totalAmount,
-      paidAmount: 0,
+      paidAmount: data.paidAmount ?? 0,
       passengers: [
         {
           id: 'p-1',
@@ -803,25 +804,61 @@ export class TourService {
       ]
     };
 
-    // Store in shared bookings cache for admin panel
-    try {
-      const stored = localStorage.getItem(BOOKINGS_STORAGE_KEY);
-      const list = stored ? JSON.parse(stored) : [];
-      list.unshift(newBooking);
-      localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(list));
-    } catch (e) {
-      console.warn('Could not save booking to shared storage', e);
-    }
+    const postPayload: BookingInquiryRequest = {
+      ...data,
+      numberOfPeople: numberOfPeople,
+      voucherCode: bookingCode,
+      totalAmount: totalAmount,
+      paidAmount: data.paidAmount ?? 0,
+      paymentStatus: data.paymentStatus || 'Pendiente',
+      paymentMethod: data.paymentMethod || 'Pendiente'
+    };
 
-    return this.http.post<BookingInquiryResponse>(`${this.apiUrl}/bookings`, data).pipe(
+    return this.http.post<BookingInquiryResponse>(`${this.apiUrl}/bookings`, postPayload).pipe(
+      tap((res: BookingInquiryResponse) => {
+        try {
+          const stored = localStorage.getItem(BOOKINGS_STORAGE_KEY);
+          const list = stored ? JSON.parse(stored) : [];
+          const serverBooking = {
+            ...newBooking,
+            id: res.id,
+            voucherCode: res.voucherCode || bookingCode,
+            tourTitle: res.tourTitle || tourTitle,
+            totalAmount: res.totalAmount ?? totalAmount,
+            paidAmount: res.paidAmount ?? (data.paidAmount ?? 0),
+            paymentStatus: res.paymentStatus || data.paymentStatus || 'Pendiente',
+            status: res.status || 'Pending'
+          };
+          const existingIndex = list.findIndex((b: any) => b.id === res.id || b.voucherCode === serverBooking.voucherCode);
+          if (existingIndex >= 0) {
+            list[existingIndex] = { ...list[existingIndex], ...serverBooking };
+          } else {
+            list.unshift(serverBooking);
+          }
+          localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(list));
+        } catch (e) {
+          console.warn('Could not save booking to shared storage', e);
+        }
+      }),
       catchError(() => {
+        try {
+          const stored = localStorage.getItem(BOOKINGS_STORAGE_KEY);
+          const list = stored ? JSON.parse(stored) : [];
+          list.unshift(newBooking);
+          localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(list));
+        } catch {}
+
         return of({
           id: newBooking.id,
+          voucherCode: newBooking.voucherCode,
           fullName: data.fullName,
           tourTitle: tourTitle,
           status: 'Pending',
           createdAt: newBooking.createdAt,
-          whatsAppDirectUrl: newBooking.whatsAppDirectUrl
+          whatsAppDirectUrl: newBooking.whatsAppDirectUrl,
+          totalAmount: totalAmount,
+          paidAmount: 0,
+          paymentStatus: 'Pendiente'
         });
       })
     );

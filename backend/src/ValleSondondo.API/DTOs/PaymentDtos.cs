@@ -77,3 +77,12 @@ public class IdentificationDto
     public string Type { get; set; } = "DNI";
     public string Number { get; set; } = string.Empty;
 }
+
+public class MercadoPagoConfirmPaymentDto
+{
+    public string? PaymentId { get; set; }
+    public string? ExternalReference { get; set; }
+    public string? Status { get; set; }
+    public decimal? TransactionAmount { get; set; }
+    public string? PaymentMethodId { get; set; }
+}

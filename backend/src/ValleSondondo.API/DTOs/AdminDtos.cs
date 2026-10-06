@@ -23,8 +23,10 @@ public class LoginResponseDto
 public class BookingAdminDto
 {
     public int Id { get; set; }
+    public string VoucherCode { get; set; } = string.Empty;
     public int? TourId { get; set; }
     public string TourTitle { get; set; } = string.Empty;
+    public decimal TourPriceSoles { get; set; }
     public string FullName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
@@ -34,12 +36,28 @@ public class BookingAdminDto
     public string Status { get; set; } = "Pending";
     public DateTime CreatedAt { get; set; }
     public string WhatsAppDirectUrl { get; set; } = string.Empty;
+
+    // Payment details
+    public decimal TotalAmount { get; set; }
+    public decimal PaidAmount { get; set; }
+    public string PaymentStatus { get; set; } = "Pendiente";
+    public string PaymentMethod { get; set; } = "Pendiente";
+    public string? PaymentReceiptUrl { get; set; }
 }
 
 public class UpdateBookingStatusDto
 {
     [Required]
     public string Status { get; set; } = "Pending";
+}
+
+public class UpdateBookingPaymentDto
+{
+    public string? PaymentMethod { get; set; }
+    public decimal PaidAmount { get; set; }
+    public decimal TotalAmount { get; set; }
+    public string? PaymentStatus { get; set; }
+    public string? PaymentReceiptUrl { get; set; }
 }
 
 public class CreateTourDto

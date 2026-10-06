@@ -61,6 +61,11 @@ public class ValleSondondoDbContext : DbContext
             entity.Property(e => e.FullName).IsRequired().HasMaxLength(150);
             entity.Property(e => e.Email).IsRequired().HasMaxLength(150);
             entity.Property(e => e.Phone).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.VoucherCode).HasMaxLength(50);
+            entity.Property(e => e.TotalAmount).HasPrecision(10, 2);
+            entity.Property(e => e.PaidAmount).HasPrecision(10, 2);
+            entity.Property(e => e.PaymentStatus).HasMaxLength(50);
+            entity.Property(e => e.PaymentMethod).HasMaxLength(50);
 
             entity.HasOne(e => e.Tour)
                   .WithMany(t => t.BookingInquiries)

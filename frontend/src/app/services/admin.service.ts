@@ -690,13 +690,22 @@ export class AdminService {
 
     return this.http.get<AdminBooking[]>(url, { headers: this.getAuthHeaders() }).pipe(
       tap(items => {
-        // Merge with local enriched data
+        // Merge with local enriched operational data (passengers, guide, vehicle)
         const local = this.bookingsSignal();
         const merged = items.map(apiItem => {
-          const found = local.find(l => l.id === apiItem.id);
-          return found ? { ...apiItem, ...found } : apiItem;
+          const found = local.find(l => l.id === apiItem.id || (l.voucherCode && l.voucherCode === apiItem.voucherCode));
+          if (!found) return apiItem;
+          return {
+            ...found,
+            ...apiItem,
+            passengers: found.passengers && found.passengers.length > 0 ? found.passengers : apiItem.passengers,
+            guideName: found.guideName || apiItem.guideName,
+            driverName: found.driverName || apiItem.driverName,
+            vehiclePlate: found.vehiclePlate || apiItem.vehiclePlate
+          };
         });
-        this.saveBookings(merged);
+        const offlineBookings = local.filter(l => l.id > 1000000000000 && !items.some(i => i.voucherCode === l.voucherCode));
+        this.saveBookings([...merged, ...offlineBookings]);
       }),
       catchError(() => {
         let list = this.bookingsSignal();
@@ -733,17 +742,23 @@ export class AdminService {
     paymentStatus: AdminBooking['paymentStatus'];
     paymentReceiptUrl?: string;
   }): Observable<boolean> {
-    const updated = this.bookingsSignal().map(b => {
-      if (b.id === id) {
-        return {
-          ...b,
-          ...paymentData
-        };
-      }
-      return b;
-    });
-    this.saveBookings(updated);
-    return of(true);
+    return this.http.patch<any>(`${this.apiUrl}/bookings/${id}/payment`, paymentData, { headers: this.getAuthHeaders() }).pipe(
+      map(() => true),
+      catchError(() => of(true)),
+      tap(() => {
+        const updated = this.bookingsSignal().map(b => {
+          if (b.id === id) {
+            return {
+              ...b,
+              ...paymentData,
+              status: (paymentData.paidAmount >= paymentData.totalAmount && paymentData.totalAmount > 0) ? ('Confirmed' as const) : b.status
+            };
+          }
+          return b;
+        });
+        this.saveBookings(updated);
+      })
+    );
   }
 
   updateBookingManifest(id: number, manifestData: {

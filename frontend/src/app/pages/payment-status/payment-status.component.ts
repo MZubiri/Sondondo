@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { IconComponent } from '../../components/icon/icon.component';
 import { TranslationService } from '../../services/translation.service';
+import { PaymentService } from '../../services/payment.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -227,6 +228,7 @@ import { environment } from '../../../environments/environment';
 })
 export class PaymentStatusComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private paymentService = inject(PaymentService);
   public ts = inject(TranslationService);
 
   status = signal<string>('approved');
@@ -242,12 +244,30 @@ export class PaymentStatusComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      const qStatus = params['status'] || params['collection_status'];
+      const qStatus = (params['status'] || params['collection_status'] || '').toLowerCase();
       if (qStatus) {
-        this.status.set(qStatus.toLowerCase());
+        this.status.set(qStatus);
       }
-      this.paymentId.set(params['payment_id'] || params['collection_id'] || null);
-      this.externalReference.set(params['external_reference'] || params['preference_id'] || null);
+      const pId = params['payment_id'] || params['collection_id'] || null;
+      const extRef = params['external_reference'] || params['preference_id'] || null;
+      this.paymentId.set(pId);
+      this.externalReference.set(extRef);
+
+      if (qStatus === 'approved' && (pId || extRef)) {
+        this.paymentService.confirmPayment({
+          paymentId: pId,
+          externalReference: extRef,
+          status: qStatus,
+          preferenceId: params['preference_id'] || null
+        }).subscribe({
+          next: (res) => {
+            console.log('Pago confirmado y sincronizado con backend:', res);
+          },
+          error: (err) => {
+            console.warn('No se pudo auto-confirmar el pago con el backend:', err);
+          }
+        });
+      }
     });
   }
 

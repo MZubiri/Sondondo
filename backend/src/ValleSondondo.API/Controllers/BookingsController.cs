@@ -55,8 +55,10 @@ public class BookingsController : ControllerBase
         var result = items.Select(b => new BookingAdminDto
         {
             Id = b.Id,
+            VoucherCode = !string.IsNullOrWhiteSpace(b.VoucherCode) ? b.VoucherCode : $"VSE-2026-{b.Id}",
             TourId = b.TourId,
             TourTitle = b.Tour?.Title ?? "Consulta General",
+            TourPriceSoles = b.Tour?.PriceSoles ?? 0,
             FullName = b.FullName,
             Email = b.Email,
             Phone = b.Phone,
@@ -65,7 +67,16 @@ public class BookingsController : ControllerBase
             Message = b.Message,
             Status = b.Status,
             CreatedAt = b.CreatedAt,
-            WhatsAppDirectUrl = BuildWhatsAppReplyUrl(b, b.Tour?.Title, whatsappNumber)
+            WhatsAppDirectUrl = BuildWhatsAppReplyUrl(b, b.Tour?.Title, whatsappNumber),
+            TotalAmount = b.TotalAmount.HasValue && b.TotalAmount.Value > 0
+                ? b.TotalAmount.Value
+                : ((b.Tour?.PriceSoles ?? 0) * (b.NumberOfPeople > 0 ? b.NumberOfPeople : 1)),
+            PaidAmount = b.PaidAmount ?? 0,
+            PaymentStatus = !string.IsNullOrWhiteSpace(b.PaymentStatus)
+                ? b.PaymentStatus
+                : (b.Status == "Paid" || (b.Status == "Confirmed" && (b.PaidAmount ?? 0) > 0) ? "Pagado 100%" : "Pendiente"),
+            PaymentMethod = !string.IsNullOrWhiteSpace(b.PaymentMethod) ? b.PaymentMethod : "Pendiente",
+            PaymentReceiptUrl = b.PaymentReceiptUrl
         }).ToList();
 
         return Ok(result);
@@ -86,22 +97,37 @@ public class BookingsController : ControllerBase
             tour = await _context.Tours.FindAsync(dto.TourId.Value);
         }
 
+        var totalAmount = dto.TotalAmount.HasValue && dto.TotalAmount.Value > 0
+            ? dto.TotalAmount.Value
+            : ((tour?.PriceSoles ?? 0) * (dto.NumberOfPeople > 0 ? dto.NumberOfPeople : 1));
+
         var inquiry = new BookingInquiry
         {
             TourId = dto.TourId,
             FullName = dto.FullName.Trim(),
             Email = dto.Email.Trim().ToLower(),
             Phone = dto.Phone.Trim(),
-            NumberOfPeople = dto.NumberOfPeople,
+            NumberOfPeople = dto.NumberOfPeople > 0 ? dto.NumberOfPeople : 1,
             TravelDate = dto.TravelDate,
             Message = dto.Message?.Trim() ?? string.Empty,
             PreferredLanguage = dto.PreferredLanguage ?? "es",
             Status = "Pending",
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            TotalAmount = totalAmount,
+            PaidAmount = dto.PaidAmount ?? 0,
+            PaymentStatus = !string.IsNullOrWhiteSpace(dto.PaymentStatus) ? dto.PaymentStatus : "Pendiente",
+            PaymentMethod = !string.IsNullOrWhiteSpace(dto.PaymentMethod) ? dto.PaymentMethod : "Pendiente",
+            VoucherCode = !string.IsNullOrWhiteSpace(dto.VoucherCode) ? dto.VoucherCode : null
         };
 
         await _context.BookingInquiries.AddAsync(inquiry);
         await _context.SaveChangesAsync();
+
+        if (string.IsNullOrWhiteSpace(inquiry.VoucherCode))
+        {
+            inquiry.VoucherCode = $"VSE-2026-{inquiry.Id}";
+            await _context.SaveChangesAsync();
+        }
 
         var whatsappNumber = _configuration["AgencySettings:WhatsAppNumber"] ?? "51966380590";
         var tourTitle = tour?.Title ?? "Tour en Valle del Sondondo";
@@ -110,7 +136,7 @@ public class BookingsController : ControllerBase
         var waText = $"¡Hola Valle del Sondondo Expeditions! 👋\n" +
                      $"Mi nombre es *{dto.FullName}* y deseo cotizar/reservar:\n" +
                      $"🏔️ *Tour:* {tourTitle}\n" +
-                     $"👥 *Personas:* {dto.NumberOfPeople}\n" +
+                     $"👥 *Personas:* {inquiry.NumberOfPeople}\n" +
                      $"📅 *Fecha:* {dateFormatted}\n" +
                      $"📱 *Teléfono:* {dto.Phone}\n" +
                      (!string.IsNullOrWhiteSpace(dto.Message) ? $"💬 *Mensaje:* {dto.Message}\n" : "") +
@@ -125,7 +151,12 @@ public class BookingsController : ControllerBase
             TourTitle = tourTitle,
             Status = inquiry.Status,
             CreatedAt = inquiry.CreatedAt,
-            WhatsAppDirectUrl = waUrl
+            WhatsAppDirectUrl = waUrl,
+            VoucherCode = inquiry.VoucherCode,
+            TotalAmount = inquiry.TotalAmount ?? totalAmount,
+            PaidAmount = inquiry.PaidAmount ?? 0,
+            PaymentStatus = inquiry.PaymentStatus ?? "Pendiente",
+            PaymentMethod = inquiry.PaymentMethod ?? "Pendiente"
         };
 
         return CreatedAtAction(nameof(GetInquiryById), new { id = inquiry.Id }, response);
@@ -151,7 +182,12 @@ public class BookingsController : ControllerBase
             TourTitle = inquiry.Tour?.Title ?? "Consulta general",
             Status = inquiry.Status,
             CreatedAt = inquiry.CreatedAt,
-            WhatsAppDirectUrl = string.Empty
+            WhatsAppDirectUrl = string.Empty,
+            VoucherCode = inquiry.VoucherCode ?? $"VSE-2026-{inquiry.Id}",
+            TotalAmount = inquiry.TotalAmount ?? ((inquiry.Tour?.PriceSoles ?? 0) * inquiry.NumberOfPeople),
+            PaidAmount = inquiry.PaidAmount ?? 0,
+            PaymentStatus = inquiry.PaymentStatus ?? "Pendiente",
+            PaymentMethod = inquiry.PaymentMethod ?? "Pendiente"
         });
     }
 
@@ -169,6 +205,43 @@ public class BookingsController : ControllerBase
         await _context.SaveChangesAsync();
 
         return Ok(new { success = true, id = inquiry.Id, status = inquiry.Status });
+    }
+
+    [Authorize]
+    [HttpPatch("{id}/payment")]
+    public async Task<IActionResult> UpdateBookingPayment(int id, [FromBody] UpdateBookingPaymentDto dto)
+    {
+        var inquiry = await _context.BookingInquiries.FindAsync(id);
+        if (inquiry == null)
+        {
+            return NotFound(new { message = $"Reserva con ID {id} no encontrada." });
+        }
+
+        inquiry.PaymentMethod = dto.PaymentMethod ?? inquiry.PaymentMethod ?? "Pendiente";
+        inquiry.PaidAmount = dto.PaidAmount;
+        inquiry.TotalAmount = dto.TotalAmount;
+        inquiry.PaymentStatus = dto.PaymentStatus ?? inquiry.PaymentStatus ?? "Pendiente";
+        if (!string.IsNullOrWhiteSpace(dto.PaymentReceiptUrl))
+        {
+            inquiry.PaymentReceiptUrl = dto.PaymentReceiptUrl;
+        }
+
+        if (inquiry.PaymentStatus == "Pagado 100%" || (inquiry.PaidAmount >= inquiry.TotalAmount && inquiry.TotalAmount > 0))
+        {
+            inquiry.Status = "Confirmed";
+        }
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            success = true,
+            id = inquiry.Id,
+            paymentStatus = inquiry.PaymentStatus,
+            paidAmount = inquiry.PaidAmount,
+            totalAmount = inquiry.TotalAmount,
+            status = inquiry.Status
+        });
     }
 
     [Authorize]

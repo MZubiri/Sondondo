@@ -248,6 +248,58 @@ public class PaymentsController : ControllerBase
         });
     }
 
+    [HttpPost("confirm")]
+    public async Task<IActionResult> ConfirmPayment([FromBody] MercadoPagoConfirmPaymentDto dto)
+    {
+        _logger.LogInformation("Confirmación de pago recibida desde frontend. ID: {Id}, Ref: {Ref}, Status: {Status}", 
+            dto.PaymentId, dto.ExternalReference, dto.Status);
+
+        if (string.Equals(dto.Status, "approved", StringComparison.OrdinalIgnoreCase))
+        {
+            var amount = dto.TransactionAmount ?? 0;
+            var accessToken = _configuration["MercadoPago:AccessToken"] 
+                ?? Environment.GetEnvironmentVariable("MERCADOPAGO_ACCESS_TOKEN");
+
+            if (!string.IsNullOrWhiteSpace(dto.PaymentId) && 
+                !string.IsNullOrWhiteSpace(accessToken) && 
+                (accessToken.StartsWith("TEST-") || accessToken.StartsWith("APP_USR-")))
+            {
+                try
+                {
+                    var client = _httpClientFactory.CreateClient();
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    var res = await client.GetAsync($"https://api.mercadopago.com/v1/payments/{dto.PaymentId}");
+                    if (res.IsSuccessStatusCode)
+                    {
+                        var json = await res.Content.ReadAsStringAsync();
+                        using var doc = JsonDocument.Parse(json);
+                        var root = doc.RootElement;
+                        var apiStatus = root.GetProperty("status").GetString();
+                        var apiRef = root.TryGetProperty("external_reference", out var eProp) ? eProp.GetString() : dto.ExternalReference;
+                        var apiAmount = root.TryGetProperty("transaction_amount", out var aProp) ? aProp.GetDecimal() : amount;
+                        var apiMethod = root.TryGetProperty("payment_method_id", out var mProp) ? mProp.GetString() : "MercadoPago";
+
+                        if (apiStatus == "approved")
+                        {
+                            var updated = await ApplyApprovedPaymentAsync(dto.PaymentId, apiRef ?? dto.ExternalReference, apiAmount, apiMethod);
+                            return Ok(new { success = true, updated, status = apiStatus });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error al verificar pago contra API de Mercado Pago en confirm.");
+                }
+            }
+
+            // Aplicar con los datos provistos
+            var applied = await ApplyApprovedPaymentAsync(dto.PaymentId ?? "DIRECT", dto.ExternalReference, amount, dto.PaymentMethodId ?? "MercadoPago");
+            return Ok(new { success = true, updated = applied });
+        }
+
+        return Ok(new { success = false, message = "Status not approved" });
+    }
+
     [HttpPost("webhook")]
     public async Task<IActionResult> Webhook([FromQuery] string? topic, [FromQuery] string? id, [FromBody] JsonElement? body)
     {
@@ -283,22 +335,14 @@ public class PaymentsController : ControllerBase
                         using var doc = JsonDocument.Parse(json);
                         var status = doc.RootElement.GetProperty("status").GetString();
                         var extRef = doc.RootElement.TryGetProperty("external_reference", out var eProp) ? eProp.GetString() : null;
+                        var transactionAmount = doc.RootElement.TryGetProperty("transaction_amount", out var aProp) ? aProp.GetDecimal() : 0m;
+                        var paymentMethod = doc.RootElement.TryGetProperty("payment_method_id", out var mProp) ? mProp.GetString() : "MercadoPago";
 
-                        _logger.LogInformation("Pago {PaymentId} verificado. Estado: {Status}, Ref: {Ref}", paymentId, status, extRef);
+                        _logger.LogInformation("Pago {PaymentId} verificado. Estado: {Status}, Ref: {Ref}, Monto: {Amount}", paymentId, status, extRef, transactionAmount);
 
                         if (status == "approved" && !string.IsNullOrWhiteSpace(extRef))
                         {
-                            // Actualizar reserva correspondiente en la base de datos
-                            var booking = await _context.BookingInquiries
-                                .FirstOrDefaultAsync(b => b.Message.Contains(extRef) || b.Status == "Pending");
-                            
-                            if (booking != null)
-                            {
-                                booking.Status = "Paid";
-                                booking.Message += $"\n[Mercado Pago Aprobado: {paymentId} - {DateTime.UtcNow:g}]";
-                                await _context.SaveChangesAsync();
-                                _logger.LogInformation("Reserva ID {BookingId} actualizada a 'Paid'", booking.Id);
-                            }
+                            await ApplyApprovedPaymentAsync(paymentId, extRef, transactionAmount, paymentMethod);
                         }
                     }
                 }
@@ -311,5 +355,88 @@ public class PaymentsController : ControllerBase
 
         // Siempre responder 200 OK a Mercado Pago
         return Ok(new { received = true });
+    }
+
+    private async Task<bool> ApplyApprovedPaymentAsync(string paymentId, string? extRef, decimal transactionAmount, string? paymentMethod)
+    {
+        if (string.IsNullOrWhiteSpace(extRef))
+        {
+            return false;
+        }
+
+        BookingInquiry? booking = null;
+
+        // 1. Buscar directamente por VoucherCode
+        booking = await _context.BookingInquiries
+            .Include(b => b.Tour)
+            .FirstOrDefaultAsync(b => b.VoucherCode == extRef);
+
+        // 2. Extraer ID del formato de referencia (ej: VSE-2026-6, VSE-6, VS-6)
+        if (booking == null)
+        {
+            var parts = extRef.Split(new[] { '-', '_' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var part in parts.Reverse())
+            {
+                if (int.TryParse(part, out int candidateId) && candidateId > 0)
+                {
+                    booking = await _context.BookingInquiries
+                        .Include(b => b.Tour)
+                        .FirstOrDefaultAsync(b => b.Id == candidateId);
+                    if (booking != null) break;
+                }
+            }
+        }
+
+        // 3. Buscar si el mensaje contiene la referencia
+        if (booking == null)
+        {
+            booking = await _context.BookingInquiries
+                .Include(b => b.Tour)
+                .FirstOrDefaultAsync(b => b.Message.Contains(extRef));
+        }
+
+        if (booking != null)
+        {
+            if (booking.TotalAmount == null || booking.TotalAmount == 0)
+            {
+                var tourPrice = booking.Tour?.PriceSoles ?? 0;
+                var calculated = tourPrice * (booking.NumberOfPeople > 0 ? booking.NumberOfPeople : 1);
+                booking.TotalAmount = calculated > 0 ? calculated : (transactionAmount > 0 ? transactionAmount : 0);
+            }
+
+            if (transactionAmount > 0)
+            {
+                booking.PaidAmount = transactionAmount;
+            }
+            else if (booking.PaidAmount == null || booking.PaidAmount == 0)
+            {
+                booking.PaidAmount = booking.TotalAmount ?? 0;
+            }
+
+            if (booking.PaidAmount >= booking.TotalAmount && (booking.TotalAmount ?? 0) > 0)
+            {
+                booking.PaymentStatus = "Pagado 100%";
+            }
+            else
+            {
+                booking.PaymentStatus = "Adelanto 50%";
+            }
+
+            booking.Status = "Confirmed";
+            booking.PaymentMethod = !string.IsNullOrWhiteSpace(paymentMethod) ? paymentMethod : "MercadoPago";
+
+            if (!booking.Message.Contains(paymentId))
+            {
+                booking.Message += $"\n[Mercado Pago Aprobado: {paymentId} - S/ {transactionAmount:F2} - {DateTime.UtcNow:g}]";
+            }
+
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Reserva ID {BookingId} ({Voucher}) actualizada a '{Status}', Pago: {PaymentStatus} (S/ {Paid} de S/ {Total})",
+                booking.Id, booking.VoucherCode, booking.Status, booking.PaymentStatus, booking.PaidAmount, booking.TotalAmount);
+            return true;
+        }
+
+        _logger.LogWarning("No se encontró reserva para referencia de pago: {Ref}", extRef);
+        return false;
     }
 }

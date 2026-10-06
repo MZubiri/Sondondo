@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ValleSondondo.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using ValleSondondo.Infrastructure.Data;
 namespace ValleSondondo.Infrastructure.Migrations
 {
     [DbContext(typeof(ValleSondondoDbContext))]
-    partial class ValleSondondoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261006181413_AddPaymentFieldsToBookingInquiry")]
+    partial class AddPaymentFieldsToBookingInquiry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

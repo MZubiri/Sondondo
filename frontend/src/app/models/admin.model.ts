@@ -23,6 +23,7 @@ export interface AdminBooking {
   voucherCode?: string;
   tourId?: number;
   tourTitle: string;
+  tourPriceSoles?: number;
   fullName: string;
   email: string;
   phone: string;

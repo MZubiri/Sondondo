@@ -45,3 +45,12 @@ export interface ProcessPaymentResponse {
   dateApproved?: string;
   transactionAmount: number;
 }
+
+export interface ConfirmPaymentRequest {
+  paymentId?: string;
+  externalReference?: string;
+  status: string;
+  preferenceId?: string;
+  transactionAmount?: number;
+  paymentMethodId?: string;
+}

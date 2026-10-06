@@ -621,7 +621,7 @@ export class BookingModalComponent {
     fullName: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
     phone: ['', [Validators.required, Validators.minLength(6)]],
-    numberOfPeople: [2, [Validators.required, Validators.min(1)]],
+    numberOfPeople: [1, [Validators.required, Validators.min(1)]],
     travelDate: [''],
     message: ['']
   });
@@ -637,7 +637,9 @@ export class BookingModalComponent {
   }
 
   getDepositAmount(): number {
-    return Math.round(this.getTotalPrice() / 2);
+    const total = this.getTotalPrice();
+    if (total <= 5) return total;
+    return Math.max(1, Math.round(total / 2));
   }
 
   isFieldInvalid(field: string): boolean {
@@ -657,15 +659,20 @@ export class BookingModalComponent {
 
     this.isSubmitting.set(true);
     const formVal = this.bookingForm.value;
+    const totalAmount = this.getTotalPrice();
 
     const req = {
       tourId: this.tour?.id,
       fullName: formVal.fullName,
       email: formVal.email,
       phone: formVal.phone,
-      numberOfPeople: formVal.numberOfPeople,
+      numberOfPeople: formVal.numberOfPeople || 1,
       travelDate: formVal.travelDate,
-      message: formVal.message
+      message: formVal.message,
+      totalAmount: totalAmount,
+      paidAmount: 0,
+      paymentStatus: 'Pendiente',
+      paymentMethod: 'Pendiente'
     };
 
     this.tourService.createBooking(req).subscribe({
@@ -692,41 +699,53 @@ export class BookingModalComponent {
     this.isPayingWithMP.set(true);
     const formVal = this.bookingForm.value;
     const depositAmount = this.getDepositAmount();
+    const totalAmount = this.getTotalPrice();
+    const tempVoucher = 'VSE-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
 
     const bookingReq = {
       tourId: this.tour.id,
       fullName: formVal.fullName,
       email: formVal.email,
       phone: formVal.phone,
-      numberOfPeople: formVal.numberOfPeople,
+      numberOfPeople: formVal.numberOfPeople || 1,
       travelDate: formVal.travelDate,
-      message: formVal.message
+      message: formVal.message,
+      voucherCode: tempVoucher,
+      totalAmount: totalAmount,
+      paidAmount: 0,
+      paymentStatus: 'Pendiente',
+      paymentMethod: 'MercadoPago'
     };
 
     // Primero registramos la reserva en el sistema/panel admin
     this.tourService.createBooking(bookingReq).subscribe({
       next: (bookingRes) => {
-        const ref = bookingRes?.id ? `VSE-${bookingRes.id}` : `VS-${Date.now()}`;
-        this.executeMercadoPagoCheckout(ref, depositAmount);
+        const ref = bookingRes?.voucherCode || (bookingRes?.id ? `VSE-2026-${bookingRes.id}` : tempVoucher);
+        this.executeMercadoPagoCheckout(ref, depositAmount, totalAmount);
       },
       error: () => {
         // En caso de incidencia en el backend, continúa al checkout de pago seguro
-        this.executeMercadoPagoCheckout(`VS-${Date.now()}`, depositAmount);
+        this.executeMercadoPagoCheckout(tempVoucher, depositAmount, totalAmount);
       }
     });
   }
 
-  private executeMercadoPagoCheckout(voucherCode: string, depositAmount: number): void {
+  private executeMercadoPagoCheckout(voucherCode: string, depositAmount: number, totalAmount: number): void {
     const formVal = this.bookingForm.value;
+    const isDeposit = depositAmount < totalAmount;
+    const balanceRemaining = Math.max(0, totalAmount - depositAmount);
+
     const prefReq: CreatePreferenceRequest = {
-      title: `${this.tour!.title} (Seña de Reserva 50%)`,
-      description: `Seña 50% para ${formVal.numberOfPeople} persona(s) - Fecha: ${formVal.travelDate || 'Por coordinar'} (Saldo restante: S/ ${depositAmount} PEN al llegar)`,
+      title: isDeposit ? `${this.tour!.title} (Seña de Reserva 50%)` : `${this.tour!.title} (Pago Total)`,
+      description: isDeposit
+        ? `Seña 50% para ${formVal.numberOfPeople || 1} persona(s) - Fecha: ${formVal.travelDate || 'Por coordinar'} (Saldo restante: S/ ${balanceRemaining} PEN al llegar)`
+        : `Pago total para ${formVal.numberOfPeople || 1} persona(s) - Fecha: ${formVal.travelDate || 'Por coordinar'}`,
       unitPrice: depositAmount,
       quantity: 1,
       payerName: formVal.fullName,
       payerEmail: formVal.email,
       payerPhone: formVal.phone,
-      isDepositOnly: true,
+      isDepositOnly: isDeposit,
       paymentCategory: 'Tour',
       tourId: this.tour!.id,
       bookingReference: voucherCode
@@ -777,7 +796,7 @@ export class BookingModalComponent {
       `¡Hola Valle del Sondondo Expeditions! 👋\n` +
       `Deseo cotizar el tour: *${tourTitle}*\n` +
       `👤 Nombre: ${val.fullName || 'Viajero'}\n` +
-      `👥 Personas: ${val.numberOfPeople || 2}\n` +
+      `👥 Personas: ${val.numberOfPeople || 1}\n` +
       `📅 Fecha tentativa: ${val.travelDate || 'Por coordinar'}\n` +
       `📱 Teléfono: ${val.phone || ''}\n` +
       (val.message ? `💬 Consulta: ${val.message}` : '')
