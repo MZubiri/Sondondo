@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#234c34" />
+      <stop offset="70%" stop-color="#153222" />
+      <stop offset="100%" stop-color="#0c1d13" />
+    </radialGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fdd078" />
+      <stop offset="50%" stop-color="#f4a261" />
+      <stop offset="100%" stop-color="#e76f51" />
+    </linearGradient>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f4d06f" />
+      <stop offset="100%" stop-color="#b48241" />
+    </linearGradient>
+    <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffe6a7" />
+      <stop offset="60%" stop-color="#f4a261" />
+      <stop offset="100%" stop-color="#e76f51" stop-opacity="0.8" />
+    </radialGradient>
+  </defs>
+
+  <!-- Circular Base -->
+  <circle cx="256" cy="256" r="240" fill="url(#bgGrad)" stroke="url(#ringGrad)" stroke-width="12" />
+  <circle cx="256" cy="256" r="226" fill="none" stroke="#d4a373" stroke-width="2.5" stroke-opacity="0.5" />
+
+  <!-- Sacred Andean Sun -->
+  <circle cx="256" cy="225" r="85" fill="url(#sunGrad)" opacity="0.95" />
+  
+  <!-- Sun Rays -->
+  <g stroke="#ffd166" stroke-width="4.5" opacity="0.75" stroke-linecap="round">
+    <line x1="256" y1="125" x2="256" y2="105" />
+    <line x1="326" y1="155" x2="341" y2="140" />
+    <line x1="356" y1="225" x2="376" y2="225" />
+    <line x1="186" y1="155" x2="171" y2="140" />
+    <line x1="156" y1="225" x2="136" y2="225" />
+  </g>
+
+  <!-- Mountain Peaks (Apus) -->
+  <polygon points="100,415 190,250 280,415" fill="#3a5043" />
+  <polygon points="170,285 190,250 210,285 197,277 190,292 180,280" fill="#f4f6f4" />
+
+  <polygon points="260,425 340,260 420,425" fill="#314439" />
+  <polygon points="320,300 340,260 360,300 348,290 340,305 330,295" fill="#f4f6f4" />
+
+  <!-- Central High Apu -->
+  <polygon points="160,435 256,215 360,435" fill="#203328" />
+  <polygon points="232,270 256,215 282,270 268,258 256,275 244,260" fill="#ffffff" />
+
+  <!-- Terraces (Andenes) -->
+  <path d="M 120,370 Q 256,430 392,370" fill="none" stroke="#d4a373" stroke-width="6" opacity="0.8" />
+  <path d="M 140,400 Q 256,455 372,400" fill="none" stroke="#b48241" stroke-width="6" opacity="0.8" />
+
+  <!-- Andean Condor Soaring -->
+  <!-- Left Wing -->
+  <path d="M 256,190 C 220,170 170,145 110,125 C 125,145 140,165 170,180 C 205,190 235,200 256,210 Z" fill="url(#goldGrad)" />
+  <polygon points="110,125 100,140 120,142" fill="url(#goldGrad)" />
+  <polygon points="118,142 110,157 130,157" fill="url(#goldGrad)" />
+
+  <!-- Right Wing -->
+  <path d="M 256,190 C 292,170 342,145 402,125 C 387,145 372,165 342,180 C 307,190 277,200 256,210 Z" fill="url(#goldGrad)" />
+  <polygon points="402,125 412,140 392,142" fill="url(#goldGrad)" />
+  <polygon points="394,142 402,157 382,157" fill="url(#goldGrad)" />
+
+  <!-- Condor Head & Ruff -->
+  <polygon points="256,170 250,155 256,145 262,155" fill="#f4a261" />
+  <polygon points="256,145 256,137 259,145" fill="#ffd166" />
+  <circle cx="256" cy="165" r="5" fill="#ffffff" />
+  <!-- Tail -->
+  <polygon points="248,208 256,228 264,208" fill="#e76f51" />
+</svg>

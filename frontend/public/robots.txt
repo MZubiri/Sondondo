@@ -1,4 +1,4 @@
-# robots.txt for https://valledelsondondo.com
+# robots.txt for https://valledelsondondoexpeditions.com
 User-agent: *
 Allow: /
 Disallow: /admin
@@ -6,4 +6,4 @@ Disallow: /admin/
 Disallow: /api/
 Disallow: /swagger/
 
-Sitemap: https://valledelsondondo.com/sitemap.xml
+Sitemap: https://valledelsondondoexpeditions.com/sitemap.xml
