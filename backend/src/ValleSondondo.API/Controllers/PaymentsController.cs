@@ -31,6 +31,27 @@ public class PaymentsController : ControllerBase
         _logger = logger;
     }
 
+    private string GetSanitizedAccessToken()
+    {
+        var token = (_configuration["MercadoPago:AccessToken"] 
+            ?? Environment.GetEnvironmentVariable("MERCADOPAGO_ACCESS_TOKEN")
+            ?? string.Empty).Trim();
+
+        if (token.StartsWith("PP_USR-", StringComparison.OrdinalIgnoreCase))
+        {
+            token = "A" + token;
+        }
+
+        return token;
+    }
+
+    private bool IsProductionEnvironment()
+    {
+        var env = _configuration["ASPNETCORE_ENVIRONMENT"] 
+            ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        return string.Equals(env, "Production", StringComparison.OrdinalIgnoreCase);
+    }
+
     [EnableRateLimiting("contact-policy")]
     [HttpPost("create-preference")]
     public async Task<ActionResult<PaymentPreferenceResponseDto>> CreatePreference([FromBody] CreatePaymentPreferenceDto dto)
@@ -40,8 +61,7 @@ public class PaymentsController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var accessToken = _configuration["MercadoPago:AccessToken"] 
-            ?? Environment.GetEnvironmentVariable("MERCADOPAGO_ACCESS_TOKEN");
+        var accessToken = GetSanitizedAccessToken();
 
         var publicKey = _configuration["MercadoPago:PublicKey"] 
             ?? Environment.GetEnvironmentVariable("MERCADOPAGO_PUBLIC_KEY") 
@@ -193,7 +213,17 @@ public class PaymentsController : ControllerBase
             }
         }
 
-        // Fallback / Modo de desarrollo sin credenciales en vivo
+        // Si estamos en entorno de producción y falló la creación de la preferencia real, NUNCA simular pago aprobado
+        if (IsProductionEnvironment())
+        {
+            _logger.LogError("Mercado Pago falló al generar la preferencia en Producción para: {Title}", dto.Title);
+            return StatusCode(502, new 
+            { 
+                message = "No se pudo conectar con la pasarela de pagos de Mercado Pago. Por favor intente nuevamente o coordine su pago por WhatsApp." 
+            });
+        }
+
+        // Fallback únicamente en desarrollo local sin credenciales en vivo
         _logger.LogInformation("Operando en modo de prueba / simulación de Mercado Pago para: {Title}", dto.Title);
 
         var simulatedPrefId = "SIM-" + Guid.NewGuid().ToString()[..8].ToUpper();
@@ -219,8 +249,7 @@ public class PaymentsController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var accessToken = _configuration["MercadoPago:AccessToken"] 
-            ?? Environment.GetEnvironmentVariable("MERCADOPAGO_ACCESS_TOKEN");
+        var accessToken = GetSanitizedAccessToken();
 
         if (!string.IsNullOrWhiteSpace(accessToken) && 
             (accessToken.StartsWith("TEST-") || accessToken.StartsWith("APP_USR-")))
@@ -288,8 +317,7 @@ public class PaymentsController : ControllerBase
         if (string.Equals(dto.Status, "approved", StringComparison.OrdinalIgnoreCase))
         {
             var amount = dto.TransactionAmount ?? 0;
-            var accessToken = _configuration["MercadoPago:AccessToken"] 
-                ?? Environment.GetEnvironmentVariable("MERCADOPAGO_ACCESS_TOKEN");
+            var accessToken = GetSanitizedAccessToken();
 
             if (!string.IsNullOrWhiteSpace(dto.PaymentId) && 
                 !string.IsNullOrWhiteSpace(accessToken) && 
@@ -323,7 +351,14 @@ public class PaymentsController : ControllerBase
                 }
             }
 
-            // Aplicar con los datos provistos
+            // En producción jamás marcamos como pagado si no está verificado por la API de Mercado Pago
+            if (IsProductionEnvironment())
+            {
+                _logger.LogWarning("Pago {PaymentId} no pudo ser verificado con Mercado Pago API en producción.", dto.PaymentId);
+                return BadRequest(new { success = false, message = "El pago no pudo ser verificado con Mercado Pago." });
+            }
+
+            // Aplicar con los datos provistos únicamente en desarrollo local sin credenciales
             var applied = await ApplyApprovedPaymentAsync(dto.PaymentId ?? "DIRECT", dto.ExternalReference, amount, dto.PaymentMethodId ?? "MercadoPago");
             return Ok(new { success = true, updated = applied });
         }
@@ -364,8 +399,7 @@ public class PaymentsController : ControllerBase
 
         if (!string.IsNullOrWhiteSpace(paymentId))
         {
-            var accessToken = _configuration["MercadoPago:AccessToken"] 
-                ?? Environment.GetEnvironmentVariable("MERCADOPAGO_ACCESS_TOKEN");
+            var accessToken = GetSanitizedAccessToken();
 
             if (!string.IsNullOrWhiteSpace(accessToken) && 
                 (accessToken.StartsWith("TEST-") || accessToken.StartsWith("APP_USR-")))
