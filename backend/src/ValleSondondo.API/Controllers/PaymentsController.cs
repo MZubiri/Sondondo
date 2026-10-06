@@ -93,17 +93,17 @@ public class PaymentsController : ControllerBase
         var successCfg = _configuration["MercadoPago:SuccessUrl"];
         var successUrl = !string.IsNullOrWhiteSpace(successCfg) && (successCfg.StartsWith("http://") || successCfg.StartsWith("https://"))
             ? successCfg
-            : $"{appBaseUrl}/pago/resultado?status=approved";
+            : $"{appBaseUrl}/pago/resultado";
 
         var failureCfg = _configuration["MercadoPago:FailureUrl"];
         var failureUrl = !string.IsNullOrWhiteSpace(failureCfg) && (failureCfg.StartsWith("http://") || failureCfg.StartsWith("https://"))
             ? failureCfg
-            : $"{appBaseUrl}/pago/resultado?status=failure";
+            : $"{appBaseUrl}/pago/resultado";
 
         var pendingCfg = _configuration["MercadoPago:PendingUrl"];
         var pendingUrl = !string.IsNullOrWhiteSpace(pendingCfg) && (pendingCfg.StartsWith("http://") || pendingCfg.StartsWith("https://"))
             ? pendingCfg
-            : $"{appBaseUrl}/pago/resultado?status=pending";
+            : $"{appBaseUrl}/pago/resultado";
 
         var webhookCfg = _configuration["MercadoPago:WebhookUrl"];
         var webhookUrl = !string.IsNullOrWhiteSpace(webhookCfg) && (webhookCfg.StartsWith("http://") || webhookCfg.StartsWith("https://"))
