@@ -4,6 +4,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { TourDetail, TourSummary } from '../../models/tour.model';
 import { TourService } from '../../services/tour.service';
 import { TranslationService } from '../../services/translation.service';
+import { SeoService } from '../../services/seo.service';
 import { IconComponent } from '../../components/icon/icon.component';
 import { BookingModalComponent } from '../../components/booking-modal/booking-modal.component';
 
@@ -83,9 +84,9 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
               <section class="content-block">
                 <h2 class="block-title">{{ ts.t('detail.galleryTitle') }}</h2>
                 <div class="gallery-grid">
-                  @for (img of tour()!.galleryImages; track img) {
+                  @for (img of tour()!.galleryImages; track img; let idx = $index) {
                     <div class="gallery-item">
-                      <img [src]="img" [alt]="tour()!.title" loading="lazy" (error)="onGalleryImageError($event)" />
+                      <img [src]="img" [alt]="tour()!.title + ' - Atractivo ' + (idx + 1) + ' en Valle del Sondondo, Ayacucho'" loading="lazy" (error)="onGalleryImageError($event)" />
                     </div>
                   }
                 </div>
@@ -648,6 +649,7 @@ import { BookingModalComponent } from '../../components/booking-modal/booking-mo
 export class TourDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private tourService = inject(TourService);
+  private seoService = inject(SeoService);
   public ts = inject(TranslationService);
 
   tour = signal<TourDetail | null>(null);
@@ -659,6 +661,9 @@ export class TourDetailComponent implements OnInit {
       if (slug) {
         this.tourService.getTourBySlug(slug).subscribe(t => {
           this.tour.set(t);
+          if (t) {
+            this.seoService.setTourSeo(t);
+          }
         });
       }
     });

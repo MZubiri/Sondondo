@@ -1,69 +1,156 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- 1. Homepage -->
   <url>
     <loc>https://valledelsondondoexpeditions.com/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://valledelsondondoexpeditions.com/assets/images/og-sondondo.jpg</image:loc>
+      <image:title>Valle del Sondondo Expeditions - Turismo Vivencial en Ayacucho</image:title>
+      <image:caption>Expediciones guiadas al Valle del Sondondo, cañón de cóndores y andenes prehispánicos</image:caption>
+    </image:image>
   </url>
+
+  <!-- 2. Tour: Cóndor Mayobamba -->
   <url>
-    <loc>https://valledelsondondoexpeditions.com/tour/expedicion-valle-sondondo-3d2n</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://valledelsondondoexpeditions.com/tour/vuelo-del-condor-mayobamba</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://valledelsondondoexpeditions.com/tour/circuito-terrazas-andenes-incas</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://valledelsondondoexpeditions.com/assets/images/condor_mayobamba.jpg</image:loc>
+      <image:title>Avistamiento del Cóndor Andino en Cañón de Mayobamba</image:title>
+      <image:caption>Vuelo matutino de cóndores en libertad sobre el cañón de Mayobamba, Aucará, Ayacucho</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://valledelsondondoexpeditions.com/tour/avistamiento-condores-mayobamba</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+
+  <!-- 3. Tour: Andenes de Andamarca & Danza de Tijeras -->
+  <url>
+    <loc>https://valledelsondondoexpeditions.com/tour/andenes-andamarca-danza-tijeras</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://valledelsondondoexpeditions.com/assets/images/andenes_andamarca.jpg</image:loc>
+      <image:title>Colosales Andenerías Vivas de Andamarca Patrimonio UNESCO</image:title>
+      <image:caption>Más de 5,000 hectáreas de terrazas agrícolas prehispánicas en Carmen Salcedo de Andamarca</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://valledelsondondoexpeditions.com/tour/circuito-terrazas-andenes-incas</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- 4. Tour: Minivolcán Pachapupum & Termas -->
+  <url>
+    <loc>https://valledelsondondoexpeditions.com/tour/volcan-pachapupum-termas</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://valledelsondondoexpeditions.com/assets/images/volcan_pachapupum.jpg</image:loc>
+      <image:title>Cono Geotermal de Sal y Azufre Volcán Pachapupum</image:title>
+      <image:caption>Pozas termomedicinales y monumento volcánico a 4,022 msnm en Sacsamarca</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://valledelsondondoexpeditions.com/tour/ruta-cataratas-aguas-termales</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+
+  <!-- 5. Tour: Pampa Galeras & Apu Qarhuarazo -->
+  <url>
+    <loc>https://valledelsondondoexpeditions.com/tour/pampa-galeras-vicunas-apu-qarhuarazo</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://valledelsondondoexpeditions.com/assets/images/pampa_galeras_vicunas.jpg</image:loc>
+      <image:title>Reserva Nacional Pampa Galeras y Glaciar Apu Qarhuarazo</image:title>
+      <image:caption>Santuario mundial de vicuñas silvestres y vistas al Apu sagrado de 5,112 msnm</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://valledelsondondoexpeditions.com/tour/trekking-volcan-ccarhuarazo</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+
+  <!-- 6. Tour: Pueblos Mágicos -->
+  <url>
+    <loc>https://valledelsondondoexpeditions.com/tour/pueblos-magicos-aucara-cabana-chipao</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://valledelsondondoexpeditions.com/assets/images/pueblo_andamarca.jpg</image:loc>
+      <image:title>Ruta de Pueblos Vivos del Valle del Sondondo</image:title>
+      <image:caption>Templos de piedra virreinales, tierra de Guamán Poma de Ayala y mirador Chauccalla</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://valledelsondondoexpeditions.com/tour/experiencia-vivencial-comunidades</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- 7. Tour: Gran Travesía 3D/2N -->
+  <url>
+    <loc>https://valledelsondondoexpeditions.com/tour/gran-travesia-valle-sondondo-3d2n</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://valledelsondondoexpeditions.com/assets/images/hero_sondondo.jpg</image:loc>
+      <image:title>Gran Travesía Integral Valle del Sondondo 3 Días 2 Noches</image:title>
+      <image:caption>Expedición completa: Cóndores de Mayobamba, Andenes de Andamarca y Volcán Pachapupum</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://valledelsondondoexpeditions.com/tour/expedicion-valle-sondondo-3d2n</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- 8. Páginas Institucionales & Cumplimiento Legal -->
   <url>
     <loc>https://valledelsondondoexpeditions.com/terminos-y-condiciones</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>yearly</changefreq>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://valledelsondondoexpeditions.com/politica-de-cancelacion</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>yearly</changefreq>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://valledelsondondoexpeditions.com/politica-de-privacidad</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>yearly</changefreq>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://valledelsondondoexpeditions.com/libro-de-reclamaciones</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>yearly</changefreq>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 </urlset>

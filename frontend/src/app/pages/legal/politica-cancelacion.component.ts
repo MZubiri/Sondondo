@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { IconComponent } from '../../components/icon/icon.component';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-politica-cancelacion',
@@ -248,4 +249,14 @@ import { IconComponent } from '../../components/icon/icon.component';
     }
   `]
 })
-export class PoliticaCancelacionComponent {}
+export class PoliticaCancelacionComponent implements OnInit {
+  private seo = inject(SeoService);
+
+  ngOnInit(): void {
+    this.seo.setLegalSeo(
+      'Políticas de Cancelación y Reembolso',
+      'politica-de-cancelacion',
+      'Políticas de cancelación, reprogramación y reembolsos para reservas de tours y hospedaje en Valle del Sondondo Expeditions.'
+    );
+  }
+}

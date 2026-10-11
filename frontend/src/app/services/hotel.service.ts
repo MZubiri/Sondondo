@@ -1,4 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, of, map } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -11,6 +12,7 @@ import { HOTEL_STORAGE_KEY } from './admin.service';
 export class HotelService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
+  private platformId = inject(PLATFORM_ID);
 
   private fallbackHotelInfo: HotelInfo = {
     name: 'Hotel Punto Clave',
@@ -155,6 +157,13 @@ export class HotelService {
   };
 
   getHotelInfo(): Observable<HotelInfo> {
+    if (isPlatformServer(this.platformId)) {
+      return of({
+        ...this.fallbackHotelInfo,
+        rooms: (this.fallbackHotelInfo.rooms || []).filter(r => r.isActive !== false)
+      });
+    }
+
     return this.http.get<HotelInfo>(`${this.apiUrl}/hotel?includeInactive=false`).pipe(
       map(data => ({
         ...data,

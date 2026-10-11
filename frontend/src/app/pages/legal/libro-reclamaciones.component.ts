@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { IconComponent } from '../../components/icon/icon.component';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-libro-reclamaciones',
@@ -772,12 +773,21 @@ import { IconComponent } from '../../components/icon/icon.component';
     }
   `]
 })
-export class LibroReclamacionesComponent {
+export class LibroReclamacionesComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private seo = inject(SeoService);
 
   public todayDate = new Date();
   public isSubmitting = false;
   public submittedReceipt: any = null;
+
+  ngOnInit(): void {
+    this.seo.setLegalSeo(
+      'Libro de Reclamaciones Virtual',
+      'libro-de-reclamaciones',
+      'Libro de Reclamaciones Virtual conforme al Código de Protección y Defensa del Consumidor de INDECOPI en Valle del Sondondo Expeditions.'
+    );
+  }
 
   public claimForm = this.fb.group({
     fullName: ['', [Validators.required, Validators.minLength(3)]],

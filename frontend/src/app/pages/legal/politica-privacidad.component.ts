@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { IconComponent } from '../../components/icon/icon.component';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-politica-privacidad',
@@ -206,4 +207,14 @@ import { IconComponent } from '../../components/icon/icon.component';
     }
   `]
 })
-export class PoliticaPrivacidadComponent {}
+export class PoliticaPrivacidadComponent implements OnInit {
+  private seo = inject(SeoService);
+
+  ngOnInit(): void {
+    this.seo.setLegalSeo(
+      'Política de Privacidad',
+      'politica-de-privacidad',
+      'Política de privacidad y protección de datos personales conforme a la Ley 29733 en Valle del Sondondo Expeditions.'
+    );
+  }
+}

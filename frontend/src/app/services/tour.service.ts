@@ -1,4 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -24,6 +25,7 @@ import {
 export class TourService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
+  private platformId = inject(PLATFORM_ID);
 
   private sanitizeTour<T extends TourSummary>(tour: T): T {
     let img = tour.mainImageUrl;
@@ -502,6 +504,17 @@ export class TourService {
   ];
 
   getTours(category?: string, featured?: boolean, search?: string): Observable<TourSummary[]> {
+    if (isPlatformServer(this.platformId)) {
+      let filtered = this.fallbackTours.filter(t => t.isActive !== false);
+      if (category) filtered = filtered.filter(t => t.categorySlug === category);
+      if (featured !== undefined) filtered = filtered.filter(t => t.featured === featured);
+      if (search) {
+        const s = search.toLowerCase();
+        filtered = filtered.filter(t => (t.title && t.title.toLowerCase().includes(s)) || (t.subtitle && t.subtitle.toLowerCase().includes(s)));
+      }
+      return of(filtered.map(t => this.sanitizeTour(t)));
+    }
+
     let params = new HttpParams();
     if (category) params = params.set('category', category);
     if (featured !== undefined) params = params.set('featured', featured);
@@ -554,6 +567,50 @@ export class TourService {
   }
 
   getTourBySlug(slug: string): Observable<TourDetail> {
+    if (isPlatformServer(this.platformId)) {
+      const item = this.resolveTourItemBySlug(this.fallbackTours, slug);
+      const detailedInfo = this.detailedCatalogById[item.id];
+      const itineraries = (item.itineraries && item.itineraries.length > 0)
+        ? item.itineraries
+        : (detailedInfo?.itineraries && detailedInfo.itineraries.length > 0)
+          ? detailedInfo.itineraries
+          : [
+              {
+                id: 1,
+                dayNumber: 1,
+                title: `Día 1: Expedición ${item.title}`,
+                description: item.description || 'Recorrido guiado por los principales atractivos y miradores del Valle del Sondondo.',
+                activities: 'Trekking guiado, interpretación cultural y fotografía',
+                meals: 'Desayuno campestre, Almuerzo andino',
+                accommodation: `Retorno a ${item.startingPoint || 'Aucará / Puquio'}`
+              }
+            ];
+
+      const detail: TourDetail = {
+        ...item,
+        description: item.description || (detailedInfo?.description || 'Expedición auténtica por el Valle del Sondondo.'),
+        galleryImages: (item.galleryImages && item.galleryImages.length > 0) ? item.galleryImages : (detailedInfo?.galleryImages || [item.mainImageUrl || '/assets/images/hero_sondondo.jpg']),
+        included: (item.included && item.included.length > 0) ? item.included : (detailedInfo?.included || [
+          'Transporte turístico privado ida y vuelta',
+          'Guía local oficial acreditado',
+          'Almuerzo andino tradicional',
+          'Asistencia permanente y botiquín de primeros auxilios'
+        ]),
+        notIncluded: (item.notIncluded && item.notIncluded.length > 0) ? item.notIncluded : (detailedInfo?.notIncluded || [
+          'Propinas voluntarias',
+          'Gastos personales y compras de artesanías'
+        ]),
+        recommendations: (item.recommendations && item.recommendations.length > 0) ? item.recommendations : (detailedInfo?.recommendations || [
+          'Ropa abrigadora en capas (polar y cortaviento)',
+          'Calzado de trekking con buen agarre',
+          'Lentes de sol con filtro UV y bloqueador solar',
+          'Agua y snacks ligeros para la caminata'
+        ]),
+        itineraries: itineraries
+      };
+      return of(this.sanitizeTour(detail));
+    }
+
     return this.http.get<TourDetail>(`${this.apiUrl}/tours/${slug}`).pipe(
       map(detail => {
         let localTours: any[] = [];
@@ -675,12 +732,48 @@ export class TourService {
   }
 
   getCategories(): Observable<Category[]> {
+    if (isPlatformServer(this.platformId)) {
+      return of(this.fallbackCategories);
+    }
+
     return this.http.get<Category[]>(`${this.apiUrl}/categories`).pipe(
       catchError(() => of(this.fallbackCategories))
     );
   }
 
   getTestimonials(): Observable<Testimonial[]> {
+    if (isPlatformServer(this.platformId)) {
+      return of([
+        {
+          id: 1,
+          authorName: 'Lucía Mendoza',
+          location: 'Lima, Perú',
+          rating: 5,
+          comment: 'Ver más de 20 cóndores volar a pocos metros en el mirador de Mayobamba fue una experiencia espiritual inigualable. Los guías locales de Andamarca conocen la cuenca como nadie.',
+          tourName: 'Kuntur Ñan: El Vuelo del Cóndor',
+          date: '2026-08-15'
+        },
+        {
+          id: 2,
+          authorName: 'Carlos Restrepo',
+          location: 'Medellín, Colombia',
+          rating: 5,
+          comment: 'Los andenes vivos de Andamarca superan con creces lo que uno imagina. La gastronomía tradicional y la danza de tijeras en la plaza nos dejaron sin palabras.',
+          tourName: 'Gran Circuito Andenes Vivos de Andamarca',
+          date: '2026-07-22'
+        },
+        {
+          id: 3,
+          authorName: 'Sophie Dubois',
+          location: 'Lyon, Francia',
+          rating: 5,
+          comment: 'El volcán de sal y azufre de Pachapupum es una joya geológica desconocida por el turismo masivo. Excelente organización y respeto total a la comunidad.',
+          tourName: 'Minivolcanes de Pachapupum & Termas Medicinales',
+          date: '2026-06-30'
+        }
+      ]);
+    }
+
     return this.http.get<Testimonial[]>(`${this.apiUrl}/testimonials`).pipe(
       catchError(() => {
         try {
@@ -735,6 +828,19 @@ export class TourService {
   }
 
   getAgencyInfo(): Observable<AgencyInfo> {
+    if (isPlatformServer(this.platformId)) {
+      return of({
+        name: environment.agencyName,
+        whatsappNumber: environment.fallbackWhatsApp,
+        phoneNumber: environment.agencyPhone,
+        email: environment.agencyEmail,
+        address: environment.agencyAddress,
+        safeTravelsCertified: true,
+        facebookUrl: 'https://www.facebook.com/valledelsondondoexpeditions',
+        instagramUrl: 'https://www.instagram.com/valledelsondondoexpeditions'
+      });
+    }
+
     return this.http.get<AgencyInfo>(`${this.apiUrl}/agency`).pipe(
       catchError(() => of({
         name: environment.agencyName,

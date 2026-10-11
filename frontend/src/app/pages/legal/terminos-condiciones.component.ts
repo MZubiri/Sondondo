@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { IconComponent } from '../../components/icon/icon.component';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-terminos-condiciones',
@@ -211,4 +212,14 @@ import { IconComponent } from '../../components/icon/icon.component';
     }
   `]
 })
-export class TerminosCondicionesComponent {}
+export class TerminosCondicionesComponent implements OnInit {
+  private seo = inject(SeoService);
+
+  ngOnInit(): void {
+    this.seo.setLegalSeo(
+      'Términos y Condiciones',
+      'terminos-y-condiciones',
+      'Términos y condiciones legales para contratación de expediciones, tours guiados y hospedaje en Valle del Sondondo, Ayacucho.'
+    );
+  }
+}

@@ -63,7 +63,9 @@ export class ThemeService {
       const theme = this.currentTheme();
       this.applyThemeToDom(theme);
       try {
-        localStorage.setItem(STORAGE_KEY, theme);
+        if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+          localStorage.setItem(STORAGE_KEY, theme);
+        }
       } catch {
         // Ignore localStorage errors
       }
@@ -82,9 +84,11 @@ export class ThemeService {
 
   private getInitialTheme(): ThemeId {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY) as ThemeId;
-      if (saved && this.themes.some(t => t.id === saved)) {
-        return saved;
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        const saved = localStorage.getItem(STORAGE_KEY) as ThemeId;
+        if (saved && this.themes.some(t => t.id === saved)) {
+          return saved;
+        }
       }
     } catch {
       // Fallback if localStorage is disabled

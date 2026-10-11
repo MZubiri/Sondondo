@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TourSummary, Category, Testimonial, AgencyInfo } from '../../models/tour.model';
 import { TourService } from '../../services/tour.service';
 import { HotelService } from '../../services/hotel.service';
+import { SeoService } from '../../services/seo.service';
 import { HotelInfo, HotelRoom } from '../../models/hotel.model';
 import { HeroComponent } from '../../components/hero/hero.component';
 import { TourListComponent } from '../../components/tour-list/tour-list.component';
@@ -98,6 +99,7 @@ import { PaymentModalComponent, PaymentTarget } from '../../components/payment-m
 export class HomeComponent implements OnInit {
   private tourService = inject(TourService);
   private hotelService = inject(HotelService);
+  private seoService = inject(SeoService);
 
   tours = signal<TourSummary[]>([]);
   categories = signal<Category[]>([]);
@@ -109,6 +111,7 @@ export class HomeComponent implements OnInit {
   selectedPaymentTarget = signal<PaymentTarget | null>(null);
 
   ngOnInit(): void {
+    this.seoService.setHomeSeo();
     this.tourService.getTours().subscribe(data => this.tours.set(data));
     this.tourService.getCategories().subscribe(data => this.categories.set(data));
     this.tourService.getTestimonials().subscribe(data => this.testimonials.set(data));
